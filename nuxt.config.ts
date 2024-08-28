@@ -12,7 +12,8 @@ export default defineNuxtConfig({
     },
     "@pinia/nuxt",
     "@unocss/nuxt",
+    "@vueuse/nuxt",
   ],
   vite: { vue: { template: { transformAssetUrls } } },
-  css: ['~/assets/main.css']
+  css: ["~/assets/main.css"],
 });

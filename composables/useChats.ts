@@ -27,6 +27,7 @@ export const useChats = (topicID?: MaybeRefOrGetter<number | undefined>) => {
       console.warn("没有topic id");
       return;
     }
+    await until(() => iDB.DB).toBeTruthy();
     if (chatID === undefined)
       await iDB.DB?.add(IDB_VAR.CHATS, {
         content,

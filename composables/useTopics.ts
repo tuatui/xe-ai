@@ -2,6 +2,7 @@ interface TopicData {
   id: number;
   title: string;
 }
+
 export const useTopics = () => {
   const iDB = useIndexedDBStore();
   const topics = ref<TopicData[]>([]);
@@ -15,6 +16,7 @@ export const useTopics = () => {
       isPending.value = false;
     });
   const updateTopic = async (title: string, topicID?: number) => {
+    await until(() => iDB.DB).toBeTruthy();
     if (topicID === undefined)
       await iDB.DB?.add(IDB_VAR.TOPICS, {
         title,
