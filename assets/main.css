@@ -1,0 +1,3 @@
+html {
+  overflow: auto !important; /* 覆盖vuetify的样式 */
+}
