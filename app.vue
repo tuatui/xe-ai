@@ -1,7 +1,7 @@
 <template>
   <VApp>
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage keepalive />
     </NuxtLayout>
   </VApp>
 </template>
