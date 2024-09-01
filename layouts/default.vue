@@ -1,6 +1,6 @@
 <template>
   <VLayout>
-    <VNavigationDrawer>
+    <VNavigationDrawer disable-resize-watcher  permanent>
       <VTextField clearable hide-details v-model="userInput">
         <template #append-inner>
           <VBtn
@@ -10,6 +10,7 @@
           ></VBtn>
         </template>
       </VTextField>
+      <SettingDialog />
       <VList density="compact" nav>
         <VListItem
           v-for="(item, i) in topics"

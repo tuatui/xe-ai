@@ -3,7 +3,7 @@
     <div class="h0 flex-grow-1 overflow-auto">
       <!-- <div v-for="i in data" class="max-w-full text-wrap break-words">
         {{ i }}
-      </div> -->{{ chats }}
+      </div> -->
     </div>
     <div class="flex flex-col">
       <div class="text-right p2">
