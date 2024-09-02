@@ -32,7 +32,7 @@ export const useChats = (topicID?: MaybeRefOrGetter<number | undefined>) => {
       },
       { immediate: true }
     );
-  const updateChat = async (content: string, from: number, chatID?: number) => {
+  const updateChat = async (context: string, from: number, chatID?: number) => {
     if (tid.value === undefined) {
       console.warn("没有topic id");
       return;
@@ -44,7 +44,7 @@ export const useChats = (topicID?: MaybeRefOrGetter<number | undefined>) => {
       isPending.value = true;
       if (chatID === undefined)
         await iDB.DB?.add(IDB_VAR.CHATS, {
-          content,
+          context,
           from,
           topic_id: tid.value,
         } as Partial<ChatData>);
@@ -52,7 +52,7 @@ export const useChats = (topicID?: MaybeRefOrGetter<number | undefined>) => {
         await iDB.DB?.put(
           IDB_VAR.CHATS,
           {
-            content,
+            context,
             from,
             topic_id: tid.value,
           } as Partial<ChatData>,

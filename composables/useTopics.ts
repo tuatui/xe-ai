@@ -1,4 +1,4 @@
-interface TopicData {
+export interface TopicData {
   id: number;
   title: string;
 }
