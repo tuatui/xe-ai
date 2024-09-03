@@ -15,7 +15,7 @@
       <VList density="compact" nav>
         <VListItem
           v-for="(item, i) in topics"
-          @click="tabsIns?.add(item)"
+          @click="focusedChat.chatTabsExpose?.add(item)"
           :key="i"
           :value="item"
           :title="item.title || '无标题'"
@@ -23,15 +23,37 @@
         />
       </VList>
     </VNavigationDrawer>
-    <VMain><ChatTabs ref="tabsIns" /></VMain>
+    <VMain><AdjustableView :view-tree="vt" /></VMain>
   </VLayout>
 </template>
-<script setup lang="ts">
-import type ChatTabs from "~/components/ChatTabs.vue";
+<script setup lang="tsx">
+import { ChatTabs } from "#components";
 import { useDraggable } from "@vueuse/core";
 
 const dragger = ref<HTMLElement | null>(null);
 const width = ref(300);
+
+const vt = {
+  isVertical: false,
+  children: [
+    {
+      isVertical: false,
+      children: [],
+      space: 0.5,
+      isLeaf: true,
+      view: <ChatTabs />,
+    },
+    {
+      isVertical: false,
+      children: [],
+      space: 0.5,
+      isLeaf: true,
+      view: <ChatTabs />,
+    },
+  ],
+  space: 1,
+  isLeaf: false,
+};
 
 const { x, style } = useDraggable(dragger, {
   initialValue: { x: 300, y: 0 },
@@ -49,7 +71,7 @@ const updateTopicHandle = () => {
   updateTopic(userInput.value);
   userInput.value = "";
 };
-const tabsIns = ref<InstanceType<typeof ChatTabs>>();
+const focusedChat = focusedChatStore();
 </script>
 <style lang="css" scoped>
 .nav-dragger {

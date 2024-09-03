@@ -1,5 +1,9 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div
+    class="flex flex-col h-full tabs-focus"
+    @focus="handleClickChatTabs"
+    tabindex="0"
+  >
     <VTabs v-model="currTab" bg-color="primary" show-arrows>
       <VTab :value="i.id" v-for="i in topics" :key="i.id">
         {{ i.title }}
@@ -47,11 +51,21 @@ const remove = (topic: TopicData) => {
   if (topic.id === currTab.value && topics.value.length > 0)
     currTab.value = topics.value[Math.max(i - 1, 0)].id;
 };
-defineExpose({
+
+const focusedChat = focusedChatStore();
+const handleClickChatTabs = () => (focusedChat.chatTabsExpose = expose);
+const expose = {
   add: (topic: TopicData) => {
     const i = topics.value.findIndex((v) => v.id === topic.id);
     if (i < 0) topics.value.push(topic);
     else currTab.value = i;
   },
-});
+};
+defineExpose(expose);
 </script>
+<!-- <style lang="css" scoped>
+.tabs-focus:focus{
+  outline: 0.2rem solid rgb(var(--v-theme-secondary));
+  outline-offset: -0.2rem;
+} 
+</style> -->
