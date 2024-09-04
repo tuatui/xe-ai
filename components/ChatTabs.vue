@@ -138,14 +138,15 @@ const splitHorizHandle = () => {
   else alert("hahhaa");
 };
 
-const resizeObs = new ResizeObserver((entries) => {
-  const size = entries[0]?.contentBoxSize[0];
-  if (size) viewSize.value = size;
-});
-
 const viewSize = ref<ResizeObserverSize>({ blockSize: 500, inlineSize: 500 });
-onMounted(() => divElem.value && resizeObs.observe(divElem.value));
-onUnmounted(() => resizeObs.disconnect());
+if (import.meta.client) {
+  const resizeObs = new ResizeObserver((entries) => {
+    const size = entries[0]?.contentBoxSize[0];
+    if (size) viewSize.value = size;
+  });
+  onMounted(() => divElem.value && resizeObs.observe(divElem.value));
+  onUnmounted(() => resizeObs.disconnect());
+}
 </script>
 <!-- <style lang="css" scoped>
 .tabs-focus:focus{

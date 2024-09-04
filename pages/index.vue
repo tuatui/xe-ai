@@ -24,7 +24,7 @@
       </VList>
     </VNavigationDrawer>
     <VMain>
-      <ClientOnly><AdjustableView v-model="vt" /></ClientOnly>
+      <AdjustableView v-model="vt" />
     </VMain>
   </VLayout>
 </template>

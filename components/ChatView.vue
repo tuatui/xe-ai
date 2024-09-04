@@ -32,7 +32,6 @@ const { globalSharedChats } = chatsStore();
 const data = globalSharedChats.get(props.topicID) || useChats(props.topicID);
 
 if (!globalSharedChats.has(props.topicID)) {
-  console.log("init", props.topicID)
   globalSharedChats.set(props.topicID, data);
   data.value.chatRefCount = 1;
 } else data.value.chatRefCount++;

@@ -1,13 +1,11 @@
 <template>
   <template v-if="viewTree.isLeaf">
-    <KeepAlive
-      ><component
-        :is="viewTree.view"
-        @splitHorizontal="handleSplit(true)"
-        @splitVertical="handleSplit(false)"
-        @close="$emit('viewClose')"
-      ></component
-    ></KeepAlive>
+    <component
+      :is="viewTree.view"
+      @splitHorizontal="handleSplit(true)"
+      @splitVertical="handleSplit(false)"
+      @close="$emit('viewClose')"
+    ></component>
   </template>
   <template v-else>
     <div
