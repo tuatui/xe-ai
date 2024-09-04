@@ -4,24 +4,39 @@
     @focus="handleClickChatTabs"
     tabindex="0"
   >
-    <VTabs v-model="currTab" bg-color="primary" show-arrows>
-      <VTab :value="i.id" v-for="i in topics" :key="i.id">
-        {{ i.title }}
-        <template #append>
-          <VBtn
-            variant="text"
-            icon="mdi-window-close"
-            density="comfortable"
-            size="small"
-            @click.stop="remove(i)"
-          />
-        </template>
-      </VTab>
-    </VTabs>
-    <VTabsWindow v-model="currTab" class="grow flex flex-col [&>*]:grow">
+    <div class="flex">
+      <VTabs v-model="data.currTab" bg-color="primary" show-arrows class="grow">
+        <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
+          {{ i.title }}
+          <template #append>
+            <VBtn
+              variant="text"
+              icon="mdi-window-close"
+              density="comfortable"
+              size="small"
+              @click.stop="remove(i)"
+            />
+          </template>
+        </VTab>
+      </VTabs>
+      <div class="bg-primary">
+        <VBtn
+          icon="mdi-view-split-horizontal"
+          variant="text"
+          @click="$emit('splitHorizontal')"
+        />
+        <VBtn
+          icon="mdi-view-split-vertical"
+          variant="text"
+          @click="$emit('splitVertical')"
+        />
+        <VBtn icon="mdi-close" variant="text" @click="$emit('close')" />
+      </div>
+    </div>
+    <VTabsWindow v-model="data.currTab" class="grow flex flex-col [&>*]:grow">
       <VTabsWindowItem
         :value="i.id"
-        v-for="i in topics"
+        v-for="i in data.topics"
         :key="i.id"
         class="h-full"
       >
@@ -31,37 +46,50 @@
   </div>
 </template>
 <script setup lang="ts">
-const topics = ref<TopicData[]>([]);
-const currTab = ref<number>();
+const props = defineProps<{ uniqueKey: Symbol }>();
+const store = chatTabsStore();
 
-let lastTopicsLen = topics.value.length;
+const data =
+  store.globalSharedTabs.get(props.uniqueKey) ||
+  ref<{
+    topics: TopicData[];
+    currTab: number | undefined;
+  }>({ topics: [], currTab: undefined });
+
+if (!store.globalSharedTabs.has(props.uniqueKey))
+  store.globalSharedTabs.set(props.uniqueKey, data);
+
 watch(
-  () => topics.value,
-  () => {
-    if (topics.value.length > lastTopicsLen)
-      currTab.value = topics.value.at(-1)?.id;
-    lastTopicsLen = topics.value.length;
-  },
-  { deep: true }
+  () => data.value.topics.length,
+  (newVal, oldVal) => {
+    console.log(newVal, oldVal);
+    if (newVal > oldVal) data.value.currTab = data.value.topics.at(-1)?.id;
+  }
 );
 const remove = (topic: TopicData) => {
-  const i = topics.value.indexOf(topic);
+  const i = data.value.topics.indexOf(topic);
   if (i < 0) return;
-  topics.value.splice(i, 1);
-  if (topic.id === currTab.value && topics.value.length > 0)
-    currTab.value = topics.value[Math.max(i - 1, 0)].id;
+  data.value.topics.splice(i, 1);
+  if (topic.id === data.value.currTab && data.value.topics.length > 0)
+    data.value.currTab = data.value.topics[Math.max(i - 1, 0)].id;
 };
 
 const focusedChat = focusedChatStore();
 const handleClickChatTabs = () => (focusedChat.chatTabsExpose = expose);
 const expose = {
   add: (topic: TopicData) => {
-    const i = topics.value.findIndex((v) => v.id === topic.id);
-    if (i < 0) topics.value.push(topic);
-    else currTab.value = i;
+    const i = data.value.topics.findIndex((v) => v.id === topic.id);
+    if (i < 0) data.value.topics.push(topic);
+    else data.value.currTab = i;
   },
 };
 defineExpose(expose);
+
+defineEmits<{
+  splitHorizontal: [];
+  splitVertical: [];
+  close: [];
+}>();
 </script>
 <!-- <style lang="css" scoped>
 .tabs-focus:focus{

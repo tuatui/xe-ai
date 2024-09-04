@@ -23,38 +23,28 @@
         />
       </VList>
     </VNavigationDrawer>
-    <VMain><AdjustableView :view-tree="vt" /></VMain>
+    <VMain>
+      <ClientOnly><AdjustableView v-model="vt" /></ClientOnly>
+    </VMain>
   </VLayout>
 </template>
 <script setup lang="tsx">
 import { ChatTabs } from "#components";
-import { useDraggable } from "@vueuse/core";
-
 const dragger = ref<HTMLElement | null>(null);
 const width = ref(300);
 
-const vt = {
-  isVertical: false,
-  children: [
-    {
-      isVertical: false,
-      children: [],
-      space: 0.5,
-      isLeaf: true,
-      view: <ChatTabs />,
-    },
-    {
-      isVertical: false,
-      children: [],
-      space: 0.5,
-      isLeaf: true,
-      view: <ChatTabs />,
-    },
-  ],
-  space: 1,
-  isLeaf: false,
-};
-
+const vt = ref(
+  new ViewTree(
+    false,
+    undefined,
+    false,
+    [
+      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5),
+      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5),
+    ],
+    1
+  )
+);
 const { x, style } = useDraggable(dragger, {
   initialValue: { x: 300, y: 0 },
   preventDefault: true,
