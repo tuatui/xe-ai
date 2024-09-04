@@ -5,66 +5,56 @@ export interface ChatData {
   from: number;
 }
 
-export const useChats = (topicID?: MaybeRefOrGetter<number | undefined>) => {
-  const tid = toRef(topicID);
+export const useChats = (topicID: number) => {
   const iDB = useIndexedDBStore();
   const chats = ref<ChatData[]>([]);
-  const isPending = ref(false);
-  if (iDB.isAvailable)
-    watch(
-      tid,
-      async () => {
-        if (tid.value === undefined) return;
-        if (!iDB.DB) await until(() => iDB.DB).toBeTruthy();
-        await until(isPending).toBe(false);
-        try {
-          isPending.value = true;
-          chats.value = await iDB.DB!.getAllFromIndex(
-            IDB_VAR.CHATS,
-            "topic_id",
-            tid.value
-          );
-        } catch (error) {
-          console.error(error);
-        } finally {
-          isPending.value = false;
-        }
-      },
-      { immediate: true }
-    );
-  const updateChat = async (context: string, from: number, chatID?: number) => {
-    if (tid.value === undefined) {
-      console.warn("没有topic id");
-      return;
-    }
 
-    await until(() => iDB.DB).toBeTruthy();
-    await until(isPending).toBe(false);
+  const taskCount = ref(0);
+  const isPending = computed(() => taskCount.value > 0);
+
+  const getChatsData = async (): Promise<ChatData[]> => {
+    if (!iDB.isAvailable) return [];
+    const db = await iDB.onDBReady();
     try {
-      isPending.value = true;
+      return await db.getAllFromIndex(IDB_VAR.CHATS, "topic_id", topicID);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  taskCount.value++;
+  getChatsData().then((val) => {
+    chats.value = val;
+    taskCount.value--;
+  });
+
+  const updateChat = async (context: string, from: number, chatID?: number) => {
+    const db = await iDB.onDBReady();
+
+    try {
+      taskCount.value++;
       if (chatID === undefined)
-        await iDB.DB?.add(IDB_VAR.CHATS, {
+        await db.add(IDB_VAR.CHATS, {
           context,
           from,
-          topic_id: tid.value,
+          topic_id: topicID,
         } as Partial<ChatData>);
       else
-        await iDB.DB?.put(
+        await db.put(
           IDB_VAR.CHATS,
           {
             context,
             from,
-            topic_id: tid.value,
+            topic_id: topicID,
           } as Partial<ChatData>,
           chatID
         );
-      chats.value =
-        (await iDB.DB?.getAllFromIndex(IDB_VAR.CHATS, "topic_id", tid.value)) ??
-        [];
+      chats.value = await getChatsData();
     } catch (error) {
       console.error(error);
     } finally {
-      isPending.value = false;
+      taskCount.value--;
     }
   };
   return { chats, isPending, updateChat };

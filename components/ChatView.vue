@@ -22,12 +22,10 @@
 </template>
 <script setup lang="ts">
 const props = defineProps<{
-  topicID?: number;
+  topicID: number;
 }>();
 const userInput = ref("");
-const { chats, isPending, updateChat } = useChats(
-  computed(() => props.topicID)
-);
+const { chats, isPending, updateChat } = useChats(props.topicID);
 const updateHandle = async () => {
   await updateChat(userInput.value, 0);
   userInput.value = "";
