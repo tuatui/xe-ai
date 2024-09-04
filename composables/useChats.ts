@@ -57,5 +57,6 @@ export const useChats = (topicID: number) => {
       taskCount.value--;
     }
   };
-  return { chats, isPending, updateChat };
+  const chatRefCount = ref(0);
+  return ref({ chats, isPending, updateChat, chatRefCount });
 };

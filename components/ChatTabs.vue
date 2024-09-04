@@ -62,7 +62,6 @@ if (!store.globalSharedTabs.has(props.uniqueKey))
 watch(
   () => data.value.topics.length,
   (newVal, oldVal) => {
-    console.log(newVal, oldVal);
     if (newVal > oldVal) data.value.currTab = data.value.topics.at(-1)?.id;
   }
 );
