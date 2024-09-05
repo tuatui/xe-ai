@@ -111,6 +111,7 @@ const remove = (topic: TopicData) => {
 
 const focusedChat = focusedChatStore();
 const handleClickChatTabs = () => (focusedChat.chatTabsExpose = expose);
+onMounted(handleClickChatTabs)
 const expose = {
   add: (topic: TopicData) => {
     const i = data.value.topics.findIndex((v) => v.id === topic.id);

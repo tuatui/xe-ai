@@ -15,7 +15,7 @@
       <VList density="compact" nav>
         <VListItem
           v-for="(item, i) in topics"
-          @click="focusedChat.chatTabsExpose?.add(item)"
+          @click="handleAddChatTabs(item)"
           :key="i"
           :value="item"
           :title="item.title || '无标题'"
@@ -45,6 +45,23 @@ const vt = ref(
     1
   )
 );
+
+const handleAddChatTabs = async (topic: TopicData) => {
+  if (vt.value.children.length >= 1) {
+    focusedChat.chatTabsExpose?.add(topic);
+  } else {
+    const newVT = new ViewTree(
+      true,
+      (key) => <ChatTabs uniqueKey={key} />,
+      false,
+      [],
+      1
+    );
+    vt.value.children.push(newVT);
+    await nextTick();
+    focusedChat.chatTabsExpose?.add(topic);
+  }
+};
 const { x, style } = useDraggable(dragger, {
   initialValue: { x: 300, y: 0 },
   preventDefault: true,
