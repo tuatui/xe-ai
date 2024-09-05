@@ -11,8 +11,14 @@
         </template>
       </VTextField>
       <SettingDialog />
-      <div ref="dragger" :style="style" class="nav-dragger"></div>
+      <div
+        ref="dragger"
+        class="nav-dragger"
+        :class="{ active: isDragging }"
+        :style="{ left: `${position.x}px` }"
+      ></div>
       <VList density="compact" nav>
+        {{ isDragging }}{{ position }}
         <VListItem
           v-for="(item, i) in topics"
           @click="handleAddChatTabs(item)"
@@ -45,7 +51,6 @@ const vt = ref(
     1
   )
 );
-
 const handleAddChatTabs = async (topic: TopicData) => {
   if (vt.value.children.length >= 1) {
     focusedChat.chatTabsExpose?.add(topic);
@@ -62,16 +67,32 @@ const handleAddChatTabs = async (topic: TopicData) => {
     focusedChat.chatTabsExpose?.add(topic);
   }
 };
-const { x, style } = useDraggable(dragger, {
-  initialValue: { x: 300, y: 0 },
-  preventDefault: true,
-  axis: "x",
-  containerElement: document?.body,
-});
-watchDebounced(x, () => (width.value = x.value), {
-  debounce: 50,
-  maxWait: 50,
-});
+
+const { isDragging, position } = useMouseDrag(
+  dragger,
+  {
+    init: { x: 300, y: 0 },
+  },
+  {
+    onTryDrag: (pos) => {
+      const max = window.innerWidth / 3;
+      const min = Math.min(max / 3, 100);
+      if (pos.x > max) return { x: max };
+      else if (pos.x > min) return pos;
+      else return { x: min };
+    },
+  }
+);
+
+watchDebounced(
+  () => position.value.x,
+  () => (width.value = position.value.x),
+  {
+    debounce: 50,
+    maxWait: 50,
+  }
+);
+
 const userInput = ref("");
 const { topics, updateTopic } = useTopics();
 const updateTopicHandle = () => {
@@ -84,11 +105,18 @@ const focusedChat = focusedChatStore();
 .nav-dragger {
   height: 100dvh;
   width: 10px;
+  transform: translateX(-5px);
+  top: 0px;
+
   user-select: none;
   cursor: col-resize;
   z-index: 999;
-  transform: translateX(-5px);
-  /* background-color: red; */
   position: fixed;
+  transition: background-color 200ms ease;
+
+  &.active,
+  &:hover {
+    background-color: rgba(var(--v-border-color), var(--v-border-opacity));
+  }
 }
 </style>
