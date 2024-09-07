@@ -43,7 +43,7 @@
               'offset-x': !viewTree.isVertical,
               'offset-y': viewTree.isVertical,
             }"
-            @mousedown="(ev) => handleMouseDrag(ev, i)"
+            @mousedown.stop="(ev) => handleMouseDrag(ev, i)"
           ></div>
         </div>
       </template>
@@ -124,36 +124,133 @@ const handleViewClose = (index: number) => {
 };
 const viewParent = ref<HTMLDivElement>();
 const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
-  mouseDragImp(
-    firstEv,
-    {
-      onDrag(ev) {
-        const el = viewParent.value as HTMLElement;
-        let outSideSpace, realSize;
-        if (!viewTree.value.isVertical) {
-          outSideSpace = el.getBoundingClientRect().x;
-          realSize = el.clientWidth;
-        } else {
-          outSideSpace = el.getBoundingClientRect().y;
-          realSize = el.clientHeight;
+  mouseDragImp(firstEv, {
+    onDrag(ev) {
+      const el = viewParent.value as HTMLElement;
+      let outSideSpace, realSize, mousePosition;
+      if (!viewTree.value.isVertical) {
+        outSideSpace = el.getBoundingClientRect().x;
+        realSize = el.clientWidth;
+        mousePosition = ev.pageX;
+      } else {
+        outSideSpace = el.getBoundingClientRect().y;
+        realSize = el.clientHeight;
+        mousePosition = ev.pageY;
+      }
+
+      let preSpace = 0;
+      for (let i = 0; i <= index; i++)
+        preSpace += viewTree.value.children[i].space * realSize;
+
+      let targetPosition = mousePosition - outSideSpace;
+
+      const currPosition = preSpace;
+      const expectPX = targetPosition - currPosition;
+
+      if (expectPX > 0) {
+        const taskList: any[] = [];
+        let leftPX = expectPX;
+        for (let i = index + 1; i < viewTree.value.children.length; i++) {
+          const res = resizeNegotiate(
+            viewTree.value.children[i],
+            leftPX,
+            viewTree.value.isVertical,
+            viewTree.value.children[i].space * realSize
+          );
+          if (!res) continue;
+          leftPX -= res.consumePX;
+          taskList.push(res.startResize);
+          if (leftPX <= 0) break;
         }
+        if (taskList.length === 0) return;
+        taskList.forEach((each) => each());
+        const targetPercent = (expectPX - leftPX) / realSize;
 
-        let preSpace = 0;
-        for (let i = 0; i < index; i++)
-          preSpace += viewTree.value.children[i].space * realSize;
-        const pagePosition = viewTree.value.isVertical ? ev.pageY : ev.pageX;
-        const targetPosition = pagePosition - outSideSpace - preSpace;
-
-        const targetPercent = targetPosition / realSize;
-        const targetView = viewTree.value.children[index];
-        viewTree.value.children[index + 1].space +=
-          targetView.space - targetPercent;
-        targetView.space = targetPercent;
-      },
+        viewTree.value.children[index].space += targetPercent;
+      } else {
+        const taskList: any[] = [];
+        let leftPX = -expectPX;
+        for (let i = index; i >= 0; i--) {
+          const res = resizeNegotiate(
+            viewTree.value.children[i],
+            leftPX,
+            viewTree.value.isVertical,
+            viewTree.value.children[i].space * realSize
+          );
+          if (!res) continue;
+          leftPX -= res.consumePX;
+          taskList.push(res.startResize);
+          if (leftPX <= 0) break;
+        }
+        if (taskList.length === 0) return;
+        taskList.forEach((each) => each());
+        const targetPercent = (-expectPX - leftPX) / realSize;
+        viewTree.value.children[index + 1].space += targetPercent;
+      }
     },
-  );
+  });
 };
-
+const resizeNegotiate = (
+  vt: ViewTree,
+  expectPX: number,
+  isVertical: boolean,
+  width: number
+): {
+  startResize: (size?: number) => void;
+  consumePX: number;
+} | void => {
+  const minPX = 52;
+  if (vt.isLeaf) {
+    if (width <= minPX) return;
+    const leftPX = width - minPX;
+    const consumePX = Math.min(leftPX, expectPX);
+    return {
+      startResize: (size: number = consumePX) => {
+        vt.space = ((width - size) * vt.space) / width;
+      },
+      consumePX,
+    };
+  }
+  if (vt.isVertical === isVertical) {
+    let leftPX = expectPX;
+    const resizeJob: (() => void)[] = [];
+    for (const vtc of vt.children) {
+      const res = resizeNegotiate(vtc, expectPX, isVertical, width * vtc.space);
+      if (!res || !res.consumePX) continue;
+      leftPX -= res.consumePX;
+      resizeJob.push(res.startResize);
+      if (leftPX <= 0) break;
+    }
+    const consumePX = expectPX - leftPX;
+    return {
+      startResize: () => {
+        resizeJob.forEach((each) => each());
+        const shirkPresent = 1 - vt.children.reduce((p, c) => p + c.space, 0);
+        const eventPresent = shirkPresent / vt.children.length;
+        vt.children.forEach((each) => (each.space += eventPresent));
+      },
+      consumePX,
+    };
+  } else {
+    const minSizes: number[] = [];
+    const taskList: ((size?: number) => void)[] = [];
+    for (const vtc of vt.children) {
+      if (vtc.isLeaf) continue;
+      const res = resizeNegotiate(vtc, expectPX, isVertical, width);
+      if (!res || !res.consumePX) return;
+      minSizes.push(res.consumePX);
+      taskList.push(res.startResize);
+    }
+    const minConsumePX = Math.min(...minSizes, width - minPX, expectPX);
+    return {
+      startResize: (size: number = minConsumePX) => {
+        taskList.forEach((each) => each(size));
+        vt.space = ((width - size) * vt.space) / width;
+      },
+      consumePX: minConsumePX,
+    };
+  }
+};
 </script>
 <style lang="css" scoped>
 * {
