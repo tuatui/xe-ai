@@ -65,14 +65,14 @@ const handleSplit = (isVertical: boolean, index: number) => {
   if (viewTree.value.children.length === 1) {
     viewTree.value.isVertical = isVertical;
     target.space = 0.5;
-    viewTree.value.children.unshift(
+    viewTree.value.children.push(
       new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5)
     );
   } else {
     if (isVertical === viewTree.value.isVertical) {
       const newSpace = (target.space /= 2);
       viewTree.value.children.splice(
-        index,
+        index + 1,
         0,
         new ViewTree(
           true,
@@ -218,7 +218,12 @@ const resizeNegotiate = (
     let leftPX = expectPX;
     const resizeJob: ResizeFn[] = [];
     for (const vtc of vt.children) {
-      const res = resizeNegotiate(vtc, expectPX, isVertical, spacePX * vtc.space);
+      const res = resizeNegotiate(
+        vtc,
+        expectPX,
+        isVertical,
+        spacePX * vtc.space
+      );
       if (!res || !res.consumePX) continue;
       leftPX -= res.consumePX;
       resizeJob.push(res.startResize);
