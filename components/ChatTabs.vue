@@ -5,13 +5,14 @@
     tabindex="0"
     ref="divElem"
   >
-    <VSheet class="!flex flex-row" elevation="4">
-      <VTabs
-        v-model="data.currTab"
-        bg-color="primary"
-        show-arrows
-        class="grow min-w-0"
-      >
+    <VSheet
+      class="!flex flex-row bg-primary"
+      elevation="4"
+      :class="{
+        'tab-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
+      }"
+    >
+      <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
         <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
           {{ i.title }}
           <template #append>
@@ -25,17 +26,17 @@
           </template>
         </VTab>
       </VTabs>
-      <div class="bg-primary flex-shrink-0">
+      <div class="flex-shrink-0">
         <template v-if="viewSize.inlineSize > 300">
           <VBtn
-            icon="mdi-view-split-vertical"
+            icon="mdi-view-split-vertical "
             variant="text"
-            @click="splitVertHandle"
+            @click.stop="splitVertHandle"
           /><VBtn
             icon="mdi-view-split-horizontal"
             variant="text"
-            @click="splitHorizHandle"
-          /><VBtn icon="mdi-close" variant="text" @click="$emit('close')" />
+            @click.stop="splitHorizHandle"
+          /><VBtn icon="mdi-close" variant="text" @click.stop="$emit('close')" />
         </template>
         <template v-else>
           <VMenu open-on-hover>
@@ -157,9 +158,11 @@ if (import.meta.client) {
   onUnmounted(() => resizeObs.disconnect());
 }
 </script>
-<!-- <style lang="css" scoped>
-.tabs-focus:focus{
-  outline: 0.2rem solid rgb(var(--v-theme-secondary));
-  outline-offset: -0.2rem;
-} 
-</style> -->
+<style lang="css" scoped>
+.tab-medium-emphasis {
+  color: rgb(
+    var(--v-theme-on-primary),
+    var(--v-medium-emphasis-opacity)
+  ) !important;
+}
+</style>
