@@ -5,7 +5,7 @@
     tabindex="0"
     ref="divElem"
   >
-    <div class="flex">
+    <VSheet class="!flex flex-row" elevation="4">
       <VTabs
         v-model="data.currTab"
         bg-color="primary"
@@ -66,7 +66,7 @@
           </VMenu>
         </template>
       </div>
-    </div>
+    </VSheet>
     <VTabsWindow v-model="data.currTab" class="grow flex flex-col [&>*]:grow">
       <VTabsWindowItem
         :value="i.id"
@@ -80,19 +80,20 @@
   </div>
 </template>
 <script setup lang="ts">
-const props = defineProps<{ uniqueKey: Symbol }>();
+// 不能动态改动uniqueKey，有需要可以再创建新的组件实例
+const { uniqueKey } = defineProps<{ uniqueKey: Symbol }>();
 const store = chatTabsStore();
 const divElem = ref<HTMLDivElement>();
 
 const data =
-  store.globalSharedTabs.get(props.uniqueKey) ||
+  store.globalSharedTabs.get(uniqueKey) ||
   ref<{
     topics: TopicData[];
     currTab: number | undefined;
   }>({ topics: [], currTab: undefined });
 
-if (!store.globalSharedTabs.has(props.uniqueKey))
-  store.globalSharedTabs.set(props.uniqueKey, data);
+if (!store.globalSharedTabs.has(uniqueKey))
+  store.globalSharedTabs.set(uniqueKey, data);
 
 watch(
   () => data.value.topics.length,
@@ -111,15 +112,22 @@ const remove = (topic: TopicData) => {
 
 const focusedChat = focusedChatStore();
 const handleClickChatTabs = () => (focusedChat.chatTabsExpose = expose);
-onMounted(handleClickChatTabs)
-const expose = {
+
+const expose: ChatTabsExpose = {
   add: (topic: TopicData) => {
     const i = data.value.topics.findIndex((v) => v.id === topic.id);
     if (i < 0) data.value.topics.push(topic);
-    else data.value.currTab = i;
+    data.value.currTab = topic.id;
   },
+  getAll: () => data.value.topics,
+  getCurr: () => data.value.topics.find((v) => v.id === data.value.currTab),
 };
 
+onMounted(() => {
+  const lastFocusTopic = focusedChat.chatTabsExpose?.getCurr();
+  if (lastFocusTopic) expose.add(lastFocusTopic);
+  handleClickChatTabs();
+});
 defineExpose(expose);
 
 const emit = defineEmits<{
