@@ -165,11 +165,11 @@ const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
           taskList.push(res.startResize);
           if (leftPX <= 0) break;
         }
-        if (taskList.length === 0) {
-          target.classList.add("reject");
-          return;
-        }
-        target.classList.remove("reject");
+        if (leftPX > 1) target.classList.add("reject");
+        else target.classList.remove("reject");
+
+        if (taskList.length === 0) return;
+
         taskList.forEach((each) => each());
         const targetPercent = (expectPX - leftPX) / elSize;
 
@@ -189,11 +189,11 @@ const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
           taskList.push(res.startResize);
           if (leftPX <= 0) break;
         }
-        if (taskList.length === 0) {
-          target.classList.add("reject");
-          return;
-        }
-        target.classList.remove("reject");
+        if (leftPX > 1) target.classList.add("reject");
+        else target.classList.remove("reject");
+
+        if (taskList.length === 0) return;
+
         taskList.forEach((each) => each());
         const targetPercent = (-expectPX - leftPX) / elSize;
         viewTree.value.children[index + 1].space += targetPercent;
