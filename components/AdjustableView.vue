@@ -125,8 +125,10 @@ const handleViewClose = (index: number) => {
 
 const viewParent = ref<HTMLDivElement>();
 const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
+  const target = firstEv.target as HTMLDivElement;
+  target.classList.add("active");
   mouseDragImp(firstEv, {
-    onDrag(ev) {
+    onDrag: (ev) => {
       const el = viewParent.value as HTMLElement;
       let outSideSpace, elSize, mousePosition;
       if (!viewTree.value.isVertical) {
@@ -163,7 +165,11 @@ const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
           taskList.push(res.startResize);
           if (leftPX <= 0) break;
         }
-        if (taskList.length === 0) return;
+        if (taskList.length === 0) {
+          target.classList.add("reject");
+          return;
+        }
+        target.classList.remove("reject");
         taskList.forEach((each) => each());
         const targetPercent = (expectPX - leftPX) / elSize;
 
@@ -183,11 +189,19 @@ const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
           taskList.push(res.startResize);
           if (leftPX <= 0) break;
         }
-        if (taskList.length === 0) return;
+        if (taskList.length === 0) {
+          target.classList.add("reject");
+          return;
+        }
+        target.classList.remove("reject");
         taskList.forEach((each) => each());
         const targetPercent = (-expectPX - leftPX) / elSize;
         viewTree.value.children[index + 1].space += targetPercent;
       }
+    },
+    onStop: () => {
+      target.classList.remove("reject");
+      target.classList.remove("active");
     },
   });
 };
@@ -262,8 +276,8 @@ const resizeNegotiate = (
 </script>
 <style lang="css" scoped>
 * {
-  --view-border-width: 0.2rem;
-  --view-dragger-width: 1rem;
+  --view-border-width: 0.1rem;
+  --view-dragger-width: 0.6rem;
 }
 .cut-off {
   border-style: solid;
@@ -288,20 +302,35 @@ const resizeNegotiate = (
     position: absolute;
     z-index: 999;
     transition: background-color 200ms ease;
+    border-style: solid;
+    border-width: 0;
+
+    border-color: rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+
     &.offset-x {
       transform: translateX(
         calc(0px - ((var(--view-dragger-width) + var(--view-border-width)) / 2))
       );
+      border-left-width: var(--view-border-width);
+      border-right-width: var(--view-border-width);
       cursor: col-resize;
     }
     &.offset-y {
       transform: translateY(
         calc(0px - ((var(--view-dragger-width) + var(--view-border-width)) / 2))
       );
+      border-top-width: var(--view-border-width);
+      border-bottom-width: var(--view-border-width);
       cursor: row-resize;
     }
+    &.active,
     &:hover {
-      background-color: rgba(var(--v-border-color), var(--v-border-opacity));
+      border-color: rgba(var(--v-theme-background));
+      background-color: rgba(var(--v-theme-primary));
+    }
+    &.reject {
+      background-color: rgba(var(--v-theme-error));
     }
   }
 }
