@@ -20,6 +20,11 @@ export const useTopics = () => {
         isPending.value = false;
       }
     })();
+  const removeTopic = async (topicID: number) => {
+    const idb = await iDB.onDBReady();
+    await idb.delete(IDB_VAR.TOPICS, topicID);
+    topics.value = await idb.getAll(IDB_VAR.TOPICS);
+  };
   const updateTopic = async (title: string, topicID?: number) => {
     await until(() => iDB.DB).toBeTruthy();
     await until(isPending).toBe(false);
@@ -30,13 +35,10 @@ export const useTopics = () => {
           title,
         } as Partial<TopicData>);
       else
-        await iDB.DB?.put(
-          IDB_VAR.TOPICS,
-          {
-            title,
-          } as Partial<TopicData>,
-          topicID
-        );
+        await iDB.DB?.put(IDB_VAR.TOPICS, {
+          id: topicID,
+          title,
+        });
       topics.value = (await iDB.DB?.getAll(IDB_VAR.TOPICS)) ?? [];
     } catch (error) {
       console.error(error);
@@ -44,5 +46,5 @@ export const useTopics = () => {
       isPending.value = false;
     }
   };
-  return { topics, isPending, updateTopic };
+  return { topics, isPending, updateTopic, removeTopic };
 };

@@ -1,33 +1,27 @@
 <template>
   <VLayout>
     <VNavigationDrawer disable-resize-watcher permanent :width="width">
-      <VTextField clearable hide-details v-model="userInput">
-        <template #append-inner>
-          <VBtn
-            icon="mdi-send"
-            variant="text"
-            @click="updateTopicHandle"
-          ></VBtn>
-        </template>
-      </VTextField>
-      <SettingDialog />
       <div
         ref="dragger"
         class="nav-dragger"
         :class="{ active: isDragging }"
         :style="{ left: `${position.x}px` }"
       ></div>
-      <VList density="compact" nav>
-        {{ isDragging }}{{ position }}
+      <VList>
         <VListItem
-          v-for="(item, i) in topics"
+          v-for="item in topics"
           @click="handleAddChatTabs(item)"
-          :key="i"
-          :value="item"
-          :title="item.title || '无标题'"
+          :key="item.id"
           color="primary"
-        />
+        >
+          <NavListItem
+            :value="item.title || '无标题'"
+            @remove="removeTopic(item.id)"
+            @update="(v) => updateTopic(v, item.id)"
+          />
+        </VListItem>
       </VList>
+      <SettingDialog />
     </VNavigationDrawer>
     <VMain>
       <AdjustableView v-model="vt" />
@@ -94,7 +88,7 @@ watchDebounced(
 );
 
 const userInput = ref("");
-const { topics, updateTopic } = useTopics();
+const { topics, updateTopic, removeTopic } = useTopics();
 const updateTopicHandle = () => {
   updateTopic(userInput.value);
   userInput.value = "";

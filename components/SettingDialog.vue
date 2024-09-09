@@ -1,7 +1,7 @@
 <template>
   <VDialog v-model="dialog" transition="dialog-bottom-transition" fullscreen>
     <template v-slot:activator="{ props: activatorProps }">
-      <VBtn prepend-icon="mdi-cog" size="text" v-bind="activatorProps"></VBtn>
+      <VBtn icon="mdi-cog" variant="text" v-bind="activatorProps" />
     </template>
 
     <VCard>
