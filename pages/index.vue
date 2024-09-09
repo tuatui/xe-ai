@@ -50,19 +50,31 @@ const vt = ref(
 );
 const handleAddChatTabs = async (topic: TopicData) => {
   if (vt.value.children.length >= 1) {
-    focusedChat.chatTabsExpose?.add(topic);
-  } else {
-    const newVT = new ViewTree(
-      true,
-      (key) => <ChatTabs uniqueKey={key} />,
-      false,
-      [],
-      1
-    );
-    vt.value.children.push(newVT);
-    await nextTick();
-    focusedChat.chatTabsExpose?.add(topic);
+    if (focusedChat.chatTabsExpose) {
+      focusedChat.chatTabsExpose.add(topic);
+      return;
+    }
+    for (const [_, val] of tabsStore.globalSharedTabs) {
+      if (!val.value.expose) continue;
+      focusedChat.chatTabsExpose = val.value.expose;
+      focusedChat.chatTabsExpose.add(topic);
+      break;
+    }
+    if (!focusedChat.chatTabsExpose)
+      console.warn("存在标签页但是找不到可用的导出");
+
+    return;
   }
+  const newVT = new ViewTree(
+    true,
+    (key) => <ChatTabs uniqueKey={key} />,
+    false,
+    [],
+    1
+  );
+  vt.value.children.push(newVT);
+  await nextTick();
+  focusedChat.chatTabsExpose?.add(topic);
 };
 
 const { isDragging, position } = useMouseDrag(
@@ -90,12 +102,8 @@ watchDebounced(
   }
 );
 
-const userInput = ref("");
 const { topics, updateTopic, removeTopic } = useTopics();
-const updateTopicHandle = () => {
-  updateTopic(userInput.value);
-  userInput.value = "";
-};
+const tabsStore = chatTabsStore();
 const focusedChat = focusedChatStore();
 </script>
 <style lang="css" scoped>

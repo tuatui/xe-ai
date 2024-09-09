@@ -36,7 +36,11 @@
             icon="mdi-view-split-horizontal"
             variant="text"
             @click.stop="splitHorizHandle"
-          /><VBtn icon="mdi-close" variant="text" @click.stop="$emit('close')" />
+          /><VBtn
+            icon="mdi-close"
+            variant="text"
+            @click.stop="$emit('close')"
+          />
         </template>
         <template v-else>
           <VMenu open-on-hover>
@@ -91,6 +95,7 @@ const data =
   ref<{
     topics: TopicData[];
     currTab: number | undefined;
+    expose?: ChatTabsExpose;
   }>({ topics: [], currTab: undefined });
 
 if (!store.globalSharedTabs.has(uniqueKey))
@@ -128,6 +133,11 @@ onMounted(() => {
   const lastFocusTopic = focusedChat.chatTabsExpose?.getCurr();
   if (lastFocusTopic) expose.add(lastFocusTopic);
   handleClickChatTabs();
+  data.value.expose = expose;
+});
+onUnmounted(() => {
+  if (toRaw(focusedChat.chatTabsExpose) === expose)
+    focusedChat.chatTabsExpose = undefined;
 });
 defineExpose(expose);
 

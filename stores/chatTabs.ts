@@ -5,6 +5,7 @@ export const chatTabsStore = defineStore("chat-tabs", () => {
       Ref<{
         topics: TopicData[];
         currTab: number | undefined;
+        expose?: ChatTabsExpose
       }>
     >()
   );
