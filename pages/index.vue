@@ -1,27 +1,30 @@
 <template>
   <VLayout>
     <VNavigationDrawer disable-resize-watcher permanent :width="width">
+      <div class="h-full w-full flex flex-col">
+        <VList class="grow">
+          <VListItem
+            v-for="item in topics"
+            @click="handleAddChatTabs(item)"
+            :key="item.id"
+            color="primary"
+          >
+            <NavListItem
+              :value="item.title || '无标题'"
+              @remove="removeTopic(item.id)"
+              @update="(v) => updateTopic(v, item.id)"
+            />
+          </VListItem>
+        </VList>
+        <VDivider />
+        <SettingDialog />
+      </div>
       <div
         ref="dragger"
         class="nav-dragger"
         :class="{ active: isDragging }"
         :style="{ left: `${position.x}px` }"
       ></div>
-      <VList>
-        <VListItem
-          v-for="item in topics"
-          @click="handleAddChatTabs(item)"
-          :key="item.id"
-          color="primary"
-        >
-          <NavListItem
-            :value="item.title || '无标题'"
-            @remove="removeTopic(item.id)"
-            @update="(v) => updateTopic(v, item.id)"
-          />
-        </VListItem>
-      </VList>
-      <SettingDialog />
     </VNavigationDrawer>
     <VMain>
       <AdjustableView v-model="vt" />
