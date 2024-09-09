@@ -3,7 +3,6 @@
 $font-family: "Inter var", "Inter", "Roboto", "Helvetica Neue", sans-serif;
 
 @use "vuetify" with (
-  $utilities: false,
   $reset: false,
   $color-pack: false,
   $body-font-family: $font-family
