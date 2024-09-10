@@ -11,6 +11,7 @@
       :class="{
         'tab-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
       }"
+      @click="handleClickChatTabs"
     >
       <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
         <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
