@@ -1,0 +1,38 @@
+$view-border-width: 0.1rem;
+$view-dragger-width: 0.6rem;
+
+@mixin dragger-base {
+  min-width: $view-dragger-width;
+  min-height: $view-dragger-width;
+  user-select: none;
+  z-index: 999;
+  transition: background-color 200ms ease;
+  border-style: solid;
+  border-width: 0;
+  border-color: transparent;
+  background-clip: padding-box;
+  &.active,
+  &:hover {
+    border-color: rgba(var(--v-theme-background));
+    background-color: rgba(var(--v-theme-primary));
+  }
+  &.reject {
+    background-color: rgba(var(--v-theme-error));
+  }
+  &.offset-x {
+    transform: translateX(
+      calc(0px - (($view-dragger-width + $view-border-width) / 2))
+    );
+    border-left-width: $view-border-width;
+    border-right-width: $view-border-width;
+    cursor: col-resize;
+  }
+  &.offset-y {
+    transform: translateY(
+      calc(0px - (($view-dragger-width + $view-border-width) / 2))
+    );
+    border-top-width: $view-border-width;
+    border-bottom-width: $view-border-width;
+    cursor: row-resize;
+  }
+}

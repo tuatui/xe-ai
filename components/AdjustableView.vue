@@ -274,64 +274,27 @@ const resizeNegotiate = (
   }
 };
 </script>
-<style lang="css" scoped>
-* {
-  --view-border-width: 0.1rem;
-  --view-dragger-width: 0.6rem;
-}
+<style lang="scss" scoped>
+@use "/assets/tab.scss" as *;
 .cut-off {
   border-style: solid;
   border-width: 0;
   border-color: rgba(var(--v-border-color), var(--v-border-opacity));
   &.cut-off-right {
-    border-right-width: var(--view-border-width);
+    border-right-width: $view-border-width;
   }
   &.cut-off-bottom {
-    border-bottom-width: var(--view-border-width);
+    border-bottom-width: $view-border-width;
   }
 }
-
 .view-dragger-parent {
   position: relative;
   .view-dragger {
     width: 100%;
     height: 100%;
-    min-width: var(--view-dragger-width);
-    min-height: var(--view-dragger-width);
-    user-select: none;
     position: absolute;
-    z-index: 999;
-    transition: background-color 200ms ease;
-    border-style: solid;
-    border-width: 0;
 
-    border-color: rgba(0, 0, 0, 0);
-    background-clip: padding-box;
-
-    &.offset-x {
-      transform: translateX(
-        calc(0px - ((var(--view-dragger-width) + var(--view-border-width)) / 2))
-      );
-      border-left-width: var(--view-border-width);
-      border-right-width: var(--view-border-width);
-      cursor: col-resize;
-    }
-    &.offset-y {
-      transform: translateY(
-        calc(0px - ((var(--view-dragger-width) + var(--view-border-width)) / 2))
-      );
-      border-top-width: var(--view-border-width);
-      border-bottom-width: var(--view-border-width);
-      cursor: row-resize;
-    }
-    &.active,
-    &:hover {
-      border-color: rgba(var(--v-theme-background));
-      background-color: rgba(var(--v-theme-primary));
-    }
-    &.reject {
-      background-color: rgba(var(--v-theme-error));
-    }
+    @include dragger-base;
   }
 }
 </style>

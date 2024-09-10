@@ -21,7 +21,7 @@
       </div>
       <div
         ref="dragger"
-        class="nav-dragger"
+        class="dragger offset-x top-0px fixed h-100dvh cursor-col-resize"
         :class="{ active: isDragging }"
         :style="{ left: `${position.x}px` }"
       ></div>
@@ -113,22 +113,9 @@ const handleUpdateTopic = async (title: string, topicID: number) => {
 const tabsStore = chatTabsStore();
 const focusedChat = focusedChatStore();
 </script>
-<style lang="css" scoped>
-.nav-dragger {
-  height: 100dvh;
-  width: 10px;
-  transform: translateX(-5px);
-  top: 0px;
-
-  user-select: none;
-  cursor: col-resize;
-  z-index: 999;
-  position: fixed;
-  transition: background-color 200ms ease;
-
-  &.active,
-  &:hover {
-    background-color: rgba(var(--v-border-color), var(--v-border-opacity));
-  }
+<style lang="scss" scoped>
+@use "/assets/tab.scss" as *;
+.dragger {
+  @include dragger-base();
 }
 </style>
