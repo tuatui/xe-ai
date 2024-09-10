@@ -12,7 +12,7 @@
             <NavListItem
               :value="item.title || '无标题'"
               @remove="removeTopic(item.id)"
-              @update="(v) => updateTopic(v, item.id)"
+              @update="(v) => handleUpdateTopic(v, item.id)"
             />
           </VListItem>
         </VList>
@@ -103,6 +103,13 @@ watchDebounced(
 );
 
 const { topics, updateTopic, removeTopic } = useTopics();
+const handleUpdateTopic = async (title: string, topicID: number) => {
+  await updateTopic(title, topicID);
+  tabsStore.globalSharedTabs.forEach((each) => {
+    const res = each.value.topics.find((topic) => topic.id == topicID);
+    if (res) res.title = title;
+  });
+};
 const tabsStore = chatTabsStore();
 const focusedChat = focusedChatStore();
 </script>
