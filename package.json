@@ -20,6 +20,7 @@
     "@unocss/nuxt": "^0.62.3",
     "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3",
+    "marked": "^14.1.2",
     "ress": "^5.0.2",
     "sass-embedded": "^1.78.0",
     "unocss": "^0.62.3",

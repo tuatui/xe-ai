@@ -2,6 +2,7 @@ export interface ChatData {
   id: number;
   topic_id: number;
   context: string;
+  HtmlContextCache?: string;
   from: ChatRole;
 }
 

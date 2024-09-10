@@ -31,6 +31,9 @@ devDependencies:
   '@vueuse/nuxt':
     specifier: ^11.0.3
     version: 11.0.3(nuxt@3.13.1)(vue@3.5.3)
+  marked:
+    specifier: ^14.1.2
+    version: 14.1.2
   ress:
     specifier: ^5.0.2
     version: 5.0.2
@@ -4038,6 +4041,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       semver: 6.3.1
+
+  /marked@14.1.2:
+    resolution: {integrity: sha512-f3r0yqpz31VXiDB/wj9GaOB0a2PRLQl6vJmXiFrniNwjkKdvakqJRULhjFKJpxOchlCRiG5fcacoUZY5Xa6PEQ==}
+    engines: {node: '>= 18'}
+    hasBin: true
+    dev: true
 
   /mdn-data@2.0.28:
     resolution: {integrity: sha512-aylIc7Z9y4yzHYAJNuESG3hfhC+0Ibp/MAMiaOZgNv4pmEdFyfZhhhny4MNiAfWdBQ1RQ2mfDWmM1x8SvGyp8g==}

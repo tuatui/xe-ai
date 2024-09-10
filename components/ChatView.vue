@@ -2,9 +2,11 @@
   <div class="h-full flex flex-col gap-row-2">
     <div class="h0 flex-grow-1 overflow-auto py10">
       <article class="w-[min(100%,45rem)] mxa">
-        <div v-for="i in data.chats" class="max-w-full text-wrap break-words my16">
-          {{ i.context }}
-        </div>
+        <div
+          v-for="i in data.chats"
+          class="max-w-full text-wrap break-words my16"
+          v-html="i.HtmlContextCache || chat2Html(i)"
+        ></div>
       </article>
     </div>
     <div class="flex flex-col">
@@ -26,9 +28,9 @@
   </div>
 </template>
 <script setup lang="ts">
-const props = defineProps<{
-  topicID: number;
-}>();
+import { htmlRender } from "~/utils/HtmlRender";
+
+const props = defineProps<{ topicID: number }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
 const data = globalSharedChats.get(props.topicID) || useChats(props.topicID);
@@ -48,5 +50,10 @@ onUnmounted(() => {
 const updateHandle = async () => {
   await data.value.updateChat(userInput.value, 0);
   userInput.value = "";
+};
+
+const chat2Html = (chat: ChatData) => {
+  chat.HtmlContextCache = htmlRender(chat.context ?? "");
+  return chat.HtmlContextCache;
 };
 </script>
