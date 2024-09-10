@@ -2,7 +2,7 @@
   <VLayout>
     <VNavigationDrawer disable-resize-watcher permanent :width="width">
       <div class="h-full w-full flex flex-col">
-        <VList class="grow">
+        <VList class="grow min-h-0 overflow-auto">
           <VListItem
             v-for="item in topics"
             @click="handleAddChatTabs(item)"
