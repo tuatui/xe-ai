@@ -1,8 +1,5 @@
 export const chatsStore = defineStore("chats-store", () => {
-  const globalSharedChats = new Map<
-    number,
-    ReturnType<typeof useChats>
-  >();
+  const globalSharedChats = new Map<number, useChatReturn>();
 
   return { globalSharedChats };
 });

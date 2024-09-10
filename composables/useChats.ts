@@ -2,10 +2,23 @@ export interface ChatData {
   id: number;
   topic_id: number;
   context: string;
-  from: number;
+  from: ChatRole;
 }
 
-export const useChats = (topicID: number) => {
+export enum ChatRole {
+  system,
+  user,
+  bot,
+}
+
+export type useChatReturn = Ref<{
+  chats: ChatData[];
+  isPending: boolean;
+  updateChat: (context: string, from: number, chatID?: number) => Promise<void>;
+  chatRefCount: number;
+}>;
+
+export const useChats = (topicID: number): useChatReturn => {
   const iDB = useIndexedDBStore();
   const chats = ref<ChatData[]>([]);
 
