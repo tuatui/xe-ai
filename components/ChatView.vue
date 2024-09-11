@@ -61,5 +61,5 @@ const chat2Html = (chat: ChatData) => {
 };
 </script>
 <style lang="scss">
-@use "/assets/markdown";
+@use "/assets/markdown.scss";
 </style>

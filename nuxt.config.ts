@@ -12,6 +12,6 @@ export default defineNuxtConfig({
     // 手动控制导入，以解决自带的类名和unocss冲突的问题
     moduleOptions: { disableVuetifyStyles: true },
   },
-  css: ["~/assets/vuetify/main.scss"],
+  css: ["~/assets/vuetify/main.scss", "github-markdown-css"],
   ssr: false,
 });

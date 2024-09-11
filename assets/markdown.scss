@@ -1,4 +1,5 @@
-@use "github-markdown-css";
+//现在在nuxt.config.ts里引入，这样避免了Sourcemap missing的警告
+//@use "github-markdown-css";
 
 .markdown-body {
   background-color: transparent;
