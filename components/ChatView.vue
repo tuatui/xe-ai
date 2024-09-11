@@ -1,7 +1,10 @@
 <template>
   <div class="h-full flex flex-col gap-row-2">
-    <div class="h0 flex-grow-1 overflow-auto py10">
-      <article class="w-[min(100%,45rem)] mxa">
+    <div
+      class="markdown-body h0 flex-grow-1 overflow-auto py4"
+      :class="{ dark: $vuetify.theme.current.dark }"
+    >
+      <article class="w-[min(100%,45rem)] mxa px2">
         <div
           v-for="i in data.chats"
           class="max-w-full text-wrap break-words my16"
@@ -57,3 +60,6 @@ const chat2Html = (chat: ChatData) => {
   return chat.HtmlContextCache;
 };
 </script>
+<style lang="scss">
+@use "/assets/markdown";
+</style>
