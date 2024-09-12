@@ -34,20 +34,18 @@
 <script setup lang="tsx">
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
-const width = ref(300);
+
 
 const vt = ref(
   new ViewTree(
     false,
     undefined,
     false,
-    [
-      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5),
-      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5),
-    ],
+    [new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 1)],
     1
   )
 );
+
 const handleAddChatTabs = async (topic: TopicData) => {
   if (vt.value.children.length >= 1) {
     if (focusedChat.chatTabsExpose) {
@@ -80,7 +78,7 @@ const handleAddChatTabs = async (topic: TopicData) => {
 const { isDragging, position } = useMouseDrag(
   dragger,
   {
-    init: { x: 300, y: 0 },
+    init: { x: 200, y: 0 },
   },
   {
     onTryDrag: (pos) => {
@@ -92,7 +90,7 @@ const { isDragging, position } = useMouseDrag(
     },
   }
 );
-
+const width = ref(position.value.x);
 watchDebounced(
   () => position.value.x,
   () => (width.value = position.value.x),
