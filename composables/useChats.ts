@@ -9,13 +9,17 @@ export interface ChatData {
 export enum ChatRole {
   system,
   user,
-  bot,
+  assistant,
 }
 
 export type useChatReturn = Ref<{
   chats: ChatData[];
   isPending: boolean;
-  updateChat: (context: string, from: number, chatID?: number) => Promise<void>;
+  updateChat: (
+    context: string,
+    from?: number,
+    id?: IDBValidKey
+  ) => Promise<IDBValidKey | void>;
   chatRefCount: number;
 }>;
 
@@ -43,28 +47,31 @@ export const useChats = (topicID: number): useChatReturn => {
     taskCount.value--;
   });
 
-  const updateChat = async (context: string, from: number, chatID?: number) => {
+  const updateChat = async (
+    context: string,
+    from?: number,
+    id?: IDBValidKey
+  ) => {
     const db = await iDB.onDBReady();
 
     try {
       taskCount.value++;
-      if (chatID === undefined)
-        await db.add(IDB_VAR.CHATS, {
+      let key;
+      if (id === undefined)
+        key = await db.add(IDB_VAR.CHATS, {
           context,
           from,
           topic_id: topicID,
         } as Partial<ChatData>);
       else
-        await db.put(
-          IDB_VAR.CHATS,
-          {
-            context,
-            from,
-            topic_id: topicID,
-          } as Partial<ChatData>,
-          chatID
-        );
+        key = await db.put(IDB_VAR.CHATS, {
+          id,
+          context,
+          from,
+          topic_id: topicID,
+        } as Partial<ChatData>);
       chats.value = await getChatsData();
+      return key;
     } catch (error) {
       console.error(error);
     } finally {

@@ -8,7 +8,7 @@
         <div
           v-for="i in data.chats"
           class="max-w-full text-wrap break-words my16"
-          v-html="i.HtmlContextCache || chat2Html(i)"
+          v-html="chat2Html(i)"
         ></div>
       </article>
     </div>
@@ -50,15 +50,47 @@ onUnmounted(() => {
   } else data.value.chatRefCount--;
 });
 
-const updateHandle = async () => {
-  await data.value.updateChat(userInput.value, 0);
-  userInput.value = "";
-};
-
 const chat2Html = (chat: ChatData) => {
-  chat.HtmlContextCache = htmlRender(chat.context ?? "");
-  return chat.HtmlContextCache;
+  if (chat.HtmlContextCache) return chat.HtmlContextCache;
+  if (chat.context) {
+    chat.HtmlContextCache = htmlRender(chat.context);
+    return chat.HtmlContextCache;
+  }
+  return "";
 };
+import { GPTChat } from "~/utils/AI";
+
+const { bots } = useBots();
+const open = (async () => {
+  await until(() => bots.value.length).toBeTruthy();
+  const apiKey = bots.value.find(
+    (e) => e.nick_name === "dev_test2"
+  )?.secret_key;
+  return new GPTChat(apiKey, "https://apic.ohmygpt.com/v1");
+})();
+
+const updateHandle = async () => {
+  await data.value.updateChat(userInput.value, ChatRole.user);
+  userInput.value = "";
+
+  const chatSteam = (await open).createChat(data.value.chats, "gpt-4o-mini");
+
+  const res = await data.value.updateChat("", ChatRole.assistant);
+  if (res === undefined) return;
+  const chat = data.value.chats.findLast((c) => c.id === res);
+  if (chat === undefined) return;
+  
+  for await (const { context } of chatSteam) {
+    chat.context += context;
+    chat.HtmlContextCache = htmlRender(chat.context);
+    updateDebounced(data, chat);
+  }
+};
+const updateDebounced = useDebounceFn(
+  (data: useChatReturn, chat: ChatData) =>
+    data.value.updateChat(chat.context, ChatRole.assistant, chat.id),
+  100
+);
 </script>
 <style lang="scss">
 @use "/assets/markdown.scss";
