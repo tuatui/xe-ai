@@ -2,6 +2,8 @@ export interface BotsData {
   id: number;
   secret_key: string;
   nick_name: string;
+  provider: Provider;
+  avaiableModel: ModelList[];
   name: string;
 }
 
@@ -25,9 +27,11 @@ export const useBots = () => {
   const updateBot = async (data: Partial<BotsData>) => {
     const db = await iDB.onDBReady();
     try {
-      const rawData = toRaw(data); // vue的代理对象会导致序列化失败
-      if (data.id === undefined) await db.add(IDB_VAR.BOTS, rawData);
-      else await db.put(IDB_VAR.BOTS, rawData);
+      // vue的代理对象会导致序列化失败
+      // 我不知道为什么unocss会有个clone函数，但是看起来可以实现深拷贝
+      const clonedData = cloneDeep(data);
+      if (data.id === undefined) await db.add(IDB_VAR.BOTS, clonedData);
+      else await db.put(IDB_VAR.BOTS, clonedData);
       bots.value = await getBotsData();
     } catch (error) {
       console.error(error);

@@ -35,7 +35,6 @@
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
 
-
 const vt = ref(
   new ViewTree(
     false,

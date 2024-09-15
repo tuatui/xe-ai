@@ -1,3 +1,5 @@
+import type { VNode } from "vue";
+import { Provider } from "./all";
 export interface ChatChunk {
   context: string;
   source?: any;
@@ -17,12 +19,15 @@ export interface ChatService {
     isSupportIMG?: boolean;
     isSupportAudio?: boolean;
   };
-  readonly info: { provider: string };
+  readonly info: { provider: string; key: Provider; icon: VNode };
   createChatSession: (conf: Partial<ChatSessionConf>) => ChatSession;
 }
-
+export interface ModelList {
+  name: string;
+  owner: string;
+}
 export interface ChatSession {
   createChat: (...args: any[]) => AsyncGenerator<ChatChunk>;
   formatMessage?: (chats: ChatData[]) => unknown;
-  getModelList?: () => Promise<string[]>;
+  getModelList?: () => Promise<ModelList[]>;
 }
