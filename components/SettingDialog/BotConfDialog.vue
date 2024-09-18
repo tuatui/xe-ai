@@ -13,6 +13,16 @@
               <component :is="Services[bot.provider]?.info?.icon" />
             </VAvatar>
           </template>
+          <template v-slot:append>
+            <VBtn
+              variant="text"
+              :color="preferBotID === bot.id ? undefined : 'primary'"
+              class="font-weight-bold"
+              :disabled="preferBotID === bot.id"
+              @click.stop="dBot.updateDeaflutBotInfo({ preferBotID: bot.id })"
+              >{{ preferBotID === bot.id ? `默认模型` : `设为默认` }}</VBtn
+            >
+          </template>
         </VListItem>
       </VList>
 
@@ -27,6 +37,8 @@
 <script setup lang="ts">
 const model = defineModel({ default: false });
 const { bots, updateBot } = useBots();
+const dBot = defalutBotStore();
+const preferBotID = computed(() => dBot.defalutBotInfo.preferBotID);
 const isBotsInfoDialogOpen = ref(false);
 
 const botsInfo = ref<Partial<BotsData>>();

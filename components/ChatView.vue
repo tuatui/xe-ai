@@ -14,12 +14,40 @@
     </div>
     <div class="flex flex-col">
       <VToolbar density="compact">
-        <VBtn
-          icon="mdi-brain"
-          size="large"
+        <VSelect
+          class="max-w50 ml1"
           density="compact"
-          rounded="lg"
-        ></VBtn>
+          :items="bots"
+          v-model="selectedBots"
+          :item-props="(item) => ({ title: item.nick_name })"
+          return-object
+          hide-details
+        >
+          <template v-slot:item="{ props, item }">
+            <VListItem
+              v-bind="props"
+              class="overflow-hidden min-w0 text-wrap break-all"
+            >
+              <template v-slot:append>
+                <component :is="Services[item.value.provider]?.info?.icon" />
+              </template>
+            </VListItem>
+          </template>
+        </VSelect>
+        <VSelect
+          class="max-w50 ml1"
+          density="compact"
+          :items="modelList"
+          v-model="selectedModel"
+          :item-props="
+            (item) => ({
+              title: item.name,
+              subtitle: item.owner,
+              value: item.name,
+            })
+          "
+          hide-details
+        />
         <!-- <VSelect
             class="max-w50"
             prepend-inner-icon="mdi-brain"
@@ -62,7 +90,7 @@ const props = defineProps<{ topicID: number }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
 const data = globalSharedChats.get(props.topicID) || useChats(props.topicID);
-console.log(data);
+
 if (!globalSharedChats.has(props.topicID)) {
   globalSharedChats.set(props.topicID, data);
   data.value.chatRefCount = 1;
@@ -85,10 +113,37 @@ const chat2Html = (chat: ChatData) => {
 };
 import { GPTChatService, type ChatSession } from "~/utils/AI";
 const selectedBots = ref<BotsData>();
-const { bots } = useBots();
-until(() => bots.value.length)
+
+const { bots, getBotsData } = useBots();
+
+/* until(() => bots.value.length)
   .toBeTruthy()
   .then(() => (selectedBots.value = bots.value.at(-1)));
+ */
+const dBot = defalutBotStore();
+
+(async () => {
+  await until(() => dBot.defalutBotInfo.preferBotID).toMatch(
+    (v) => v !== undefined
+  );
+  if (selectedBots.value !== undefined) return;
+  const res = await getBotsData(dBot.defalutBotInfo.preferBotID);
+  if (!res) return;
+  selectedBots.value = res.pop();
+})();
+
+const modelList = computed(() => {
+  return selectedBots.value?.avaiableModel ?? [];
+});
+const selectedModel = ref<string>();
+watch(
+  () => modelList.value.length,
+  (newVal) => {
+    if (!newVal) return;
+    if (selectedModel.value !== undefined) return;
+    selectedModel.value = modelList.value[0].name;
+  }
+);
 
 let gptChat: ChatSession | undefined | null;
 watch(selectedBots, (newVal) => {
@@ -108,7 +163,7 @@ const updateHandle = async () => {
   await data.value.updateChat(userInput.value, ChatRole.user);
   userInput.value = "";
 
-  const chatSteam = gptChat.createChat(data.value.chats, "gpt-4o-mini");
+  const chatSteam = gptChat.createChat(data.value.chats, selectedModel.value);
 
   const res = await data.value.updateChat("", ChatRole.assistant);
   if (res === undefined) return;

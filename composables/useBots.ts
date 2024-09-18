@@ -38,5 +38,5 @@ export const useBots = () => {
       console.warn("数据更新失败", data);
     }
   };
-  return { bots, updateBot };
+  return { bots, updateBot, getBotsData };
 };
