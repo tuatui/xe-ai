@@ -62,16 +62,16 @@
           /> -->
         <VSpacer />
         <VBtn
-          icon="mdi-send"
-          size="large"
+          prepend-icon="mdi-send"
+      
           color="primary"
           variant="elevated"
-          density="compact"
-          rounded="lg"
+        
+        
           @click="updateHandle"
           :loading="data.isPending"
           :disabled="!selectedBots"
-        ></VBtn>
+        >发送</VBtn>
       </VToolbar>
       <VTextarea
         rounded="0"
@@ -84,8 +84,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import { htmlRender } from "~/utils/HtmlRender";
-
 const props = defineProps<{ topicID: number }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();

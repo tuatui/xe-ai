@@ -2,8 +2,7 @@ export interface TopicData {
   id: number;
   title: string;
 }
-
-export const useTopics = () => {
+export const topicStore = defineStore("topic-store", () => {
   const iDB = useIndexedDBStore();
   const topics = ref<TopicData[]>([]);
   const isPending = ref(false);
@@ -28,14 +27,16 @@ export const useTopics = () => {
   const updateTopic = async (title: string, topicID?: number) => {
     await until(() => iDB.DB).toBeTruthy();
     await until(isPending).toBe(false);
+    let res: IDBValidKey | undefined;
     try {
       isPending.value = true;
+
       if (topicID === undefined)
-        await iDB.DB?.add(IDB_VAR.TOPICS, {
+        res = await iDB.DB?.add(IDB_VAR.TOPICS, {
           title,
         } as Partial<TopicData>);
       else
-        await iDB.DB?.put(IDB_VAR.TOPICS, {
+        res = await iDB.DB?.put(IDB_VAR.TOPICS, {
           id: topicID,
           title,
         });
@@ -44,7 +45,8 @@ export const useTopics = () => {
       console.error(error);
     } finally {
       isPending.value = false;
+      return res;
     }
   };
   return { topics, isPending, updateTopic, removeTopic };
-};
+});

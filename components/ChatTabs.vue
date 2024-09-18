@@ -15,7 +15,7 @@
     >
       <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
         <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
-          {{ i.title }}
+          {{ i.title || "无标题" }}
           <template #append>
             <VBtn
               variant="text"
@@ -29,6 +29,7 @@
       </VTabs>
       <div class="flex-shrink-0">
         <template v-if="viewSize.inlineSize > 300">
+          <VBtn icon="mdi-plus" variant="text" @click.stop="handleNewChat" />
           <VBtn
             icon="mdi-view-split-vertical "
             variant="text"
@@ -54,6 +55,11 @@
             </template>
             <VList>
               <VListItem>
+                <VBtn
+                  icon="mdi-plus"
+                  variant="text"
+                  @click.stop="handleNewChat"
+                />
                 <VBtn
                   icon="mdi-view-split-vertical"
                   variant="text"
@@ -82,6 +88,15 @@
       >
         <ChatView :topic-i-d="i.id" class="h-full" />
       </VTabsWindowItem>
+      <VBtn
+        v-if="data.topics.length === 0"
+        class="ma"
+        color="primary"
+        prepend-icon="mdi-forum-plus"
+        @click="handleNewChat"
+      >
+        开始新聊天
+      </VBtn>
     </VTabsWindow>
   </div>
 </template>
@@ -120,12 +135,13 @@ const remove = (topic: TopicData) => {
 const focusedChat = focusedChatStore();
 const handleClickChatTabs = () => (focusedChat.chatTabsExpose = expose);
 
+const add = (topic: TopicData): void => {
+  const i = data.value.topics.findIndex((v) => v.id === topic.id);
+  if (i < 0) data.value.topics.push(topic);
+  data.value.currTab = topic.id;
+};
 const expose: ChatTabsExpose = {
-  add: (topic: TopicData) => {
-    const i = data.value.topics.findIndex((v) => v.id === topic.id);
-    if (i < 0) data.value.topics.push(topic);
-    data.value.currTab = topic.id;
-  },
+  add,
   getAll: () => data.value.topics,
   getCurr: () => data.value.topics.find((v) => v.id === data.value.currTab),
 };
@@ -168,6 +184,13 @@ if (import.meta.client) {
   onMounted(() => divElem.value && resizeObs.observe(divElem.value));
   onUnmounted(() => resizeObs.disconnect());
 }
+const ts = topicStore();
+const handleNewChat = async () => {
+  const res = await ts.updateTopic("");
+  if (!res) return;
+  const newTopic = ts.topics.at(-1);
+  if (newTopic) add(newTopic);
+};
 </script>
 <style lang="css" scoped>
 .tab-medium-emphasis {

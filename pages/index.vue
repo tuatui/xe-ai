@@ -98,8 +98,10 @@ watchDebounced(
     maxWait: 50,
   }
 );
+const ts = topicStore();
+const { updateTopic, removeTopic } = ts;
+const topics = computed(() => ts.topics);
 
-const { topics, updateTopic, removeTopic } = useTopics();
 const handleUpdateTopic = async (title: string, topicID: number) => {
   await updateTopic(title, topicID);
   tabsStore.globalSharedTabs.forEach((each) => {
