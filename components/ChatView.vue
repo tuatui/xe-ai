@@ -48,30 +48,16 @@
           "
           hide-details
         />
-        <!-- <VSelect
-            class="max-w50"
-            prepend-inner-icon="mdi-brain"
-            density="compact"
-            :items="bots"
-            v-model="selectedBots"
-            :item-props="
-              (item) => ({ title: item.nick_name, subtitle: item.name })
-            "
-            return-object
-            hide-details
-          /> -->
         <VSpacer />
         <VBtn
           prepend-icon="mdi-send"
-      
           color="primary"
           variant="elevated"
-        
-        
           @click="updateHandle"
           :loading="data.isPending"
           :disabled="!selectedBots"
-        >发送</VBtn>
+          >发送</VBtn
+        >
       </VToolbar>
       <VTextarea
         rounded="0"
@@ -87,6 +73,7 @@
 const props = defineProps<{ topicID: number }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
+const { getTopicData, updateTopic2 } = topicStore();
 const data = globalSharedChats.get(props.topicID) || useChats(props.topicID);
 
 if (!globalSharedChats.has(props.topicID)) {
@@ -109,6 +96,7 @@ const chat2Html = (chat: ChatData) => {
   }
   return "";
 };
+import { topicStore } from "~/stores/topic";
 import { GPTChatService, type ChatSession } from "~/utils/AI";
 const selectedBots = ref<BotsData>();
 
@@ -179,6 +167,45 @@ const updateDebounced = useDebounceFn(
     data.value.updateChat(chat.context, ChatRole.assistant, chat.id),
   100
 );
+
+const determineSetting = async () => {
+  const [res] = await getTopicData(props.topicID);
+  if (res.prederSetting) {
+    selectedModel.value = res.prederSetting.preferModelName;
+    [selectedBots.value] = await getBotsData(res.prederSetting.preferBotID);
+    return;
+  }
+  if (dBot.defalutBotInfo.preferModelName !== undefined)
+    selectedModel.value = dBot.defalutBotInfo.preferModelName;
+  if (dBot.defalutBotInfo.preferBotID !== undefined)
+    [selectedBots.value] = await getBotsData(dBot.defalutBotInfo.preferBotID);
+};
+determineSetting();
+
+watch(selectedModel, (newVal) => {
+  if (newVal !== undefined && selectedBots.value?.id !== undefined)
+    updateTopic2(
+      {
+        prederSetting: {
+          preferBotID: selectedBots.value?.id,
+          preferModelName: newVal,
+        },
+      },
+      props.topicID
+    );
+});
+watch(selectedBots, (newVal) => {
+  if (newVal !== undefined && selectedModel.value !== undefined)
+    updateTopic2(
+      {
+        prederSetting: {
+          preferBotID: newVal.id,
+          preferModelName: selectedModel.value,
+        },
+      },
+      props.topicID
+    );
+});
 </script>
 <style lang="scss">
 @use "/assets/markdown.scss";
