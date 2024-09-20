@@ -15,6 +15,11 @@
               @update="(v) => handleUpdateTopic(v, item.id)"
             />
           </VListItem>
+          123
+          {{ $t("ifWork") }}
+          <VBtn @click="setLocale('en')">en</VBtn>
+          <VBtn @click="setLocale('zh')">zh</VBtn>
+          <VBtn @click="setLocale('fr')">fr</VBtn>
         </VList>
         <VDivider />
         <SettingDialog />
@@ -32,6 +37,7 @@
   </VLayout>
 </template>
 <script setup lang="tsx">
+const { locale, setLocale } = useI18n();
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
 

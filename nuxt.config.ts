@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { presetUno } from "unocss";
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
@@ -8,6 +9,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "vuetify-nuxt-module",
     "unplugin-icons/nuxt",
+    "@nuxtjs/i18n",
   ],
   vuetify: {
     // 手动控制导入，以解决自带的类名和unocss冲突的问题
@@ -17,6 +19,25 @@ export default defineNuxtConfig({
     presets: [
       { from: "unocss", imports: [{ name: "clone", as: "cloneDeep" }] },
     ],
+  },
+  i18n: {
+    locales: [
+      {
+        code: "zh",
+        file: "zh.ts",
+      },
+      {
+        code: "en",
+        file: "en.ts",
+      },
+    ],
+    lazy: true,
+    langDir: "lang",
+    defaultLocale: "zh",
+    vueI18n: "./lang/config/i18n.config.ts",
+  },
+  unocss: {
+    presets: [presetUno()],
   },
   css: ["~/assets/vuetify/main.scss", "github-markdown-css"],
   ssr: false,
