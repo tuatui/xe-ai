@@ -56,12 +56,12 @@
           @click="updateHandle"
           :loading="data.isPending"
           :disabled="!selectedBots"
-          >发送</VBtn
+          >{{$t("chat.send")}}</VBtn
         >
       </VToolbar>
       <VTextarea
         rounded="0"
-        label="请输入..."
+        :label="$t('chat.inputTips')"
         v-model="userInput"
         :disabled="data.isPending"
         hide-details

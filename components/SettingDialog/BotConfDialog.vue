@@ -20,7 +20,11 @@
               class="font-weight-bold"
               :disabled="preferBotID === bot.id"
               @click.stop="dBot.updateDeaflutBotInfo({ preferBotID: bot.id })"
-              >{{ preferBotID === bot.id ? `默认模型` : `设为默认` }}</VBtn
+              >{{
+                preferBotID === bot.id
+                  ? $t("setting.defaultModule")
+                  : $t("setting.setDefault")
+              }}</VBtn
             >
           </template>
         </VListItem>

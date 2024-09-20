@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { presetUno } from "unocss";
+import { locales } from "./lang/config/locales.config";
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
@@ -21,18 +22,10 @@ export default defineNuxtConfig({
     ],
   },
   i18n: {
-    locales: [
-      {
-        code: "zh",
-        file: "zh.ts",
-      },
-      {
-        code: "en",
-        file: "en.ts",
-      },
-    ],
+    locales,
     lazy: true,
     langDir: "lang",
+    strategy: "no_prefix",
     defaultLocale: "zh",
     vueI18n: "./lang/config/i18n.config.ts",
   },

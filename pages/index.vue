@@ -10,19 +10,32 @@
             color="primary"
           >
             <NavListItem
-              :value="item.title || '无标题'"
+              :value="item.title || $t('chat.untitled')"
               @remove="removeTopic(item.id)"
               @update="(v) => handleUpdateTopic(v, item.id)"
             />
           </VListItem>
-          123
-          {{ $t("ifWork") }}
-          <VBtn @click="setLocale('en')">en</VBtn>
-          <VBtn @click="setLocale('zh')">zh</VBtn>
-          <VBtn @click="setLocale('fr')">fr</VBtn>
         </VList>
         <VDivider />
-        <SettingDialog />
+        <div class="flex gap1">
+          <SettingDialog />
+          <VMenu>
+            <template v-slot:activator="{ props }" r>
+              <VBtn icon="mdi-translate" v-bind="props" variant="text" />
+            </template>
+            <VList nav width="150">
+              <VListItem
+                density="compact"
+                v-for="(item, i) in locales"
+                :variant="locale === item.code ? `tonal` : undefined"
+                :key="i"
+                :title="item.name"
+                @click="setLocale(item.code)"
+              >
+              </VListItem>
+            </VList>
+          </VMenu>
+        </div>
       </div>
       <div
         ref="dragger"
@@ -37,7 +50,7 @@
   </VLayout>
 </template>
 <script setup lang="tsx">
-const { locale, setLocale } = useI18n();
+const { setLocale, locales, locale } = useI18n();
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
 

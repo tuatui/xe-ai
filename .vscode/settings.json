@@ -3,8 +3,10 @@
   "i18n-ally.enabledParsers": ["ts"],
   "i18n-ally.enabledFrameworks": ["vue"],
   // HACK: 重定向tsconfig，避免ts-node版本问题
-  "i18n-ally.parsers.typescript.tsNodePath": "node_modules/ts-node/dist/bin.js\" --project \"./.vscode/tsconfig.json",
-  "i18n-ally.disabled": false,
+  "i18n-ally.parsers.typescript.compilerOptions": {
+    "moduleResolution": "Node"
+  },
+  "i18n-ally.parsers.typescript.tsNodePath": "node_modules/ts-node/dist/bin.js\" --skip-project --project \"",
   "i18n-ally.sourceLanguage": "en",
   "i18n-ally.keystyle": "nested"
 }

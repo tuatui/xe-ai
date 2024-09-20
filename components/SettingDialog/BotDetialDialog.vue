@@ -1,7 +1,7 @@
 <template>
   <VDialog v-model="model" class="max-w-[max(40dvw,500px)]">
     <VForm @submit.prevent>
-      <VCard title="编辑">
+      <VCard :title="$t('common.edit')">
         <VCardText>
           <VSelect
             v-model="botsInfoClone.provider"
@@ -13,11 +13,14 @@
               })
             "
           />
-          <VTextField v-model="botsInfoClone.nick_name" label="名字" />
+          <VTextField
+            v-model="botsInfoClone.nick_name"
+            :label="$t('common.name')"
+          />
           <VTextField
             v-model="botsInfoClone.secret_key"
             type="password"
-            label="密钥"
+            :label="$t('module.secretKey')"
           />
 
           <div class="flex gap4">
@@ -43,24 +46,26 @@
               <template v-slot:no-data>
                 <VListItem>
                   <VListItemTitle v-if="modelSearch">
-                    "<strong>{{ modelSearch }}</strong
-                    >" 按 回车<kbd>enter</kbd>可以添加
+                    " <strong> {{ modelSearch }} </strong> "
+                    {{ $t("setting.editModule.press") }}
+                    <VKbd>ENTER</VKbd>
+                    {{ $t("setting.editModule.toAdd") }}
                   </VListItemTitle>
                   <VListItemTitle v-else-if="modelList.length === 0">
-                    无数据，尝试获取数据或手动添加
+                    {{ $t("setting.editModule.noData") }}
                   </VListItemTitle>
                 </VListItem>
               </template>
             </VCombobox>
             <VBtn
-            color="primary"
+              color="primary"
               prepend-icon="mdi-magnify"
               variant="text"
               size="x-large"
               @click="handleGetModelList"
               :disabled="isFetchingModelList"
             >
-              查找模型
+              {{ $t("setting.editModule.fetch") }}
             </VBtn>
           </div>
         </VCardText>
@@ -69,7 +74,7 @@
           <VSpacer></VSpacer>
           <VBtn
             size="large"
-            text="取消"
+            :text="$t('common.cancel')"
             variant="tonal"
             @click="model = false"
           />
@@ -77,7 +82,7 @@
             size="large"
             type="submit"
             color="primary"
-            text="提交"
+            :text="$t('common.submit')"
             variant="flat"
             @click="handleUpdate"
           />
@@ -87,7 +92,6 @@
   </VDialog>
 </template>
 <script setup lang="ts">
-
 const model = defineModel({ default: false });
 const props = defineProps<{
   botInfo?: Partial<BotsData>;

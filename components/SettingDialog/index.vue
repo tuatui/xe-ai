@@ -6,16 +6,19 @@
 
     <VCard>
       <VToolbar>
-        <VToolbarTitle>设置</VToolbarTitle>
+        <VToolbarTitle>{{ $t("common.setting") }}</VToolbarTitle>
         <VSpacer></VSpacer>
         <VBtn icon="mdi-close" @click="dialog = false"></VBtn>
       </VToolbar>
 
       <VList lines="two" subheader>
         <div class="max-w-[min(100%,60rem)] mxa">
-          <VListSubheader>模型</VListSubheader>
+          <VListSubheader>{{ $t("common.module") }}</VListSubheader>
 
-          <VListItem title="配置模型" @click="isModelDialogOpen = true">
+          <VListItem
+            :title="$t('module.config')"
+            @click="isModelDialogOpen = true"
+          >
             <template v-slot:append>
               <VAvatar icon="mdi-chevron-right" />
             </template>

@@ -15,7 +15,7 @@
     >
       <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
         <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
-          {{ i.title || "无标题" }}
+          {{ i.title || $t("chat.untitled") }}
           <template #append>
             <VBtn
               variant="text"
@@ -95,7 +95,7 @@
         prepend-icon="mdi-forum-plus"
         @click="handleNewChat"
       >
-        开始新聊天
+        {{ $t("chat.new") }}
       </VBtn>
     </VTabsWindow>
   </div>
