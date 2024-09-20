@@ -11,4 +11,24 @@ export const locales: LocaleObject[] = [
     file: "en.ts",
     name: "English",
   },
+  {
+    code: "fr",
+    file: "fr.ts",
+    name: "Français",
+  },
+  {
+    code: "ru",
+    file: "ru.ts",
+    name: "Русский",
+  },
+  {
+    code: "es",
+    file: "es.ts",
+    name: "Español",
+  },
+  {
+    code: "ar",
+    file: "ar.ts",
+    name: "اَلْعَرَبِيَّةُ",
+  },
 ];
