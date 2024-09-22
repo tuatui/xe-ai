@@ -27,7 +27,7 @@
             <VCombobox
               :hide-no-data="false"
               v-model:search="modelSearch"
-              v-model="botsInfoClone.avaiableModel"
+              v-model="botsInfoClone.availableModel"
               :loading="isFetchingModelList"
               :items="modelList"
               :item-props="
@@ -103,7 +103,7 @@ const createBotsInfo = (): Partial<BotsData> => ({
   nick_name: "",
   secret_key: "",
   name: "chat-gpt-3.5",
-  avaiableModel: [],
+  availableModel: [],
   provider: Provider.OpenAI,
 });
 const handleUpdate = () => {
@@ -125,9 +125,9 @@ const handleGetModelList = async () => {
   if (isFetchingModelList.value) return;
   try {
     if (botsInfoClone.value.provider === undefined) return;
-    const serivces = Services[botsInfoClone.value.provider];
-    if (!serivces) return;
-    const session = serivces.createChatSession({
+    const services = Services[botsInfoClone.value.provider];
+    if (!services) return;
+    const session = services.createChatSession({
       apiKey: botsInfoClone.value.secret_key,
       baseURL: "https://apic.ohmygpt.com/v1",
     });
@@ -143,18 +143,18 @@ const handleGetModelList = async () => {
   }
 };
 watch(
-  () => botsInfoClone.value.avaiableModel?.length,
+  () => botsInfoClone.value.availableModel?.length,
   (newVal = 0, oldVal = 0) => {
-    if (botsInfoClone.value.avaiableModel === undefined) return;
+    if (botsInfoClone.value.availableModel === undefined) return;
 
     const addTargetIndex = newVal - 1;
     if (newVal <= oldVal) return;
 
-    if (typeof botsInfoClone.value.avaiableModel[addTargetIndex] !== "string")
+    if (typeof botsInfoClone.value.availableModel[addTargetIndex] !== "string")
       return;
 
-    const str = botsInfoClone.value.avaiableModel[addTargetIndex];
-    botsInfoClone.value.avaiableModel[addTargetIndex] = {
+    const str = botsInfoClone.value.availableModel[addTargetIndex];
+    botsInfoClone.value.availableModel[addTargetIndex] = {
       name: str,
       owner: "user input",
     };

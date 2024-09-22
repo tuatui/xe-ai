@@ -3,7 +3,7 @@ export interface BotsData {
   secret_key: string;
   nick_name: string;
   provider: Provider;
-  avaiableModel: ModelList[];
+  availableModel: ModelList[];
   name: string;
 }
 

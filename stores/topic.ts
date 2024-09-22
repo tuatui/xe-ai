@@ -1,7 +1,7 @@
 export interface TopicData {
   id: number;
   title: string;
-  prederSetting?: DefalutBotSetting;
+  preferSetting?: DefaultBotSetting;
 }
 export const topicStore = defineStore("topic-store", () => {
   const iDB = useIndexedDBStore();

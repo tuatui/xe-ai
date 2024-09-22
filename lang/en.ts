@@ -21,7 +21,8 @@ export default {
       press: "Press",
       enter: "Enter",
       toAdd: "to create a new one",
-      noData: "No data available. Please try fetching data or add one manually.",
+      noData:
+        "No data available. Please try fetching data or add one manually.",
       fetch: "Fetch Model",
     },
   },

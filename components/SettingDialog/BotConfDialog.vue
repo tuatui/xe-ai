@@ -19,7 +19,7 @@
               :color="preferBotID === bot.id ? undefined : 'primary'"
               class="font-weight-bold"
               :disabled="preferBotID === bot.id"
-              @click.stop="dBot.updateDeaflutBotInfo({ preferBotID: bot.id })"
+              @click.stop="dBot.updateDefaultBotInfo({ preferBotID: bot.id })"
               >{{
                 preferBotID === bot.id
                   ? $t("setting.defaultModule")
@@ -30,7 +30,7 @@
         </VListItem>
       </VList>
 
-      <SettingDialogBotDetialDialog
+      <SettingDialogBotDetailDialog
         v-model="isBotsInfoDialogOpen"
         :bot-info="botsInfo"
         @new-bot-info="(n) => updateBot(n)"
@@ -41,8 +41,8 @@
 <script setup lang="ts">
 const model = defineModel({ default: false });
 const { bots, updateBot } = useBots();
-const dBot = defalutBotStore();
-const preferBotID = computed(() => dBot.defalutBotInfo.preferBotID);
+const dBot = defaultBotStore();
+const preferBotID = computed(() => dBot.defaultBotInfo.preferBotID);
 const isBotsInfoDialogOpen = ref(false);
 
 const botsInfo = ref<Partial<BotsData>>();
@@ -58,7 +58,7 @@ const formatTitle = (bot: Partial<BotsData>) => {
     if (info) title += info.provider + " ";
   }
 
-  if (bot.secret_key !== undefined) title += hideParticalStr(bot.secret_key);
+  if (bot.secret_key !== undefined) title += hidePartialStr(bot.secret_key);
   return title;
 };
 </script>

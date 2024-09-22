@@ -1,20 +1,20 @@
-export interface HideParticalStrConf {
+export interface HidePartialStrConf {
   replaceChar: string;
   hidePercentage: number;
   align: "left" | "center" | "right";
 }
-const defalutConf: Readonly<HideParticalStrConf> = {
+const defaultConf: Readonly<HidePartialStrConf> = {
   replaceChar: "*",
   hidePercentage: 0.6,
   align: "center",
 };
 
-export const hideParticalStr = (
+export const hidePartialStr = (
   input: string,
-  conf?: HideParticalStrConf
+  conf?: HidePartialStrConf
 ): string => {
   if (!input) return "";
-  const finalConf = conf ? { ...defalutConf, ...conf } : defalutConf;
+  const finalConf = conf ? { ...defaultConf, ...conf } : defaultConf;
   const hideCount = finalConf.hidePercentage * input.length;
   const { replaceChar } = finalConf;
 

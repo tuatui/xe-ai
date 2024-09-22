@@ -106,20 +106,20 @@ const { bots, getBotsData } = useBots();
   .toBeTruthy()
   .then(() => (selectedBots.value = bots.value.at(-1)));
  */
-const dBot = defalutBotStore();
+const dBot = defaultBotStore();
 
 (async () => {
-  await until(() => dBot.defalutBotInfo.preferBotID).toMatch(
+  await until(() => dBot.defaultBotInfo.preferBotID).toMatch(
     (v) => v !== undefined
   );
   if (selectedBots.value !== undefined) return;
-  const res = await getBotsData(dBot.defalutBotInfo.preferBotID);
+  const res = await getBotsData(dBot.defaultBotInfo.preferBotID);
   if (!res) return;
   selectedBots.value = res.pop();
 })();
 
 const modelList = computed(() => {
-  return selectedBots.value?.avaiableModel ?? [];
+  return selectedBots.value?.availableModel ?? [];
 });
 const selectedModel = ref<string>();
 watch(
@@ -170,15 +170,15 @@ const updateDebounced = useDebounceFn(
 
 const determineSetting = async () => {
   const [res] = await getTopicData(props.topicID);
-  if (res.prederSetting) {
-    selectedModel.value = res.prederSetting.preferModelName;
-    [selectedBots.value] = await getBotsData(res.prederSetting.preferBotID);
+  if (res.preferSetting) {
+    selectedModel.value = res.preferSetting.preferModelName;
+    [selectedBots.value] = await getBotsData(res.preferSetting.preferBotID);
     return;
   }
-  if (dBot.defalutBotInfo.preferModelName !== undefined)
-    selectedModel.value = dBot.defalutBotInfo.preferModelName;
-  if (dBot.defalutBotInfo.preferBotID !== undefined)
-    [selectedBots.value] = await getBotsData(dBot.defalutBotInfo.preferBotID);
+  if (dBot.defaultBotInfo.preferModelName !== undefined)
+    selectedModel.value = dBot.defaultBotInfo.preferModelName;
+  if (dBot.defaultBotInfo.preferBotID !== undefined)
+    [selectedBots.value] = await getBotsData(dBot.defaultBotInfo.preferBotID);
 };
 determineSetting();
 
@@ -186,7 +186,7 @@ watch(selectedModel, (newVal) => {
   if (newVal !== undefined && selectedBots.value?.id !== undefined)
     updateTopic2(
       {
-        prederSetting: {
+        preferSetting: {
           preferBotID: selectedBots.value?.id,
           preferModelName: newVal,
         },
@@ -198,7 +198,7 @@ watch(selectedBots, (newVal) => {
   if (newVal !== undefined && selectedModel.value !== undefined)
     updateTopic2(
       {
-        prederSetting: {
+        preferSetting: {
           preferBotID: newVal.id,
           preferModelName: selectedModel.value,
         },
