@@ -3,7 +3,7 @@
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
-          <h3>{{ $t("common.allModules") }}</h3>
+          <h3>{{ $t("common.allModels") }}</h3>
           <VBtn icon="mdi-close" variant="text" @click="model = false" />
         </VCardTitle>
       </template>
@@ -45,9 +45,6 @@
         <div class="w-full">
           <VDivider class="w-full mb2" />
           <VListItem @click="openDialog()" lines="two">
-            <template>
-              <VDivider class="w-full" />
-            </template>
             <template v-slot:prepend>
               <VAvatar icon="mdi-plus" color="surface-variant" />
             </template>

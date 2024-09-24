@@ -6,7 +6,7 @@
           <VCardTitle class="!flex items-center justify-between">
             <h3>
               {{ isUpdate ? $t("common.edit") : $t("common.create") }}
-              {{ $t("common.module") }}
+              {{ $t("common.model") }}
             </h3>
             <VBtn icon="mdi-close" variant="text" @click="model = false" />
           </VCardTitle>

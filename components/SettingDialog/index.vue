@@ -13,7 +13,7 @@
 
       <VList lines="two" subheader>
         <div class="max-w-[min(100%,60rem)] mxa">
-          <VListSubheader>{{ $t("common.module") }}</VListSubheader>
+          <VListSubheader>{{ $t("common.model") }}</VListSubheader>
 
           <VListItem
             :title="$t('module.config')"
