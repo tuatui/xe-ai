@@ -1,8 +1,10 @@
 <template>
   <div class="h-full flex flex-col">
     <div
-      class="markdown-body h0 flex-grow-1 overflow-auto py4"
+      class="markdown-body h0 flex-grow-1 relative overflow-y-auto py4"
       :class="{ dark: $vuetify.theme.current.dark }"
+      ref="contentBody"
+      @scroll="handleScroll"
     >
       <article class="w-[min(100%,45rem)] mxa px2">
         <div
@@ -11,6 +13,18 @@
           v-html="chat2Html(i)"
         ></div>
       </article>
+      <div
+        class="sticky bottom-0 w-[min(100%,calc(45rem+144px))] mxa h48px pr4"
+      >
+        <VFab
+          class="w-full justify-end"
+          :active="!isScrollToEnd"
+          @click="contentBody && scrollToEnd(contentBody)"
+          icon="mdi-chevron-down"
+          variant="elevated"
+          color="secondary"
+        />
+      </div>
     </div>
     <div class="flex flex-col">
       <VToolbar density="compact">
@@ -19,6 +33,7 @@
           density="compact"
           :items="bots"
           v-model="selectedBots"
+          @update:model-value="handleUpdateSelectedBots"
           :item-props="(item) => ({ title: item.nick_name })"
           return-object
           hide-details
@@ -39,6 +54,7 @@
           density="compact"
           :items="modelList"
           v-model="selectedModel"
+          @update:model-value="handleUpdateSelectedModel"
           :item-props="
             (item) => ({
               title: item.name,
@@ -56,7 +72,7 @@
           @click="updateHandle"
           :loading="data.isPending"
           :disabled="!selectedBots"
-          >{{$t("chat.send")}}</VBtn
+          >{{ $t("chat.send") }}</VBtn
         >
       </VToolbar>
       <VTextarea
@@ -70,6 +86,14 @@
   </div>
 </template>
 <script setup lang="ts">
+const contentBody = ref<HTMLDivElement>();
+const isScrollToEnd = ref(false);
+const handleScroll = (ev: Event) => {
+  const target = ev.target as HTMLDivElement;
+  isScrollToEnd.value =
+    Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 20;
+};
+
 const props = defineProps<{ topicID: number }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
@@ -87,7 +111,16 @@ onUnmounted(() => {
     data.value.chatRefCount = 0;
   } else data.value.chatRefCount--;
 });
-
+watch(
+  () => data.value.chats.length,
+  async (newVal, oldVal) => {
+    if (oldVal === 0 && newVal > 0) {
+      await until(contentBody).toBeTruthy();
+      scrollToEnd(contentBody.value!, { behavior: "instant" });
+    }
+  },
+  { once: true }
+);
 const chat2Html = (chat: ChatData) => {
   if (chat.HtmlContextCache) return chat.HtmlContextCache;
   if (chat.context) {
@@ -149,6 +182,8 @@ const updateHandle = async () => {
   await data.value.updateChat(userInput.value, ChatRole.user);
   userInput.value = "";
 
+  if (contentBody.value) scrollToEnd(contentBody.value);
+
   const chatSteam = gptChat.createChat(data.value.chats, selectedModel.value);
 
   const res = await data.value.updateChat("", ChatRole.assistant);
@@ -159,6 +194,9 @@ const updateHandle = async () => {
   for await (const { context } of chatSteam) {
     chat.context += context;
     chat.HtmlContextCache = htmlRender(chat.context);
+    if (isScrollToEnd.value && contentBody.value)
+      scrollToEnd(contentBody.value);
+
     updateDebounced(data, chat);
   }
 };
@@ -182,30 +220,26 @@ const determineSetting = async () => {
 };
 determineSetting();
 
-watch(selectedModel, (newVal) => {
+const handleUpdateSelectedModel = (newVal?: string) => {
   if (newVal !== undefined && selectedBots.value?.id !== undefined)
-    updateTopic2(
-      {
-        preferSetting: {
-          preferBotID: selectedBots.value?.id,
-          preferModelName: newVal,
-        },
+    updateTopic2({
+      id: props.topicID,
+      preferSetting: {
+        preferBotID: selectedBots.value?.id,
+        preferModelName: newVal,
       },
-      props.topicID
-    );
-});
-watch(selectedBots, (newVal) => {
+    });
+};
+const handleUpdateSelectedBots = (newVal?: BotsData) => {
   if (newVal !== undefined && selectedModel.value !== undefined)
-    updateTopic2(
-      {
-        preferSetting: {
-          preferBotID: newVal.id,
-          preferModelName: selectedModel.value,
-        },
+    updateTopic2({
+      id: props.topicID,
+      preferSetting: {
+        preferBotID: newVal.id,
+        preferModelName: selectedModel.value,
       },
-      props.topicID
-    );
-});
+    });
+};
 </script>
 <style lang="scss">
 @use "/assets/markdown.scss";
