@@ -18,7 +18,10 @@ export default defineNuxtConfig({
   },
   imports: {
     presets: [
-      { from: "unocss", imports: [{ name: "clone", as: "cloneDeep" }] },
+      {
+        from: "unocss",
+        imports: [{ name: "clone", as: "cloneDeep" }, { name: "mergeDeep" }],
+      },
     ],
   },
   i18n: {

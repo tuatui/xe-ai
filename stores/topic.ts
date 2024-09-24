@@ -3,6 +3,7 @@ export interface TopicData {
   title: string;
   preferSetting?: DefaultBotSetting;
 }
+
 export const topicStore = defineStore("topic-store", () => {
   const iDB = useIndexedDBStore();
   const topics = ref<TopicData[]>([]);
@@ -51,17 +52,21 @@ export const topicStore = defineStore("topic-store", () => {
       return res;
     }
   };
-  const updateTopic2 = async (
-    topicData?: Partial<TopicData>,
-    topicID?: number
-  ) => {
+  // TODO: updateTopic需要删除，并且所有api应该改为此种格式
+  const updateTopic2 = async (topicData?: Partial<TopicData>) => {
     let res: IDBValidKey | undefined;
     const clonedData = cloneDeep(topicData);
     try {
+      if (!clonedData) throw new Error("could not clone data");
       taskCount.value++;
       const db = await iDB.onDBReady();
-      if (topicID === undefined) res = await db.add(IDB_VAR.TOPICS, clonedData);
-      else res = await db.put(IDB_VAR.TOPICS, { id: topicID, ...clonedData });
+      if (topicData?.id === undefined)
+        res = await db.add(IDB_VAR.TOPICS, clonedData);
+      else {
+        const oldData: TopicData = await db.get(IDB_VAR.TOPICS, topicData.id);
+        const mergedData = mergeDeep(oldData, clonedData);
+        res = await db.put(IDB_VAR.TOPICS, mergedData);
+      }
       topics.value = await db.getAll(IDB_VAR.TOPICS);
     } catch (error) {
       console.error(error);
