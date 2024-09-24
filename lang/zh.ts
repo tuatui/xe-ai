@@ -9,6 +9,10 @@ export default {
     edit: "编辑",
     cancel: "取消",
     submit: "提交",
+    allModules: "所有模型",
+    update: "更新",
+    delete: "删除",
+    create: "创建",
   },
   chat: {
     new: "新聊天",
@@ -19,6 +23,7 @@ export default {
   setting: {
     defaultModule: "默认模型",
     setDefault: "设为默认",
+    addModel: "新增模型",
     editModule: {
       press: "按下",
       enter: "回车",

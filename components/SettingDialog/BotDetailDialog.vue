@@ -1,7 +1,16 @@
 <template>
   <VDialog v-model="model" class="max-w-[max(40dvw,500px)]">
     <VForm @submit.prevent>
-      <VCard :title="$t('common.edit')">
+      <VCard>
+        <template v-slot:title>
+          <VCardTitle class="!flex items-center justify-between">
+            <h3>
+              {{ isUpdate ? $t("common.edit") : $t("common.create") }}
+              {{ $t("common.module") }}
+            </h3>
+            <VBtn icon="mdi-close" variant="text" @click="model = false" />
+          </VCardTitle>
+        </template>
         <VCardText>
           <VSelect
             v-model="botsInfoClone.provider"
@@ -73,17 +82,20 @@
         <VCardActions>
           <VSpacer></VSpacer>
           <VBtn
+            v-if="isUpdate"
             size="large"
-            :text="$t('common.cancel')"
-            variant="tonal"
-            @click="model = false"
+            type="submit"
+            color="error"
+            :text="$t('common.delete')"
+            variant="text"
+            @click="handleUpdate"
           />
           <VBtn
             size="large"
             type="submit"
             color="primary"
             :text="$t('common.submit')"
-            variant="flat"
+            variant="text"
             @click="handleUpdate"
           />
         </VCardActions>
@@ -111,6 +123,7 @@ const handleUpdate = () => {
   model.value = false;
 };
 const botsInfoClone = ref<Partial<BotsData>>(props.botInfo ?? createBotsInfo());
+const isUpdate = computed(() => botsInfoClone.value.id !== undefined);
 watch(
   () => props.botInfo,
   (newVal) => {

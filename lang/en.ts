@@ -7,6 +7,10 @@ export default {
     edit: "Edit",
     cancel: "Cancel",
     submit: "Submit",
+    allModules: "All Modules",
+    update: "Update",
+    delete: "Delete",
+    create: "Create",
   },
   chat: {
     new: "New Chat",
@@ -17,6 +21,7 @@ export default {
   setting: {
     defaultModule: "Default Model",
     setDefault: "Set as Default",
+    addModel: "Add Model",
     editModule: {
       press: "Press",
       enter: "Enter",

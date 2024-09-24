@@ -1,6 +1,12 @@
 <template>
   <VDialog v-model="model" class="max-w-[max(40dvw,500px)]">
     <VCard>
+      <template v-slot:title>
+        <VCardTitle class="!flex items-center justify-between">
+          <h3>{{ $t("common.allModules") }}</h3>
+          <VBtn icon="mdi-close" variant="text" @click="model = false" />
+        </VCardTitle>
+      </template>
       <VList lines="two">
         <VListItem
           v-for="bot in bots"
@@ -35,6 +41,20 @@
         :bot-info="botsInfo"
         @new-bot-info="(n) => updateBot(n)"
       />
+      <template v-slot:actions>
+        <div class="w-full">
+          <VDivider class="w-full mb2" />
+          <VListItem @click="openDialog()" lines="two">
+            <template>
+              <VDivider class="w-full" />
+            </template>
+            <template v-slot:prepend>
+              <VAvatar icon="mdi-plus" color="surface-variant" />
+            </template>
+            {{ $t("setting.addModel") }}
+          </VListItem>
+        </div>
+      </template>
     </VCard>
   </VDialog>
 </template>
