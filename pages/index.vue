@@ -4,14 +4,14 @@
       <div class="h-full w-full flex flex-col">
         <VList class="grow min-h-0 overflow-auto">
           <VListItem
-            v-for="item in topics"
+            v-for="(item, i) in topics"
             @click="handleAddChatTabs(item)"
             :key="item.id"
             color="primary"
           >
             <NavListItem
               :value="item.title || $t('chat.untitled')"
-              @remove="removeTopic(item.id)"
+              @remove="handleRemoveTopic(item, i)"
               @update="(v) => handleUpdateTopic(v, item.id)"
             />
           </VListItem>
@@ -37,6 +37,7 @@
           </VMenu>
         </div>
       </div>
+      <BottomSnackBar />
       <div
         ref="dragger"
         class="dragger offset-x top-0px fixed h-100dvh cursor-col-resize"
@@ -117,10 +118,27 @@ watchDebounced(
     maxWait: 50,
   }
 );
+const { pushNotification } = notificationStore();
 const ts = topicStore();
 const { updateTopic, removeTopic } = ts;
 const topics = computed(() => ts.topics);
-
+const handleRemoveTopic = (topic: TopicData, index: number) => {
+  ts.topics.splice(index, 1);
+  pushNotification({
+    content: `已删除 "${topic.title || "无标题"}"`,
+    cancelable: true,
+    onFinish: () => {
+      removeTopic(topic.id);
+      tabsStore.globalSharedTabs.forEach((each) => {
+        const res = each.value.topics.findIndex(
+          (_topic) => _topic.id == topic.id
+        );
+        if (res >= 0) each.value.topics.splice(res, 1);
+      });
+    },
+    onCancel: () => ts.topics.splice(index, 0, topic),
+  });
+};
 const handleUpdateTopic = async (title: string, topicID: number) => {
   await updateTopic(title, topicID);
   tabsStore.globalSharedTabs.forEach((each) => {
