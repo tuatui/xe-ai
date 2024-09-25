@@ -86,14 +86,6 @@
   </div>
 </template>
 <script setup lang="ts">
-const contentBody = ref<HTMLDivElement>();
-const isScrollToEnd = ref(false);
-const handleScroll = (ev: Event) => {
-  const target = ev.target as HTMLDivElement;
-  isScrollToEnd.value =
-    Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 20;
-};
-
 const props = defineProps<{ topicID: number }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
@@ -114,10 +106,14 @@ onUnmounted(() => {
 watch(
   () => data.value.chats.length,
   async (newVal, oldVal) => {
-    if (oldVal === 0 && newVal > 0) {
-      await until(contentBody).toBeTruthy();
-      scrollToEnd(contentBody.value!, { behavior: "instant" });
-    }
+    if (oldVal >= newVal) return;
+
+    await until(contentBody).toBeTruthy();
+    if (data.value.tempStore.scrollTop !== undefined || !contentBody.value)
+      return;
+    scrollToEnd(contentBody.value, { behavior: "instant" });
+    data.value.tempStore.scrollTop = contentBody.value.scrollTop;
+    isScrollToEnd.value = true;
   },
   { once: true }
 );
@@ -240,6 +236,24 @@ const handleUpdateSelectedBots = (newVal?: BotsData) => {
       },
     });
 };
+
+const contentBody = ref<HTMLDivElement>();
+const isScrollToEnd = ref(true);
+const handleScroll = useDebounceFn((ev: Event) => {
+  const target = ev.target as HTMLDivElement;
+  isScrollToEnd.value =
+    Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 20;
+  data.value.tempStore.scrollTop = target.scrollTop;
+}, 200);
+
+onMounted(() => {
+  if (data.value.tempStore.scrollTop !== undefined && contentBody.value) {
+    contentBody.value.scrollTo({
+      top: data.value.tempStore.scrollTop,
+      behavior: "instant",
+    });
+  }
+});
 </script>
 <style lang="scss">
 @use "/assets/markdown.scss";

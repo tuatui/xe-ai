@@ -14,6 +14,9 @@ export enum ChatRole {
 
 export type useChatReturn = Ref<{
   chats: ChatData[];
+  tempStore: {
+    scrollTop?: number;
+  };
   isPending: boolean;
   updateChat: (
     context: string,
@@ -26,7 +29,7 @@ export type useChatReturn = Ref<{
 export const useChats = (topicID: number): useChatReturn => {
   const iDB = useIndexedDBStore();
   const chats = ref<ChatData[]>([]);
-
+  const tempStore = ref({});
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
 
@@ -79,5 +82,5 @@ export const useChats = (topicID: number): useChatReturn => {
     }
   };
   const chatRefCount = ref(0);
-  return ref({ chats, isPending, updateChat, chatRefCount });
+  return ref({ chats, isPending, updateChat, chatRefCount, tempStore });
 };
