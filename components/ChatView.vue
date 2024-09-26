@@ -69,7 +69,6 @@
           color="primary"
           variant="elevated"
           @click="updateHandle"
-          :loading="data.isPending"
           :disabled="!selectedBots"
           >{{ $t("chat.send") }}</VBtn
         >
@@ -78,7 +77,6 @@
         rounded="0"
         :label="$t('chat.inputTips')"
         v-model="userInput"
-        :disabled="data.isPending"
         hide-details
       />
     </div>
@@ -190,8 +188,7 @@ const updateHandle = async () => {
     chat.context += context;
     chat.HtmlContextCache = htmlRender(chat.context);
     if (isScrollToEnd.value && contentBody.value)
-      scrollToEnd(contentBody.value);
-
+      scrollToEnd(contentBody.value, { behavior: "instant" });
     updateDebounced(data, chat);
   }
 };
@@ -238,11 +235,14 @@ const handleUpdateSelectedBots = (newVal?: BotsData) => {
 
 const contentBody = ref<HTMLDivElement>();
 const isScrollToEnd = ref(true);
-const handleScroll = useDebounceFn((ev: Event) => {
+const handleScroll = (ev: Event) => {
   const target = ev.target as HTMLDivElement;
   isScrollToEnd.value =
     Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 20;
-  data.value.tempStore.scrollTop = target.scrollTop;
+  handleUpdateScrollStatus();
+};
+const handleUpdateScrollStatus = useDebounceFn(() => {
+  data.value.tempStore.scrollTop = contentBody.value?.scrollTop;
 }, 200);
 
 onMounted(() => {
