@@ -35,6 +35,11 @@
               </VListItem>
             </VList>
           </VMenu>
+          <VBtn
+            variant="text"
+            icon="mdi-theme-light-dark"
+            @click="theme.global.name.value = isDarkTheme ? 'light' : 'dark'"
+          />
         </div>
       </div>
       <BottomSnackBar />
@@ -51,6 +56,8 @@
   </VLayout>
 </template>
 <script setup lang="tsx">
+const theme = useTheme();
+const isDarkTheme = computed(() => theme.global.current.value.dark);
 const { setLocale, locales, locale } = useI18n();
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);

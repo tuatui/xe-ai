@@ -1,0 +1,10 @@
+@use "sass:meta";
+
+@include meta.load-css("highlight.js/styles/github");
+.v-theme--dark {
+  @include meta.load-css("highlight.js/styles/github-dark");
+}
+
+.v-application {
+  @include meta.load-css("./base");
+}

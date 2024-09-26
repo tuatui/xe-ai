@@ -2,7 +2,6 @@
   <div class="h-full flex flex-col">
     <div
       class="markdown-body h0 flex-grow-1 relative overflow-y-auto py4"
-      :class="{ dark: $vuetify.theme.current.dark }"
       ref="contentBody"
       @scroll="handleScroll"
     >
@@ -14,7 +13,7 @@
         ></div>
       </article>
       <div
-        class="sticky bottom-0 w-[min(100%,calc(45rem+144px))] mxa h48px pr4"
+        class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa h48px pr1"
       >
         <VFab
           class="w-full justify-end"
@@ -255,6 +254,3 @@ onMounted(() => {
   }
 });
 </script>
-<style lang="scss">
-@use "/assets/markdown.scss";
-</style>

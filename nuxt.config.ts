@@ -35,6 +35,6 @@ export default defineNuxtConfig({
   unocss: {
     presets: [presetUno()],
   },
-  css: ["~/assets/vuetify/main.scss", "github-markdown-css"],
+  css: ["~/assets/vuetify/main.scss", "~/assets/markdown/markdown.scss"],
   ssr: false,
 });
