@@ -25,11 +25,15 @@ export const topicStore = defineStore("topic-store", () => {
   };
   getTopicData().then((v) => (topics.value = v));
 
+  // TODO: 需要重构IDB模块
+
+  // 删除后不会自动更新
   const removeTopic = async (topicID: number) => {
     const idb = await iDB.onDBReady();
     await idb.delete(IDB_VAR.TOPICS, topicID);
-    topics.value = await idb.getAll(IDB_VAR.TOPICS);
   };
+  const updateCache = async () => (topics.value = await getTopicData());
+
   const updateTopic = async (title: string, topicID?: number) => {
     let res: IDBValidKey | undefined;
     try {
@@ -82,5 +86,6 @@ export const topicStore = defineStore("topic-store", () => {
     updateTopic2,
     removeTopic,
     getTopicData,
+    updateCache,
   };
 });
