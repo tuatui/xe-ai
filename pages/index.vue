@@ -58,7 +58,14 @@
 <script setup lang="tsx">
 const theme = useTheme();
 const isDarkTheme = computed(() => theme.global.current.value.dark);
-const { setLocale, locales, locale } = useI18n();
+const { setLocale, locales, locale, localeProperties } = useI18n();
+useHead({
+  htmlAttrs: {
+    lang: () => localeProperties.value?.language,
+    dir: () => localeProperties.value?.dir ?? "ltr",
+  },
+});
+
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
 
