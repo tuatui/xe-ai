@@ -66,6 +66,12 @@
           "
           hide-details
         />
+        <VBtn
+          icon="mdi-download"
+          density="comfortable"
+          class="ml4"
+          @click="takeSnapshot"
+        />
         <VSpacer />
         <VBtn
           prepend-icon="mdi-send"
@@ -86,7 +92,7 @@
   </div>
 </template>
 <script setup lang="ts">
-const props = defineProps<{ topicID: number }>();
+const props = defineProps<{ topicID: number; topics: TopicData }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
 const { getTopicData, updateTopic2 } = topicStore();
@@ -118,8 +124,6 @@ watch(
   { once: true }
 );
 
-import { topicStore } from "~/stores/topic";
-import { GPTChatService, type ChatSession } from "~/utils/AI";
 const selectedBots = ref<BotsData>();
 
 const { bots, getBotsData } = useBots();
@@ -246,4 +250,16 @@ onMounted(() => {
     });
   }
 });
+
+const takeSnapshot = async () => {
+  if (!contentBody.value) return;
+
+  toSnapshot({
+    careClassNames: [...contentBody.value.classList],
+    bodyClassName: `v-application`,
+    mainClassName: contentBody.value.classList[0], // "markdown-body"
+    html: contentBody.value.children[0].innerHTML,
+    title: props.topics.title,
+  });
+};
 </script>

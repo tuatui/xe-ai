@@ -86,7 +86,7 @@
         :key="i.id"
         class="h-full"
       >
-        <ChatView :topic-i-d="i.id" class="h-full" />
+        <ChatView :topic-i-d="i.id" :topics="i" class="h-full" />
       </VTabsWindowItem>
       <VBtn
         v-if="data.topics.length === 0"
