@@ -6,6 +6,10 @@ import xml from "highlight.js/lib/languages/xml";
 
 hljsCore.registerLanguage("plaintext", plaintext);
 hljsCore.registerLanguage("xml", xml); // JSX语法需要
+langAliasAddition.forEach(([alias, target]) => {
+  const languageName = languagesList[target];
+  if (languageName) hljsCore.registerAliases([alias], { languageName });
+});
 
 const marked = new Marked(
   markedHighlight({
@@ -22,7 +26,6 @@ const marked = new Marked(
         }
       }
       const language = hljsCore.getLanguage(lang) ? lang : "plaintext";
-      //if (langSet.has(lang))
       return hljsCore.highlight(code, { language }).value;
     },
   })

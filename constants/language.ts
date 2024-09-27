@@ -32,6 +32,12 @@ export const languagesList:ReadonlyArray<string> =
   "vbnet","vbscript","vbscript-html","verilog","vhdl","vim","wasm","wren","x86asm","xl","xquery",
   "zephir"];
 
+export const langAliasAddition: ReadonlyArray<[string, number]> = [
+  ["assembly", 188],
+  ["rules", 152],
+  ["tags", 171],
+  ["vb.net", 180],
+];
 export const langAliasMap: ReadonlyMap<string, number> = new Map([
   ["as", 3],
   ["asc", 5],
@@ -214,4 +220,5 @@ export const langAliasMap: ReadonlyMap<string, number> = new Map([
   ["xqm", 190],
   ["zep", 191],
   ...languagesList.map((each, index) => [each, index] as const),
+  ...langAliasAddition,
 ]);
