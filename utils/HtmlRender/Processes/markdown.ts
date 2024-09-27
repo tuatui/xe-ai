@@ -2,7 +2,10 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljsCore from "highlight.js/lib/core";
 import plaintext from "highlight.js/lib/languages/plaintext";
+import xml from "highlight.js/lib/languages/xml";
+
 hljsCore.registerLanguage("plaintext", plaintext);
+hljsCore.registerLanguage("xml", xml); // JSX语法需要
 
 const marked = new Marked(
   markedHighlight({
