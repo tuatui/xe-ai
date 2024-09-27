@@ -4,12 +4,16 @@ export const toSnapshot = ({
   bodyClassName,
   mainClassName,
   html,
+  isDark,
+  lang,
 }: {
   careClassNames?: string[];
   bodyClassName?: string;
   mainClassName?: string;
   title?: string;
   html?: string;
+  isDark?: boolean;
+  lang?: string;
 }) => {
   careClassNames ??= [];
   let careCssString = "";
@@ -19,41 +23,40 @@ export const toSnapshot = ({
     let addFlag = false;
     for (let _index = 0; _index < careClassNames.length; _index++) {
       const className = careClassNames[_index];
-      if (styleSheet.innerHTML.includes(className)) {
+      if (styleSheet.innerHTML.includes(`.${className}`)) {
         careClassNames.splice(_index, 1);
         addFlag = true;
       }
     }
     if (addFlag) careCssString += styleSheet.innerHTML + "\n";
+    if (careClassNames.length === 0) break;
   }
+  if (isDark)
+    careCssString += `
+    .v-theme--dark{
+      background-color: rgb(18,18,18)
+    }`;
 
   const template = `
     <!DOCTYPE html>
-    <html>
+    <html lang="${lang || "en"}">
       <head>
+        <title>${title || "Untitled"}</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Xe-AI is a website that provide AI chat server">
         <style>
-          #main {
-            width: min(100%, 768px);
-            margin: 0 auto;
-            padding: 64px 0;
-          }
-          .v-theme--dark{
-            background-color: rgb(18,18,18)
-          }
           ${careCssString}
         </style>
       </head>
 
-      <body class="${bodyClassName}">
-        <main class="${mainClassName}" id="main">
+      <body class="v-application ${bodyClassName}">
+        <main class="${mainClassName}">
           ${html}
         </main>
       </body>
 
-    </html>
-  `;
+    </html>`;
   const blob = new Blob([template], { type: "text/html" });
   const elem = window.document.createElement("a");
   elem.href = window.URL.createObjectURL(blob);

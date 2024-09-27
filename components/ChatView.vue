@@ -250,17 +250,24 @@ onMounted(() => {
     });
   }
 });
+const { t } = useI18n();
 const theme = useTheme();
 const takeSnapshot = async () => {
   if (!contentBody.value) return;
-  const isDark = theme.current.value.dark;
 
+  const isDark = theme.current.value.dark;
+  // 我们只需要获取uno-css和markdown-body的style sheet就可以了
+  const careClassNames: string[] = [
+    contentBody.value.classList[0],
+    contentBody.value.classList[1],
+  ];
+  console.log(careClassNames);
   toSnapshot({
-    careClassNames: [...contentBody.value.classList, "v-theme--dark"],
-    bodyClassName: `v-application ${isDark ? "v-theme--dark" : ""}`,
+    careClassNames,
+    isDark,
     mainClassName: contentBody.value.classList[0], // "markdown-body"
-    html: contentBody.value.children[0].innerHTML,
-    title: props.topics.title,
+    html: contentBody.value.children[0].outerHTML,
+    title: props.topics.title || t("chat.untitled"),
   });
 };
 </script>
