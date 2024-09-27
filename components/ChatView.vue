@@ -250,13 +250,14 @@ onMounted(() => {
     });
   }
 });
-
+const theme = useTheme();
 const takeSnapshot = async () => {
   if (!contentBody.value) return;
+  const isDark = theme.current.value.dark;
 
   toSnapshot({
-    careClassNames: [...contentBody.value.classList],
-    bodyClassName: `v-application`,
+    careClassNames: [...contentBody.value.classList, "v-theme--dark"],
+    bodyClassName: `v-application ${isDark ? "v-theme--dark" : ""}`,
     mainClassName: contentBody.value.classList[0], // "markdown-body"
     html: contentBody.value.children[0].innerHTML,
     title: props.topics.title,

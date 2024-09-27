@@ -5,6 +5,6 @@
   @include meta.load-css("highlight.js/styles/github-dark");
 }
 
-.v-application {
+:root {
   @include meta.load-css("./base");
 }

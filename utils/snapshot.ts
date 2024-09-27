@@ -39,6 +39,9 @@ export const toSnapshot = ({
             margin: 0 auto;
             padding: 64px 0;
           }
+          .v-theme--dark{
+            background-color: rgb(18,18,18)
+          }
           ${careCssString}
         </style>
       </head>
