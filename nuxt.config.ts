@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     moduleOptions: { disableVuetifyStyles: true },
   },
   imports: {
+    dirs: ["./constants"],
     presets: [
       {
         from: "unocss",

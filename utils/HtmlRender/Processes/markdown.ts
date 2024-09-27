@@ -1,15 +1,27 @@
 import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
-import hljs from 'highlight.js';
-
+import hljsCore from "highlight.js/lib/core";
+import plaintext from "highlight.js/lib/languages/plaintext";
+hljsCore.registerLanguage("plaintext", plaintext);
 
 const marked = new Marked(
   markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang, info) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-      return hljs.highlight(code, { language }).value;
-    }
+    async: true,
+    langPrefix: "hljs language-",
+    async highlight(code, lang, info) {
+      if (lang && !hljsCore.getLanguage(lang)) {
+        const target = languagesList[langAliasMap.get(lang) ?? -1];
+        if (target !== undefined) {
+          const res = await import(
+            `../../../node_modules/highlight.js/es/languages/${target}.js`
+          );
+          hljsCore.registerLanguage(target, res.default);
+        }
+      }
+      const language = hljsCore.getLanguage(lang) ? lang : "plaintext";
+      //if (langSet.has(lang))
+      return hljsCore.highlight(code, { language }).value;
+    },
   })
 );
 
