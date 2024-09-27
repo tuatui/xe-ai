@@ -16,8 +16,11 @@ const marked = new Marked(
     async: true,
     langPrefix: "hljs language-",
     async highlight(code, lang, info) {
+      lang = lang.toLowerCase();
       if (lang && !hljsCore.getLanguage(lang)) {
         const target = languagesList[langAliasMap.get(lang) ?? -1];
+        //if (!target) console.log(`missing ${lang}`);
+
         if (target !== undefined) {
           const res = await import(
             `../../../node_modules/highlight.js/es/languages/${target}.js`

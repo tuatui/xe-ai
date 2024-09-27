@@ -34,9 +34,13 @@ export const languagesList:ReadonlyArray<string> =
 
 export const langAliasAddition: ReadonlyArray<[string, number]> = [
   ["assembly", 188],
+  ["asm", 188],
   ["rules", 152],
   ["tags", 171],
   ["vb.net", 180],
+  ["livecode", 99],
+  ["objective-c", 123],
+  ["jboscli", 88],
 ];
 export const langAliasMap: ReadonlyMap<string, number> = new Map([
   ["as", 3],
