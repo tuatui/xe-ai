@@ -6,11 +6,14 @@
       @scroll="handleScroll"
     >
       <article class="w-[min(100%,45rem)] mxa px2">
-        <div
+        <ChatContentItem
           v-for="i in data.chats"
+          :key="i.id"
+          :is-scroll-to-end="isScrollToEnd"
+          :chat="i"
+          @should-scroll="scrollToEnd(contentBody!, { behavior: 'instant' })"
           class="max-w-full text-wrap break-words my16"
-          v-html="chat2Html(i)"
-        ></div>
+        />
       </article>
       <div
         class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa h48px pr1"
@@ -18,7 +21,7 @@
         <VFab
           class="w-full justify-end"
           :active="!isScrollToEnd"
-          @click="contentBody && scrollToEnd(contentBody)"
+          @click="scrollToEnd(contentBody!)"
           icon="mdi-chevron-down"
           variant="elevated"
           color="secondary"
@@ -114,14 +117,7 @@ watch(
   },
   { once: true }
 );
-const chat2Html = (chat: ChatData) => {
-  if (chat.HtmlContextCache) return chat.HtmlContextCache;
-  if (chat.context) {
-    chat.HtmlContextCache = htmlRender(chat.context);
-    return chat.HtmlContextCache;
-  }
-  return "";
-};
+
 import { topicStore } from "~/stores/topic";
 import { GPTChatService, type ChatSession } from "~/utils/AI";
 const selectedBots = ref<BotsData>();
@@ -175,7 +171,7 @@ const updateHandle = async () => {
   await data.value.updateChat(userInput.value, ChatRole.user);
   userInput.value = "";
 
-  if (contentBody.value) scrollToEnd(contentBody.value);
+  nextTick().then(() => contentBody.value && scrollToEnd(contentBody.value));
 
   const chatSteam = gptChat.createChat(data.value.chats, selectedModel.value);
 
@@ -186,9 +182,6 @@ const updateHandle = async () => {
 
   for await (const { context } of chatSteam) {
     chat.context += context;
-    chat.HtmlContextCache = htmlRender(chat.context);
-    if (isScrollToEnd.value && contentBody.value)
-      scrollToEnd(contentBody.value, { behavior: "instant" });
     updateDebounced(data, chat);
   }
 };

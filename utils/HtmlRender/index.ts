@@ -1,6 +1,8 @@
-import process from "./Processes";
+import processes from "./Processes";
 
-export type ProcessFn = (pre: string) => string;
+export type ProcessFn = (pre: string) => string | Promise<string>;
 
-export const htmlRender = (text: string) =>
-  process.reduce((pre, currProcess) => currProcess(pre), text);
+export const htmlRender = async (text: string) => {
+  for (const process of processes) text = await process(text);
+  return text;
+};
