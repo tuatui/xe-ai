@@ -13,13 +13,12 @@
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.3",
     "idb": "^8.0.0",
-    "nuxt": "^3.12.4",
+    "nuxt": "^3.13.2",
     "vue": "latest"
   },
   "devDependencies": {
     "@iconify-json/logos": "^1.2.0",
     "@nuxtjs/i18n": "^8.5.3",
-    "@nuxt/devtools": "^1.5.0",
     "@unocss/nuxt": "^0.62.3",
     "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3",
