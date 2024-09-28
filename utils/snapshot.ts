@@ -31,12 +31,14 @@ export const toSnapshot = ({
     if (addFlag) careCssString += styleSheet.innerHTML + "\n";
     if (careClassNames.length === 0) break;
   }
-  if (isDark)
+  if (isDark) {
     careCssString += `
     .v-theme--dark{
       background-color: rgb(18,18,18)
     }`;
-
+    bodyClassName ??= "";
+    bodyClassName += "v-theme--dark";
+  }
   const template = `
     <!DOCTYPE html>
     <html lang="${lang || "en"}">
@@ -50,7 +52,7 @@ export const toSnapshot = ({
         </style>
       </head>
 
-      <body class="v-application ${bodyClassName}">
+      <body class="v-application ${bodyClassName ?? ""}">
         <main class="${mainClassName}">
           ${html}
         </main>

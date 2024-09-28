@@ -1,5 +1,6 @@
 import type { VNode } from "vue";
 import { Provider } from "./all";
+
 export interface ChatChunk {
   context: string;
   source?: any;
@@ -26,8 +27,11 @@ export interface ModelList {
   name: string;
   owner: string;
 }
+export interface ChatStream extends AsyncIterable<ChatChunk> {
+  stop: () => void;
+}
 export interface ChatSession {
-  createChat: (...args: any[]) => AsyncGenerator<ChatChunk>;
+  createChat: (...args: any[]) => Promise<ChatStream>;
   formatMessage?: (chats: ChatData[]) => unknown;
   getModelList?: () => Promise<ModelList[]>;
 }

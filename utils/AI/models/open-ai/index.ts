@@ -1,9 +1,31 @@
-import OpenAI from "openai";
-import type { ClientOptions } from "openai";
-import type { ChatChunk, ChatService } from "../base";
+import type { ChatChunk, ChatService, ChatStream } from "../base";
 import { defaultChatSessionConf } from "../base";
 import { Provider } from "../all";
 import { icon } from "./icon";
+
+import OpenAI from "openai";
+import type { ClientOptions } from "openai";
+import type { Stream } from "openai/streaming.mjs";
+
+class OpenAIStream implements ChatStream {
+  constructor(
+    public steam: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+  ) {}
+  stop = () => this.steam.controller.abort;
+  [Symbol.asyncIterator] = () => {
+    const stream = this.steam;
+    return (async function* () {
+      for await (const chunk of stream)
+        yield { context: chunk.choices[0]?.delta?.content ?? "", chunk };
+    })();
+  };
+}
+
+const toOpenAiMessages = (chats: ChatData[]): OpenAiMessage[] =>
+  chats.map((chat) => ({
+    content: chat.context,
+    role: (ChatRole[chat.from] ?? "system") as keyof typeof ChatRole,
+  }));
 
 export type OpenAiMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 export type GPTModel = OpenAI.Chat.ChatModel | (string & {});
@@ -11,11 +33,7 @@ export type GPTModel = OpenAI.Chat.ChatModel | (string & {});
 export interface GPTChatChunk extends ChatChunk {
   chunk: OpenAI.Chat.Completions.ChatCompletionChunk;
 }
-const toOpenAiMessages = (chats: ChatData[]): OpenAiMessage[] =>
-  chats.map((chat) => ({
-    content: chat.context,
-    role: (ChatRole[chat.from] ?? "system") as keyof typeof ChatRole,
-  }));
+
 export const GPTChatService: ChatService = {
   info: { provider: "Open AI", key: Provider.OpenAI, icon },
   createChatSession: (conf) => {
@@ -32,19 +50,14 @@ export const GPTChatService: ChatService = {
     const openAI = new OpenAI(finalConf);
 
     return {
-      async *createChat(
-        chats: ChatData[],
-        model: GPTModel
-      ): AsyncGenerator<GPTChatChunk> {
+      async createChat(chats: ChatData[], model: GPTModel) {
         const messages = toOpenAiMessages(chats);
         const stream = await openAI.chat.completions.create({
           model,
           stream: true,
           messages,
         });
-
-        for await (const chunk of stream)
-          yield { context: chunk.choices[0]?.delta?.content ?? "", chunk };
+        return new OpenAIStream(stream);
       },
       formatMessage: toOpenAiMessages,
       getModelList: async () =>

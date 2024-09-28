@@ -186,13 +186,15 @@ const updateHandle = async () => {
 
   nextTick().then(() => contentBody.value && scrollToEnd(contentBody.value));
 
-  const chatSteam = gptChat.createChat(data.value.chats, selectedModel.value);
-
   const res = await data.value.updateChat("", ChatRole.assistant);
   if (res === undefined) return;
   const chat = data.value.chats.findLast((c) => c.id === res);
   if (chat === undefined) return;
 
+  const chatSteam = await gptChat.createChat(
+    data.value.chats,
+    selectedModel.value
+  );
   for await (const { context } of chatSteam) {
     chat.context += context;
     updateDebounced(data, chat);
@@ -270,7 +272,7 @@ const takeSnapshot = async () => {
     contentBody.value.classList[0],
     contentBody.value.classList[1],
   ];
-  console.log(careClassNames);
+  console.log(isDark);
   toSnapshot({
     careClassNames,
     isDark,
