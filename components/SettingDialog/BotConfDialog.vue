@@ -8,6 +8,11 @@
         </VCardTitle>
       </template>
       <VList lines="two">
+        <VEmptyState
+          v-if="bots.length === 0"
+          :text="$t('setting.botShowArea')"
+          :title="$t('setting.noBotTitle')"
+        />
         <VListItem
           v-for="bot in bots"
           :subtitle="formatTitle(bot)"

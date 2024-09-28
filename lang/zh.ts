@@ -31,8 +31,11 @@ export default {
     untitled: "无标题",
     send: "发送",
     inputTips: "在这里输入你的问题",
+    scrollToBottom: "滑至底部",
   },
   setting: {
+    noBotTitle: "还没有模型",
+    botShowArea: "添加模型后，会显示在这里",
     switchTheme: "切换浅色/深色主题",
     defaultModule: "默认模型",
     setDefault: "设为默认",
