@@ -203,7 +203,10 @@ const updateHandle = async () => {
   await data.value.updateChat(userInput.value, ChatRole.user);
   userInput.value = "";
 
-  nextTick().then(() => contentBody.value && scrollToEnd(contentBody.value));
+  nextTick().then(() => {
+    contentBody.value &&
+      scrollToEnd(contentBody.value, { behavior: "instant" });
+  });
 
   const res = await data.value.updateChat("", ChatRole.assistant);
   if (res === undefined) return;
