@@ -48,6 +48,9 @@ export const toSnapshot = ({
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Xe-AI is a website that provide AI chat server">
         <style>
+          * {
+            box-sizing: border-box;
+          }
           ${careCssString}
         </style>
       </head>
