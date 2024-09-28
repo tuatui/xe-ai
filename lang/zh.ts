@@ -24,6 +24,7 @@ export default {
     chatHistory: "聊天历史记录",
   },
   chat: {
+    stop: "停止对话",
     splitRight: "向右拆分聊天框",
     splitDown: "向下拆分聊天框",
     download: "下载当前聊天",

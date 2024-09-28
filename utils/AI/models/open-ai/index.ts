@@ -11,7 +11,7 @@ class OpenAIStream implements ChatStream {
   constructor(
     public steam: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {}
-  stop = () => this.steam.controller.abort;
+  stop = () => this.steam.controller.abort();
   [Symbol.asyncIterator] = () => {
     const stream = this.steam;
     return (async function* () {

@@ -82,12 +82,29 @@
           tooltip-location="top"
         />
         <VSpacer />
+        <VExpandXTransition>
+          <XCommonBtn
+            @click="stopChat()"
+            v-show="data.isProducing"
+            density="comfortable"
+            icon
+            use-icon="mdi-stop"
+            color="error"
+            variant="elevated"
+            class="mr1"
+            rounded
+            :use-tooltip="$t('chat.stop')"
+            tooltip-location="top"
+          />
+        </VExpandXTransition>
+
         <VBtn
           prepend-icon="mdi-send"
           color="primary"
           variant="elevated"
           @click="updateHandle"
-          :disabled="!selectedBots"
+          :disabled="!selectedBots || data.isProducing"
+          :loading="data.isProducing"
           >{{ $t("chat.send") }}</VBtn
         >
       </VToolbar>
@@ -178,8 +195,10 @@ watch(selectedBots, (newVal) => {
   });
 });
 
+const stopChat = ref(() => {});
 const updateHandle = async () => {
   if (!gptChat) return;
+  if (data.value.isProducing) return;
 
   await data.value.updateChat(userInput.value, ChatRole.user);
   userInput.value = "";
@@ -191,13 +210,20 @@ const updateHandle = async () => {
   const chat = data.value.chats.findLast((c) => c.id === res);
   if (chat === undefined) return;
 
-  const chatSteam = await gptChat.createChat(
-    data.value.chats,
-    selectedModel.value
-  );
-  for await (const { context } of chatSteam) {
-    chat.context += context;
-    updateDebounced(data, chat);
+  try {
+    data.value.isProducing = true;
+    const chatSteam = await gptChat.createChat(
+      data.value.chats,
+      selectedModel.value
+    );
+    stopChat.value = chatSteam.stop;
+    for await (const { context } of chatSteam) {
+      chat.context += context;
+      updateDebounced(data, chat);
+    }
+  } catch (error) {
+  } finally {
+    data.value.isProducing = false;
   }
 };
 const updateDebounced = useDebounceFn(

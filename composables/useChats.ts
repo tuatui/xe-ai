@@ -17,6 +17,7 @@ export type useChatReturn = Ref<{
     scrollTop?: number;
   };
   isPending: boolean;
+  isProducing: boolean;
   updateChat: (
     context: string,
     from?: number,
@@ -31,6 +32,7 @@ export const useChats = (topicID: number): useChatReturn => {
   const tempStore = ref({});
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
+  const isProducing = ref(false);
 
   const getChatsData = async (): Promise<ChatData[]> => {
     if (!iDB.isAvailable) return [];
@@ -81,5 +83,12 @@ export const useChats = (topicID: number): useChatReturn => {
     }
   };
   const chatRefCount = ref(0);
-  return ref({ chats, isPending, updateChat, chatRefCount, tempStore });
+  return ref({
+    chats,
+    isPending,
+    updateChat,
+    chatRefCount,
+    tempStore,
+    isProducing,
+  });
 };
