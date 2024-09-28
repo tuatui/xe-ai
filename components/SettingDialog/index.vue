@@ -1,20 +1,14 @@
 <template>
   <VDialog v-model="dialog" transition="dialog-bottom-transition" fullscreen>
     <template v-slot:activator="{ props: activatorProps }">
-      <VBtn
+      <XCommonBtn
         icon
         variant="text"
         v-bind="activatorProps"
-        :aria-label="$t('common.setting')"
-      >
-        <VIcon icon="mdi-cog" />
-        <VTooltip
-          activator="parent"
-          location="top"
-          :aria-label="$t('common.setting')"
-          >{{ $t("common.setting") }}</VTooltip
-        >
-      </VBtn>
+        tooltip-location="top"
+        :use-tooltip="$t('common.setting')"
+        use-icon="mdi-cog"
+      />
     </template>
 
     <VCard>

@@ -17,114 +17,48 @@
         <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
           {{ i.title || $t("chat.untitled") }}
           <template #append>
-            <VBtn
+            <XCommonBtn
               variant="text"
               icon
               density="comfortable"
               size="small"
               @click.stop="remove(i)"
-              :aria-label="$t('common.close')"
-            >
-              <VIcon icon="mdi-window-close" />
-              <VTooltip
-                activator="parent"
-                location="top"
-                :aria-label="$t('common.close')"
-                >{{ $t("common.close") }}</VTooltip
-              >
-            </VBtn>
+              use-icon="mdi-window-close"
+              :use-tooltip="$t('common.close')"
+            />
           </template>
         </VTab>
       </VTabs>
       <div class="flex-shrink-0">
         <template v-if="viewSize.inlineSize > 300">
-          <VBtn
-            icon
-            variant="text"
-            @click.stop="handleNewChat"
-            :aria-label="$t('chat.new')"
-          >
-            <VIcon icon="mdi-plus" />
-            <VTooltip
-              activator="parent"
-              location="top"
-              :aria-label="$t('chat.new')"
-              >{{ $t("chat.new") }}</VTooltip
-            >
-          </VBtn>
-          <VBtn
-            icon
-            variant="text"
-            @click.stop="splitVertHandle"
-            :aria-label="$t('chat.splitRight')"
-          >
-            <VIcon icon="mdi-view-split-vertical" />
-            <VTooltip
-              activator="parent"
-              location="top"
-              :aria-label="$t('chat.splitRight')"
-              >{{ $t("chat.splitRight") }}</VTooltip
-            >
-          </VBtn>
-          <VBtn
-            icon
-            variant="text"
-            @click.stop="splitHorizHandle"
-            :aria-label="$t('chat.splitDown')"
-          >
-            <VIcon icon="mdi-view-split-horizontal" />
-            <VTooltip
-              activator="parent"
-              location="top"
-              :aria-label="$t('chat.splitDown')"
-              >{{ $t("chat.splitDown") }}</VTooltip
-            >
-          </VBtn>
-          <VBtn
-            icon
-            variant="text"
-            @click.stop="$emit('close')"
-            :aria-label="$t('common.close')"
-          >
-            <VIcon icon="mdi-close" />
-            <VTooltip
-              activator="parent"
-              location="top"
-              :aria-label="$t('common.close')"
-              >{{ $t("common.close") }}</VTooltip
-            >
-          </VBtn>
+          <ChatTabsBtnGroup
+            @handle-new-chat="handleNewChat"
+            @split-vert-handle="splitVertHandle"
+            @split-horiz-handle="splitHorizHandle"
+            @close="$emit('close')"
+          />
         </template>
         <template v-else>
-          <VMenu open-on-hover>
+          <VMenu open-on-hover location="bottom end">
             <template v-slot:activator="{ props }">
               <VBtn
                 icon="mdi-dots-vertical"
                 variant="text"
                 v-bind="props"
-              ></VBtn>
+                :aria-label="$t('common.moreOptions')"
+              />
             </template>
             <VList>
-              <VListItem>
-                <VBtn
-                  icon="mdi-plus"
-                  variant="text"
-                  @click.stop="handleNewChat"
-                />
-                <VBtn
-                  icon="mdi-view-split-vertical"
-                  variant="text"
-                  @click="splitVertHandle"
-                /><VBtn
-                  icon="mdi-view-split-horizontal"
-                  variant="text"
-                  @click="splitHorizHandle"
-                /><VBtn
-                  icon="mdi-close"
-                  variant="text"
-                  @click="$emit('close')"
-                />
-              </VListItem>
+              <VListItem @click="handleNewChat">{{ $t("chat.new") }}</VListItem>
+              <VListItem @click="splitVertHandle">{{
+                $t("chat.splitRight")
+              }}</VListItem>
+              <VListItem @click="splitHorizHandle">{{
+                $t("chat.splitDown")
+              }}</VListItem>
+              <VListItem @click="$emit('close')">{{
+                $t("common.close")
+              }}</VListItem>
             </VList>
           </VMenu>
         </template>

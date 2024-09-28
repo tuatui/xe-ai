@@ -29,21 +29,15 @@
         <div class="flex gap1">
           <SettingDialog />
           <VMenu>
-            <template v-slot:activator="{ props }" r>
-              <VBtn
+            <template v-slot:activator="{ props }">
+              <XCommonBtn
                 icon
                 v-bind="props"
                 variant="text"
-                :aria-label="$t('common.language')"
-              >
-                <VIcon icon="mdi-translate" />
-                <VTooltip
-                  activator="parent"
-                  location="top"
-                  :aria-label="$t('common.language')"
-                  >{{ $t("common.language") }}</VTooltip
-                >
-              </VBtn>
+                tooltip-location="top"
+                :use-tooltip="$t('common.language')"
+                use-icon="mdi-translate"
+              />
             </template>
             <VList nav width="150">
               <VListItem
@@ -57,19 +51,13 @@
               </VListItem>
             </VList>
           </VMenu>
-          <VBtn
+          <XCommonBtn
             variant="text"
             icon
             @click="theme.global.name.value = isDarkTheme ? 'light' : 'dark'"
-            :aria-label="$t('setting.switchTheme')"
-            ><VIcon icon="mdi-theme-light-dark" />
-            <VTooltip
-              activator="parent"
-              location="top"
-              :aria-label="$t('setting.switchTheme')"
-              >{{ $t("setting.switchTheme") }}</VTooltip
-            ></VBtn
-          >
+            :use-tooltip="$t('setting.switchTheme')"
+            use-icon="mdi-theme-light-dark"
+          />
         </div>
       </div>
       <BottomSnackBar />

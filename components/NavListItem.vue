@@ -8,53 +8,31 @@
         open-on-hover
       >
         <template v-slot:activator="{ props: activatorProps }">
-          <VBtn
-            :aria-label="$t('common.moreOptions')"
+          <XCommonBtn
             v-bind="activatorProps"
             :class="{ dialog: activatorProps['aria-expanded'] === 'false' }"
             size="small"
             icon
             variant="text"
-          >
-            <VIcon icon="mdi-dots-vertical" />
-            <VTooltip
-              activator="parent"
-              location="bottom"
-              :aria-label="$t('common.moreOptions')"
-              >{{ $t("common.moreOptions") }}</VTooltip
-            >
-          </VBtn>
+            use-icon="mdi-dots-vertical"
+            :use-tooltip="$t('common.moreOptions')"
+          />
         </template>
-
-        <VBtn
+        <XCommonBtn
           key="1"
           icon
           @click="isEdit = true"
-          :aria-label="$t('common.edit')"
-        >
-          <VIcon icon="mdi-pencil" />
-          <VTooltip
-            activator="parent"
-            location="bottom"
-            :aria-label="$t('common.edit')"
-            >{{ $t("common.edit") }}</VTooltip
-          >
-        </VBtn>
-        <VBtn
+          use-icon="mdi-pencil"
+          :use-tooltip="$t('common.edit')"
+        />
+        <XCommonBtn
           key="2"
           icon
           color="error"
           @click="$emit('remove')"
-          :aria-label="$t('common.delete')"
-        >
-          <VIcon icon="mdi-delete" />
-          <VTooltip
-            activator="parent"
-            location="bottom"
-            :aria-label="$t('common.delete')"
-            >{{ $t("common.delete") }}</VTooltip
-          >
-        </VBtn>
+          use-icon="mdi-delete"
+          :use-tooltip="$t('common.delete')"
+        />
       </VSpeedDial>
     </div>
 
