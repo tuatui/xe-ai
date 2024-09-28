@@ -19,30 +19,81 @@
           <template #append>
             <VBtn
               variant="text"
-              icon="mdi-window-close"
+              icon
               density="comfortable"
               size="small"
               @click.stop="remove(i)"
-            />
+              :aria-label="$t('common.close')"
+            >
+              <VIcon icon="mdi-window-close" />
+              <VTooltip
+                activator="parent"
+                location="top"
+                :aria-label="$t('common.close')"
+                >{{ $t("common.close") }}</VTooltip
+              >
+            </VBtn>
           </template>
         </VTab>
       </VTabs>
       <div class="flex-shrink-0">
         <template v-if="viewSize.inlineSize > 300">
-          <VBtn icon="mdi-plus" variant="text" @click.stop="handleNewChat" />
           <VBtn
-            icon="mdi-view-split-vertical "
+            icon
+            variant="text"
+            @click.stop="handleNewChat"
+            :aria-label="$t('chat.new')"
+          >
+            <VIcon icon="mdi-plus" />
+            <VTooltip
+              activator="parent"
+              location="top"
+              :aria-label="$t('chat.new')"
+              >{{ $t("chat.new") }}</VTooltip
+            >
+          </VBtn>
+          <VBtn
+            icon
             variant="text"
             @click.stop="splitVertHandle"
-          /><VBtn
-            icon="mdi-view-split-horizontal"
+            :aria-label="$t('chat.splitRight')"
+          >
+            <VIcon icon="mdi-view-split-vertical" />
+            <VTooltip
+              activator="parent"
+              location="top"
+              :aria-label="$t('chat.splitRight')"
+              >{{ $t("chat.splitRight") }}</VTooltip
+            >
+          </VBtn>
+          <VBtn
+            icon
             variant="text"
             @click.stop="splitHorizHandle"
-          /><VBtn
-            icon="mdi-close"
+            :aria-label="$t('chat.splitDown')"
+          >
+            <VIcon icon="mdi-view-split-horizontal" />
+            <VTooltip
+              activator="parent"
+              location="top"
+              :aria-label="$t('chat.splitDown')"
+              >{{ $t("chat.splitDown") }}</VTooltip
+            >
+          </VBtn>
+          <VBtn
+            icon
             variant="text"
             @click.stop="$emit('close')"
-          />
+            :aria-label="$t('common.close')"
+          >
+            <VIcon icon="mdi-close" />
+            <VTooltip
+              activator="parent"
+              location="top"
+              :aria-label="$t('common.close')"
+              >{{ $t("common.close") }}</VTooltip
+            >
+          </VBtn>
         </template>
         <template v-else>
           <VMenu open-on-hover>

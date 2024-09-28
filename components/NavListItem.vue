@@ -9,21 +9,52 @@
       >
         <template v-slot:activator="{ props: activatorProps }">
           <VBtn
+            :aria-label="$t('common.moreOptions')"
             v-bind="activatorProps"
             :class="{ dialog: activatorProps['aria-expanded'] === 'false' }"
             size="small"
-            icon="mdi-dots-vertical"
+            icon
             variant="text"
-          />
+          >
+            <VIcon icon="mdi-dots-vertical" />
+            <VTooltip
+              activator="parent"
+              location="bottom"
+              :aria-label="$t('common.moreOptions')"
+              >{{ $t("common.moreOptions") }}</VTooltip
+            >
+          </VBtn>
         </template>
 
-        <VBtn key="1" icon="mdi-pencil" @click="isEdit = true" />
+        <VBtn
+          key="1"
+          icon
+          @click="isEdit = true"
+          :aria-label="$t('common.edit')"
+        >
+          <VIcon icon="mdi-pencil" />
+          <VTooltip
+            activator="parent"
+            location="bottom"
+            :aria-label="$t('common.edit')"
+            >{{ $t("common.edit") }}</VTooltip
+          >
+        </VBtn>
         <VBtn
           key="2"
-          icon="mdi-delete"
+          icon
           color="error"
           @click="$emit('remove')"
-        />
+          :aria-label="$t('common.delete')"
+        >
+          <VIcon icon="mdi-delete" />
+          <VTooltip
+            activator="parent"
+            location="bottom"
+            :aria-label="$t('common.delete')"
+            >{{ $t("common.delete") }}</VTooltip
+          >
+        </VBtn>
       </VSpeedDial>
     </div>
 

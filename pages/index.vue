@@ -1,9 +1,18 @@
 <template>
   <VLayout>
-    <VNavigationDrawer disable-resize-watcher permanent :width="width">
+    <VNavigationDrawer
+      disable-resize-watcher
+      permanent
+      :width="width"
+      :aria-label="$t('aria.sideNav')"
+    >
       <div class="h-full w-full flex flex-col">
-        <VList class="grow min-h-0 overflow-auto">
+        <VList
+          class="grow min-h-0 overflow-auto"
+          :aria-label="$t('aria.chatHistory')"
+        >
           <VListItem
+            role="option"
             v-for="(item, i) in topics"
             @click="handleAddChatTabs(item)"
             :key="item.id"
@@ -21,7 +30,20 @@
           <SettingDialog />
           <VMenu>
             <template v-slot:activator="{ props }" r>
-              <VBtn icon="mdi-translate" v-bind="props" variant="text" />
+              <VBtn
+                icon
+                v-bind="props"
+                variant="text"
+                :aria-label="$t('common.language')"
+              >
+                <VIcon icon="mdi-translate" />
+                <VTooltip
+                  activator="parent"
+                  location="top"
+                  :aria-label="$t('common.language')"
+                  >{{ $t("common.language") }}</VTooltip
+                >
+              </VBtn>
             </template>
             <VList nav width="150">
               <VListItem
@@ -37,9 +59,17 @@
           </VMenu>
           <VBtn
             variant="text"
-            icon="mdi-theme-light-dark"
+            icon
             @click="theme.global.name.value = isDarkTheme ? 'light' : 'dark'"
-          />
+            :aria-label="$t('setting.switchTheme')"
+            ><VIcon icon="mdi-theme-light-dark" />
+            <VTooltip
+              activator="parent"
+              location="top"
+              :aria-label="$t('setting.switchTheme')"
+              >{{ $t("setting.switchTheme") }}</VTooltip
+            ></VBtn
+          >
         </div>
       </div>
       <BottomSnackBar />

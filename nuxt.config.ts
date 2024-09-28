@@ -2,6 +2,18 @@
 import { presetUno } from "unocss";
 import { locales } from "./lang/config/locales.config";
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: "Xe AI",
+      meta: [
+        { charset: "utf-8" },
+        {
+          name: "description",
+          content: "Xe-AI is a website that provide AI chat server",
+        },
+      ],
+    },
+  },
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   modules: [

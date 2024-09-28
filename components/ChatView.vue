@@ -67,11 +67,20 @@
           hide-details
         />
         <VBtn
-          icon="mdi-download"
+          icon
           density="comfortable"
           class="ml4"
           @click="takeSnapshot"
-        />
+          :aria-label="$t('chat.download')"
+        >
+          <VIcon icon="mdi-download" />
+          <VTooltip
+            activator="parent"
+            location="top"
+            :aria-label="$t('chat.download')"
+            >{{ $t("chat.download") }}</VTooltip
+          >
+        </VBtn>
         <VSpacer />
         <VBtn
           prepend-icon="mdi-send"
