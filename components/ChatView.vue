@@ -19,13 +19,19 @@
         class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa h48px pr1"
       >
         <VFab
+          :title="$t('chat.scrollToBottom')"
           class="w-full justify-end"
           :active="!isScrollToEnd"
           @click="scrollToEnd(contentBody!)"
-          icon="mdi-chevron-down"
           variant="elevated"
           color="secondary"
-        />
+          icon
+        >
+          <div class="w0 overflow-hidden">
+            {{ $t("chat.scrollToBottom") }}
+          </div>
+          <VIcon icon="mdi-chevron-down" />
+        </VFab>
       </div>
     </div>
     <div class="flex flex-col">

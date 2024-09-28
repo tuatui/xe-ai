@@ -1,5 +1,6 @@
 <template>
-  <div v-html="html"></div>
+  <div v-html="html" v-if="html && chat.context"></div>
+  <VSkeletonLoader v-else type="article" class="h50" />
 </template>
 <script setup lang="ts">
 const props = defineProps<{
