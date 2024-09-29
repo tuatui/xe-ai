@@ -1,5 +1,7 @@
-$view-border-width: 0.1rem;
-$view-dragger-width: 0.6rem;
+$view-border-width: 0.1rem !default;
+$view-dragger-width: 0.6rem !default;
+$highlight-color: rgba(var(--v-theme-primary)) !default;
+$error-color: rgba(var(--v-theme-error)) !default;
 
 @mixin dragger-base {
   min-width: $view-dragger-width;
@@ -14,10 +16,10 @@ $view-dragger-width: 0.6rem;
   &.active,
   &:hover {
     border-color: rgba(var(--v-theme-background));
-    background-color: rgba(var(--v-theme-primary));
+    background-color: $highlight-color;
   }
   &.reject {
-    background-color: rgba(var(--v-theme-error));
+    background-color: $error-color;
   }
   &.offset-x {
     transform: translateX(

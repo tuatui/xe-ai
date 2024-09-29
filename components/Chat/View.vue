@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col">
+  <div class="h-full flex flex-col overflow-hidden">
     <div
       class="markdown-body h0 flex-grow-1 relative overflow-y-auto py4"
       ref="contentBody"
@@ -34,7 +34,18 @@
         </VFab>
       </div>
     </div>
-    <div class="flex flex-col">
+    <div
+      class="flex flex-col"
+      :style="{ height: `${inputAreaHeight}px` }"
+      ref="chatInputArea"
+    >
+      <div class="view-dragger-parent">
+        <div
+          class="view-dragger offset-y"
+          ref="dragger"
+          :class="{ active: isDragging }"
+        ></div>
+      </div>
       <VToolbar density="compact">
         <VSelect
           class="max-w50 ml1"
@@ -109,29 +120,58 @@
         >
       </VToolbar>
       <VTextarea
+        class="custom-flex-v-textarea"
         rounded="0"
         :label="$t('chat.inputTips')"
         v-model="userInput"
         hide-details
+        no-resize
       />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-const props = defineProps<{ topicID: number; topics: TopicData }>();
+const props = defineProps<{ topics: TopicData }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
 const { getTopicData, updateTopic2 } = topicStore();
-const data = globalSharedChats.get(props.topicID) || useChats(props.topicID);
+const data =
+  globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
 
-if (!globalSharedChats.has(props.topicID)) {
-  globalSharedChats.set(props.topicID, data);
+const chatInputArea = ref<HTMLElement | null>(null);
+const inputAreaHeight = ref(200);
+const dragger = ref<HTMLElement | null>(null);
+const { isDragging } = useMouseDrag(
+  dragger,
+  { triggerOnElemResize: false, triggerOnWindowResize: false },
+  {
+    onTryDrag: (pos) => {
+      const el = chatInputArea.value?.parentElement;
+      if (!el) return;
+      const { bottom, top } = el.getBoundingClientRect();
+      const targetMinHeight = Math.min(
+        bottom - Math.max(pos.y, top),
+        el.scrollHeight - 64 /* 为了不占满空间 */
+      );
+      inputAreaHeight.value = targetMinHeight < 200 ? 200 : targetMinHeight;
+      if (isScrollToEnd.value)
+        nextTick().then(
+          () =>
+            contentBody.value &&
+            scrollToEnd(contentBody.value, { behavior: "instant" })
+        );
+    },
+  }
+);
+
+if (!globalSharedChats.has(props.topics.id)) {
+  globalSharedChats.set(props.topics.id, data);
   data.value.chatRefCount = 1;
 } else data.value.chatRefCount++;
 
 onUnmounted(() => {
   if (data.value.chatRefCount === 1) {
-    globalSharedChats.delete(props.topicID);
+    globalSharedChats.delete(props.topics.id);
     data.value.chatRefCount = 0;
   } else data.value.chatRefCount--;
 });
@@ -236,7 +276,7 @@ const updateDebounced = useDebounceFn(
 );
 
 const determineSetting = async () => {
-  const [res] = await getTopicData(props.topicID);
+  const [res] = await getTopicData(props.topics.id);
   if (res.preferSetting) {
     selectedModel.value = res.preferSetting.preferModelName;
     [selectedBots.value] = await getBotsData(res.preferSetting.preferBotID);
@@ -252,7 +292,7 @@ determineSetting();
 const handleUpdateSelectedModel = (newVal?: string) => {
   if (newVal !== undefined && selectedBots.value?.id !== undefined)
     updateTopic2({
-      id: props.topicID,
+      id: props.topics.id,
       preferSetting: {
         preferBotID: selectedBots.value?.id,
         preferModelName: newVal,
@@ -262,7 +302,7 @@ const handleUpdateSelectedModel = (newVal?: string) => {
 const handleUpdateSelectedBots = (newVal?: BotsData) => {
   if (newVal !== undefined && selectedModel.value !== undefined)
     updateTopic2({
-      id: props.topicID,
+      id: props.topics.id,
       preferSetting: {
         preferBotID: newVal.id,
         preferModelName: selectedModel.value,
@@ -311,3 +351,32 @@ const takeSnapshot = async () => {
   });
 };
 </script>
+<style lang="scss" scoped>
+@use "/assets/tab.scss" as *
+  with(
+    $highlight-color: black,
+    $view-border-width: 0rem,
+    $view-dragger-width: 0.2rem
+  );
+.view-dragger-parent {
+  position: relative;
+  .view-dragger {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+
+    @include dragger-base;
+  }
+}
+</style>
+<style lang="scss">
+.custom-flex-v-textarea {
+  &.v-input--horizontal {
+    grid-template-rows: 1fr auto;
+    textarea {
+      height: 100%;
+      min-height: 0px;
+    }
+  }
+}
+</style>

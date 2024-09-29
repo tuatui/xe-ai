@@ -5,7 +5,7 @@ interface MousePosition {
 type tryDragFn = (
   pos: MousePosition,
   ev: { mouseEvent?: MouseEvent; resizeObserverSize?: ResizeObserverSize }
-) => Partial<MousePosition>;
+) => Partial<MousePosition> | void;
 
 interface UseMouseDragConf {
   init: MousePosition;
