@@ -27,7 +27,7 @@
         </VList>
         <VDivider />
         <div class="flex gap1">
-          <SettingDialog />
+          <Setting />
           <VMenu>
             <template v-slot:activator="{ props }">
               <XCommonBtn

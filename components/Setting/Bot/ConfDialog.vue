@@ -41,7 +41,7 @@
         </VListItem>
       </VList>
 
-      <SettingDialogBotDetailDialog
+      <SettingBotDetailDialog
         v-model="isBotsInfoDialogOpen"
         :bot-info="botsInfo"
         @new-bot-info="(n) => updateBot(n)"

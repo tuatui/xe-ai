@@ -30,7 +30,7 @@
               <VAvatar icon="mdi-chevron-right" />
             </template>
           </VListItem>
-          <SettingDialogBotConfDialog v-model="isModelDialogOpen" />
+          <SettingBotConfDialog v-model="isModelDialogOpen" />
         </div>
       </VList>
     </VCard>
