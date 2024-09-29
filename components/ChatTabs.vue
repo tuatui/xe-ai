@@ -6,7 +6,7 @@
     ref="divElem"
   >
     <VSheet
-      class="!flex flex-row bg-primary"
+      class="!flex flex-row relative z-16 bg-primary"
       elevation="4"
       :class="{
         'tab-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
@@ -29,7 +29,7 @@
           </template>
         </VTab>
       </VTabs>
-      <div class="flex-shrink-0">
+      <div class="flex-shrink-0 relative z-15">
         <template v-if="viewSize.inlineSize > 300">
           <ChatTabsBtnGroup
             @handle-new-chat="handleNewChat"
