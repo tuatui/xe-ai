@@ -61,16 +61,16 @@
         </div>
       </div>
       <BottomSnackBar />
-      <div
-        ref="dragger"
-        class="dragger offset-x top-0px fixed h-100dvh cursor-col-resize"
-        :class="{ active: isDragging }"
-        :style="{ left: `${position.x}px` }"
-      ></div>
     </VNavigationDrawer>
     <VMain>
       <AdjustableView v-model="vt" />
     </VMain>
+    <div
+      ref="dragger"
+      class="dragger offset-x top-0px fixed h-100dvh cursor-col-resize"
+      :class="{ active: isDragging }"
+      :style="{ left: `${position.x}px` }"
+    ></div>
   </VLayout>
 </template>
 <script setup lang="tsx">
