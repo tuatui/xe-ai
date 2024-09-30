@@ -35,7 +35,12 @@ export interface GPTChatChunk extends ChatChunk {
 }
 
 export const GPTChatService: ChatService = {
-  info: { provider: "Open AI", key: Provider.OpenAI, icon },
+  info: {
+    provider: "Open AI",
+    key: Provider.OpenAI,
+    icon,
+    defaultBaseUrl: "https://api.openai.com/v1/",
+  },
   createChatSession: (conf) => {
     const finalConf: Partial<ClientOptions> = {
       // 目前服务端将不会直接保存用户的secret key，并且不代理用户的请求。

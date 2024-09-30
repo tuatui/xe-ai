@@ -20,7 +20,12 @@ export interface ChatService {
     isSupportIMG?: boolean;
     isSupportAudio?: boolean;
   };
-  readonly info: { provider: string; key: Provider; icon: VNode };
+  readonly info: {
+    provider: string;
+    key: Provider;
+    icon: VNode;
+    defaultBaseUrl: string;
+  };
   createChatSession: (conf: Partial<ChatSessionConf>) => ChatSession;
 }
 export interface ModelList {

@@ -23,6 +23,11 @@
             "
           />
           <VTextField
+            v-model="botsInfoClone.apiUrl"
+            :label="$t('setting.apiUrl')"
+            placeholder="https://"
+          />
+          <VTextField
             v-model="botsInfoClone.nick_name"
             :label="$t('common.name')"
           />
@@ -117,6 +122,9 @@ const createBotsInfo = (): Partial<BotsData> => ({
   name: "chat-gpt-3.5",
   availableModel: [],
   provider: Provider.OpenAI,
+  apiUrl: props.botInfo?.provider
+    ? Services[props.botInfo.provider].info.defaultBaseUrl
+    : Services[Provider.OpenAI].info.defaultBaseUrl,
 });
 const handleUpdate = () => {
   emit("newBotInfo", botsInfoClone.value);
@@ -131,6 +139,13 @@ watch(
     else botsInfoClone.value = structuredClone(toRaw(newVal));
   }
 );
+watch(
+  () => botsInfoClone.value.provider,
+  (newVal) => {
+    if (!newVal) return;
+    botsInfoClone.value.apiUrl = Services[newVal].info.defaultBaseUrl;
+  }
+);
 const modelSearch = ref("");
 const modelList = ref<ModelList[]>([]);
 const isFetchingModelList = ref(false);
@@ -142,7 +157,7 @@ const handleGetModelList = async () => {
     if (!services) return;
     const session = services.createChatSession({
       apiKey: botsInfoClone.value.secret_key,
-      baseURL: "https://apic.ohmygpt.com/v1",
+      baseURL: botsInfoClone.value.apiUrl,
     });
 
     if (!session.getModelList) return;

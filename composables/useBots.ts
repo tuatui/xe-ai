@@ -5,6 +5,7 @@ export interface BotsData {
   provider: Provider;
   availableModel: ModelList[];
   name: string;
+  apiUrl: string;
 }
 
 export const useBots = () => {

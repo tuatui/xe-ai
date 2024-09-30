@@ -234,8 +234,8 @@ watch(selectedBots, (newVal) => {
     return;
   }
   gptChat = GPTChatService.createChatSession({
-    apiKey: newVal?.secret_key,
-    baseURL: "https://apic.ohmygpt.com/v1",
+    apiKey: newVal.secret_key,
+    baseURL: newVal.apiUrl,
   });
 });
 

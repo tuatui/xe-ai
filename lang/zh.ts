@@ -35,6 +35,7 @@ export default {
     scrollToBottom: "滑至底部",
   },
   setting: {
+    apiUrl: "服务提供商地址",
     noBotTitle: "还没有模型",
     botShowArea: "添加模型后，会显示在这里",
     switchTheme: "切换浅色/深色主题",

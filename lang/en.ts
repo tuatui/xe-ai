@@ -21,6 +21,8 @@ export default {
     inputTips: "Enter your question here",
   },
   setting: {
+    apiUrl: "Service Provider URL",
+    noBotTitle: "Not Thing in Here",
     defaultModule: "Default Model",
     setDefault: "Set as Default",
     addModel: "Add Model",
