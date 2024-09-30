@@ -62,7 +62,7 @@
       </div>
       <BottomSnackBar />
     </VNavigationDrawer>
-    <VMain>
+    <VMain class="max-h-100dvh">
       <AdjustableView v-model="vt" />
     </VMain>
     <div
