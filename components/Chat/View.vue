@@ -11,7 +11,11 @@
           :key="i.id"
           :is-scroll-to-end="isScrollToEnd"
           :chat="i"
-          @should-scroll="scrollToEnd(contentBody!, { behavior: 'instant' })"
+          @should-scroll="() => {
+            scrollToEnd(contentBody!, { behavior: 'instant' });
+            isScrollToEnd = true;
+          }
+          "
           class="max-w-full text-wrap break-words my16"
         />
       </article>
@@ -243,15 +247,15 @@ const updateHandle = async () => {
   await data.value.updateChat(userInput.value, ChatRole.user);
   userInput.value = "";
 
-  nextTick().then(() => {
-    contentBody.value &&
-      scrollToEnd(contentBody.value, { behavior: "instant" });
-  });
-
   const res = await data.value.updateChat("", ChatRole.assistant);
   if (res === undefined) return;
   const chat = data.value.chats.findLast((c) => c.id === res);
   if (chat === undefined) return;
+
+  nextTick().then(() => {
+    contentBody.value &&
+      scrollToEnd(contentBody.value, { behavior: "instant" });
+  });
 
   try {
     data.value.isProducing = true;

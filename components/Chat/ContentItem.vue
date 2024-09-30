@@ -1,8 +1,9 @@
 <template>
-  <div v-html="html" v-if="html || !chat.context"></div>
+  <div ref="contextDom" v-if="haveContext"></div>
   <VSkeletonLoader v-else type="article" class="h50" />
 </template>
 <script setup lang="ts">
+const contextDom = ref<HTMLDivElement | null>();
 const props = defineProps<{
   chat: ChatData;
   isScrollToEnd?: boolean;
@@ -11,16 +12,34 @@ const emit = defineEmits<{
   shouldScroll: [];
 }>();
 
-const html = ref("");
+let isBusy = false;
+let shouldRerender = false;
+
+const haveContext = ref(false);
 const render = async () => {
-  if (!props.chat.context) return;
-  const shouldScroll = props.isScrollToEnd;
+  if (isBusy) {
+    shouldRerender = true;
+    return;
+  }
 
-  html.value = await htmlRender(props.chat.context);
+  do {
+    shouldRerender = false;
+    isBusy = true;
 
-  if (!shouldScroll) return;
-  await nextTick();
-  emit("shouldScroll");
+    const shouldScroll = props.isScrollToEnd;
+
+    const res = props.chat.context ? await htmlRender(props.chat.context) : "";
+
+    if (!haveContext.value) {
+      haveContext.value = true;
+      await nextTick();
+    }
+    if (contextDom.value) contextDom.value.innerHTML = res;
+
+    if (shouldScroll) emit("shouldScroll");
+
+    isBusy = false;
+  } while (shouldRerender);
 };
 watch(() => props.chat.context, render);
 onMounted(render);
