@@ -24,6 +24,7 @@ export type useChatReturn = Ref<{
     id?: IDBValidKey
   ) => Promise<IDBValidKey | void>;
   chatRefCount: number;
+  stopChatting: () => void;
 }>;
 
 export const useChats = (topicID: number): useChatReturn => {
@@ -33,6 +34,7 @@ export const useChats = (topicID: number): useChatReturn => {
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
   const isProducing = ref(false);
+  const stopChatting = ref(() => {});
 
   const getChatsData = async (): Promise<ChatData[]> => {
     if (!iDB.isAvailable) return [];
@@ -90,5 +92,6 @@ export const useChats = (topicID: number): useChatReturn => {
     chatRefCount,
     tempStore,
     isProducing,
+    stopChatting,
   });
 };

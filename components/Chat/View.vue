@@ -99,7 +99,7 @@
         <VSpacer />
         <VExpandXTransition>
           <XCommonBtn
-            @click="stopChat()"
+            @click="data.stopChatting()"
             v-show="data.isProducing"
             density="comfortable"
             icon
@@ -239,7 +239,6 @@ watch(selectedBots, (newVal) => {
   });
 });
 
-const stopChat = ref(() => {});
 const updateHandle = async () => {
   if (!gptChat) return;
   if (data.value.isProducing) return;
@@ -263,7 +262,7 @@ const updateHandle = async () => {
       data.value.chats,
       selectedModel.value
     );
-    stopChat.value = chatSteam.stop;
+    data.value.stopChatting = chatSteam.stop;
     for await (const { context } of chatSteam) {
       chat.context += context;
       updateDebounced(data, chat);
