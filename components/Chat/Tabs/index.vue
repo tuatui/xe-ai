@@ -14,7 +14,12 @@
       @click="handleClickChatTabs"
     >
       <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
-        <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
+        <VTab
+          :value="i.id"
+          v-for="i in data.topics"
+          :key="i.id"
+          @click.middle.stop="remove(i)"
+        >
           {{ i.title || untitledStr }}
           <template #append>
             <XCommonBtn
