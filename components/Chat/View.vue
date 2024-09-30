@@ -16,30 +16,30 @@
             isScrollToEnd = true;
           }
           "
-          class="max-w-full text-wrap break-words my16"
+          class="max-w-full text-wrap break-words mt16"
         />
       </article>
-      <div
-        class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa h48px pr1"
-      >
-        <VFab
-          :title="$t('chat.scrollToBottom')"
-          class="w-full justify-end"
-          :active="!isScrollToEnd"
-          @click="scrollToEnd(contentBody!)"
-          variant="elevated"
-          color="secondary"
-          icon
-        >
-          <div class="w0 overflow-hidden">
-            {{ $t("chat.scrollToBottom") }}
-          </div>
-          <VIcon icon="mdi-chevron-down" />
-        </VFab>
+      <div class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa pr1 h0">
+        <div class="absolute bottom-0 right-0 h48px">
+          <VFab
+            :title="$t('chat.scrollToBottom')"
+            class="w-full justify-end"
+            :active="!isScrollToEnd"
+            @click="scrollToEnd(contentBody!)"
+            variant="elevated"
+            color="secondary"
+            icon
+          >
+            <div class="w0 overflow-hidden">
+              {{ $t("chat.scrollToBottom") }}
+            </div>
+            <VIcon icon="mdi-chevron-down" />
+          </VFab>
+        </div>
       </div>
     </div>
     <div
-      class="flex flex-col"
+      class="flex flex-col min-h-0px"
       :style="{ height: `${inputAreaHeight}px` }"
       ref="chatInputArea"
     >
@@ -124,6 +124,8 @@
         >
       </VToolbar>
       <VTextarea
+        rows="1.5"
+        row-height="0"
         class="custom-flex-v-textarea"
         rounded="0"
         :label="$t('chat.inputTips')"
@@ -157,7 +159,7 @@ const { isDragging } = useMouseDrag(
         bottom - Math.max(pos.y, top),
         el.scrollHeight - 64 /* 为了不占满空间 */
       );
-      inputAreaHeight.value = targetMinHeight < 200 ? 200 : targetMinHeight;
+      inputAreaHeight.value = targetMinHeight < 100 ? 100 : targetMinHeight;
       if (isScrollToEnd.value)
         nextTick().then(
           () =>
