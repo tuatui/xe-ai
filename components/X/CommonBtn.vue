@@ -3,6 +3,7 @@
     <slot></slot>
     <VIcon v-if="useIcon !== undefined" :icon="useIcon" />
     <VTooltip
+      open-delay="200"
       v-if="useTooltip !== undefined"
       activator="parent"
       :location="tooltipLocation ?? 'bottom'"

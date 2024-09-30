@@ -3,6 +3,7 @@
     <div v-if="!isEdit" class="flex justify-between items-center nav-h-root">
       <h2 class="grow v-list-item-title">{{ value }}</h2>
       <VSpeedDial
+        open-delay="200"
         location="right center"
         transition="scale-transition"
         open-on-hover
