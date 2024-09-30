@@ -19,7 +19,7 @@
             color="primary"
           >
             <NavListItem
-              :value="item.title || $t('chat.untitled')"
+              :value="item.title || untitledStr"
               @remove="handleRemoveTopic(item, i)"
               @update="(v) => handleUpdateTopic(v, item.id)"
             />
@@ -84,6 +84,7 @@ useHead({
   },
 });
 
+const untitledStr = useT("chat.untitled");
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
 

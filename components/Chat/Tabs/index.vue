@@ -15,7 +15,7 @@
     >
       <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
         <VTab :value="i.id" v-for="i in data.topics" :key="i.id">
-          {{ i.title || $t("chat.untitled") }}
+          {{ i.title || untitledStr }}
           <template #append>
             <XCommonBtn
               variant="text"
@@ -90,7 +90,7 @@
 const { uniqueKey } = defineProps<{ uniqueKey: Symbol }>();
 const store = chatTabsStore();
 const divElem = ref<HTMLDivElement>();
-
+const untitledStr = useT("chat.untitled");
 const data =
   store.globalSharedTabs.get(uniqueKey) ||
   ref<{
