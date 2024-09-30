@@ -13,6 +13,7 @@ export default {
     update: "Update",
     delete: "Delete",
     create: "Create",
+    notEnoughSpace: "Not Enough Space",
   },
   chat: {
     new: "New Chat",

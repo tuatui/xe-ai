@@ -2,6 +2,8 @@ export interface TopicData {
   id: number;
   title: string;
   preferSetting?: DefaultBotSetting;
+  createTime: Date;
+  updateTime: Date;
 }
 
 export const topicStore = defineStore("topic-store", () => {

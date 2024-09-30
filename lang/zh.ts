@@ -18,6 +18,7 @@ export default {
     moreOptions: "更多选项",
     close: "关闭",
     language: "语言",
+    notEnoughSpace: "空间不足",
   },
   aria: {
     sideNav: "侧边导航栏",
