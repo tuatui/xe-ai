@@ -7,24 +7,7 @@
       :aria-label="$t('aria.sideNav')"
     >
       <div class="h-full w-full flex flex-col">
-        <VList
-          class="grow min-h-0 overflow-auto"
-          :aria-label="$t('aria.chatHistory')"
-        >
-          <VListItem
-            role="option"
-            v-for="(item, i) in topics"
-            @click="handleAddChatTabs(item)"
-            :key="item.id"
-            color="primary"
-          >
-            <NavListItem
-              :value="item.title || untitledStr"
-              @remove="handleRemoveTopic(item, i)"
-              @update="(v) => handleUpdateTopic(v, item.id)"
-            />
-          </VListItem>
-        </VList>
+        <NavList @add-chat="handleAddChatTabs" />
         <VDivider />
         <div class="flex gap1">
           <Setting />
@@ -84,7 +67,6 @@ useHead({
   },
 });
 
-const untitledStr = useT("chat.untitled");
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
 
@@ -97,7 +79,8 @@ const vt = ref(
     1
   )
 );
-
+const tabsStore = chatTabsStore();
+const focusedChat = focusedChatStore();
 const handleAddChatTabs = async (topic: TopicData) => {
   if (vt.value.children.length >= 1) {
     if (focusedChat.chatTabsExpose) {
@@ -151,36 +134,6 @@ watchDebounced(
     maxWait: 50,
   }
 );
-const { pushNotification } = notificationStore();
-const ts = topicStore();
-const { updateTopic, removeTopic } = ts;
-const topics = computed(() => ts.topics);
-const handleRemoveTopic = (topic: TopicData, index: number) => {
-  ts.topics.splice(index, 1);
-  pushNotification({
-    content: `已删除 "${topic.title || "无标题"}"`,
-    cancelable: true,
-    onFinish: () => {
-      removeTopic(topic.id);
-      tabsStore.globalSharedTabs.forEach((each) => {
-        const res = each.value.topics.findIndex(
-          (_topic) => _topic.id == topic.id
-        );
-        if (res >= 0) each.value.topics.splice(res, 1);
-      });
-    },
-    onCancel: () => ts.topics.splice(index, 0, topic),
-  });
-};
-const handleUpdateTopic = async (title: string, topicID: number) => {
-  await updateTopic({ title, id: topicID });
-  tabsStore.globalSharedTabs.forEach((each) => {
-    const res = each.value.topics.find((topic) => topic.id == topicID);
-    if (res) res.title = title;
-  });
-};
-const tabsStore = chatTabsStore();
-const focusedChat = focusedChatStore();
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *;
