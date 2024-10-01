@@ -11,29 +11,7 @@
         <VDivider />
         <div class="flex gap1">
           <Setting />
-          <VMenu>
-            <template v-slot:activator="{ props }">
-              <XCommonBtn
-                icon
-                v-bind="props"
-                variant="text"
-                tooltip-location="top"
-                :use-tooltip="$t('common.language')"
-                use-icon="mdi-translate"
-              />
-            </template>
-            <VList nav width="150">
-              <VListItem
-                density="compact"
-                v-for="(item, i) in locales"
-                :variant="locale === item.code ? `tonal` : undefined"
-                :key="i"
-                :title="item.name"
-                @click="setLocale(item.code)"
-              >
-              </VListItem>
-            </VList>
-          </VMenu>
+          <I18nSwitch />
           <XCommonBtn
             variant="text"
             icon
@@ -59,13 +37,6 @@
 <script setup lang="tsx">
 const theme = useTheme();
 const isDarkTheme = computed(() => theme.global.current.value.dark);
-const { setLocale, locales, locale, localeProperties } = useI18n();
-useHead({
-  htmlAttrs: {
-    lang: () => localeProperties.value?.language,
-    dir: () => localeProperties.value?.dir ?? "ltr",
-  },
-});
 
 import { ChatTabs } from "#components";
 const dragger = ref<HTMLElement | null>(null);
