@@ -2,7 +2,6 @@ export interface TopicData {
   id: number;
   title: string;
   preferSetting?: DefaultBotSetting;
-  createTime: Date;
   updateTime: Date;
 }
 
@@ -16,8 +15,14 @@ export const topicStore = defineStore("topic-store", () => {
     try {
       taskCount.value++;
       const db = await iDB.onDBReady();
-      if (id === undefined) res = await db.getAll(IDB_VAR.TOPICS);
-      else res = [await db.get(IDB_VAR.TOPICS, id)];
+      if (id === undefined) {
+        res = [];
+        const i = db
+          .transaction(IDB_VAR.TOPICS)
+          .store.index(IDB_VAR.TOPICS_KEY.UPDATE_TIME_INDEX);
+        for await (const { value } of i.iterate(undefined, "prev"))
+          res.push(value);
+      } else res = [await db.get(IDB_VAR.TOPICS, id)];
     } catch (error) {
       console.error(error);
     } finally {

@@ -3,22 +3,29 @@
     class="grow min-h-0 overflow-auto"
     :aria-label="$t('aria.chatHistory')"
   >
-    <VListItem
-      role="option"
-      v-for="(item, i) in topics"
-      @click="$emit('addChat', item)"
-      :key="item.id"
-      color="primary"
-    >
-      <NavListItem
-        :value="item.title || untitledStr"
-        @remove="handleRemoveTopic(item, i)"
-        @update="(v) => handleUpdateTopic(v, item.id)"
-      />
-    </VListItem>
+    <template v-for="[timeStr, topicList] in relativeTimeTopic">
+      <VListSubheader>{{ timeStr }}</VListSubheader>
+      <VListItem
+        role="option"
+        v-for="(item, i) in topicList"
+        @click="$emit('addChat', item)"
+        :key="item.id"
+        color="primary"
+      >
+        <NavListItem
+          :value="item.title || untitledStr"
+          @remove="handleRemoveTopic(item, i)"
+          @update="(v) => handleUpdateTopic(v, item.id)"
+        />
+      </VListItem>
+    </template>
   </VList>
 </template>
 <script setup lang="ts">
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+
 const untitledStr = useT("chat.untitled");
 const ts = topicStore();
 const tabsStore = chatTabsStore();
@@ -27,8 +34,6 @@ defineEmits<{
 }>();
 
 const { pushNotification } = notificationStore();
-
-const topics = computed(() => ts.topics);
 const { updateTopic, removeTopic } = ts;
 
 const handleRemoveTopic = (topic: TopicData, index: number) => {
@@ -56,4 +61,20 @@ const handleUpdateTopic = async (title: string, topicID: number) => {
     if (res) res.title = title;
   });
 };
+
+const { locale } = useI18n();
+const topics = computed(() => ts.topics);
+
+const relativeTimeTopic = computed(() => {
+  dayjs.locale(locale.value);
+
+  const map = new Map<string, TopicData[]>();
+  topics.value.forEach((each) => {
+    const res = map.get(dayjs(each.updateTime).fromNow());
+    if (res) res.push(each);
+    else map.set(dayjs(each.updateTime).fromNow(), [each]);
+  });
+
+  return map;
+});
 </script>

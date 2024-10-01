@@ -8,6 +8,13 @@ for (const [key, val] of Object.entries(Vi18N)) {
   };
 }
 
+import "dayjs/locale/zh";
+import "dayjs/locale/en";
+import "dayjs/locale/fr";
+import "dayjs/locale/ru";
+import "dayjs/locale/es";
+import "dayjs/locale/ar";
+
 export default defineI18nConfig(() => ({
   fallbackLocale: "en",
   messages,
