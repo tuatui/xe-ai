@@ -18,6 +18,7 @@
           @update="(v) => handleUpdateTopic(v, item.id)"
         />
       </VListItem>
+      <VDivider />
     </template>
   </VList>
 </template>
