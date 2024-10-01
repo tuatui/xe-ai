@@ -1,9 +1,7 @@
-import * as I18nData from "vuetify/locale";
-const { zhHans: zh, ...leftData } = I18nData;
-const Vi18N = { zh, ...leftData };
-
+// 便于编译器树摇优化，
+import { zhHans as zh, en, fr, ru, es, ar } from "vuetify/locale";
+const Vi18N = { zh, en, fr, ru, es, ar };
 const messages: Record<string, any> = {};
-
 for (const [key, val] of Object.entries(Vi18N)) {
   messages[key] = {
     $vuetify: val,
