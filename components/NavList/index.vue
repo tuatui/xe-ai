@@ -1,6 +1,6 @@
 <template>
   <VList
-    class="grow min-h-0 overflow-auto"
+    class="flex flex-col grow min-h-0"
     :aria-label="$t('aria.chatHistory')"
   >
     <VListItem lines="two">
@@ -11,23 +11,28 @@
         >开始新对话</VBtn
       >
     </VListItem>
-    <template v-for="([timeStr, topicList], i) in relativeTimeTopic">
-      <VListSubheader>{{ timeStr }}</VListSubheader>
-      <VListItem
-        role="option"
-        v-for="(item, i) in topicList"
-        @click="$emit('addChat', item)"
-        :key="item.id"
-        color="primary"
-      >
-        <NavListItem
-          :value="item.title || untitledStr"
-          @remove="handleRemoveTopic(item, i)"
-          @update="(v) => handleUpdateTopic(v, item.id)"
-        />
-      </VListItem>
-      <VDivider />
-    </template>
+    <div class="grow min-h-0 overflow-auto relative">
+      <template v-for="([timeStr, topicList], i) in relativeTimeTopic">
+        <div class="sticky top-0 z-10 bg-surface">
+          <VDivider />
+          <VListSubheader>{{ timeStr }}</VListSubheader>
+        </div>
+
+        <VListItem
+          role="option"
+          v-for="(item, i) in topicList"
+          @click="$emit('addChat', item)"
+          :key="item.id"
+          color="primary"
+        >
+          <NavListItem
+            :value="item.title || untitledStr"
+            @remove="handleRemoveTopic(item, i)"
+            @update="(v) => handleUpdateTopic(v, item.id)"
+          />
+        </VListItem>
+      </template>
+    </div>
   </VList>
 </template>
 <script setup lang="ts">
