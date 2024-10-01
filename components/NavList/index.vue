@@ -3,7 +3,15 @@
     class="grow min-h-0 overflow-auto"
     :aria-label="$t('aria.chatHistory')"
   >
-    <template v-for="[timeStr, topicList] in relativeTimeTopic">
+    <VListItem lines="two">
+      <VBtn
+        variant="tonal"
+        prepend-icon="mdi-plus"
+        @click="$emit('newTopicWithChat')"
+        >开始新对话</VBtn
+      >
+    </VListItem>
+    <template v-for="([timeStr, topicList], i) in relativeTimeTopic">
       <VListSubheader>{{ timeStr }}</VListSubheader>
       <VListItem
         role="option"
@@ -32,6 +40,7 @@ const ts = topicStore();
 const tabsStore = chatTabsStore();
 defineEmits<{
   addChat: [item: TopicData];
+  newTopicWithChat: [];
 }>();
 
 const { pushNotification } = notificationStore();

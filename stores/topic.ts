@@ -10,7 +10,7 @@ export const topicStore = defineStore("topic-store", () => {
   const topics = ref<TopicData[]>([]);
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
-  const getTopicData = async (id?: number): Promise<TopicData[]> => {
+  const getTopicData = async (id?: IDBValidKey): Promise<TopicData[]> => {
     let res: TopicData[] = [];
     try {
       taskCount.value++;

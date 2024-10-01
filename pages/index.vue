@@ -7,7 +7,10 @@
       :aria-label="$t('aria.sideNav')"
     >
       <div class="h-full w-full flex flex-col">
-        <NavList @add-chat="handleAddChatTabs" />
+        <NavList
+          @add-chat="handleAddChatTabs"
+          @new-topic-with-chat="handleAddTopic"
+        />
         <VDivider />
         <div class="flex gap1">
           <Setting />
@@ -36,6 +39,7 @@ const vt = ref(
     1
   )
 );
+const { updateTopic, getTopicData } = topicStore();
 const tabsStore = chatTabsStore();
 const focusedChat = focusedChatStore();
 const handleAddChatTabs = async (topic: TopicData) => {
@@ -65,6 +69,13 @@ const handleAddChatTabs = async (topic: TopicData) => {
   vt.value.children.push(newVT);
   await nextTick();
   focusedChat.chatTabsExpose?.add(topic);
+};
+
+const handleAddTopic = async () => {
+  const res = await updateTopic();
+  if (res === undefined) return;
+  const [newTopic] = await getTopicData(res);
+  handleAddChatTabs(newTopic);
 };
 </script>
 <style lang="scss" scoped>
