@@ -189,7 +189,7 @@ if (import.meta.client) {
 }
 const ts = topicStore();
 const handleNewChat = async () => {
-  const res = await ts.updateTopic("");
+  const res = await ts.updateTopic();
   if (!res) return;
   const newTopic = ts.topics.at(-1);
   if (newTopic) add(newTopic);

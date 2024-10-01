@@ -140,7 +140,7 @@
 const props = defineProps<{ topics: TopicData }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
-const { getTopicData, updateTopic2 } = topicStore();
+const { getTopicData, updateTopic } = topicStore();
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
 
@@ -296,7 +296,7 @@ determineSetting();
 
 const handleUpdateSelectedModel = (newVal?: string) => {
   if (newVal !== undefined && selectedBots.value?.id !== undefined)
-    updateTopic2({
+    updateTopic({
       id: props.topics.id,
       preferSetting: {
         preferBotID: selectedBots.value?.id,
@@ -306,7 +306,7 @@ const handleUpdateSelectedModel = (newVal?: string) => {
 };
 const handleUpdateSelectedBots = (newVal?: BotsData) => {
   if (newVal !== undefined && selectedModel.value !== undefined)
-    updateTopic2({
+    updateTopic({
       id: props.topics.id,
       preferSetting: {
         preferBotID: newVal.id,

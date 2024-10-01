@@ -173,7 +173,7 @@ const handleRemoveTopic = (topic: TopicData, index: number) => {
   });
 };
 const handleUpdateTopic = async (title: string, topicID: number) => {
-  await updateTopic(title, topicID);
+  await updateTopic({ title, id: topicID });
   tabsStore.globalSharedTabs.forEach((each) => {
     const res = each.value.topics.find((topic) => topic.id == topicID);
     if (res) res.title = title;

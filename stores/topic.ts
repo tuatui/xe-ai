@@ -36,34 +36,11 @@ export const topicStore = defineStore("topic-store", () => {
   };
   const updateCache = async () => (topics.value = await getTopicData());
 
-  const updateTopic = async (title: string, topicID?: number) => {
+  // TODO: 所有api应该改为此种格式
+  const updateTopic = async (topicData?: Partial<TopicData>) => {
     let res: IDBValidKey | undefined;
+    const clonedData = cloneDeep(topicData ?? { title: "" });
     try {
-      taskCount.value++;
-      const db = await iDB.onDBReady();
-      if (topicID === undefined)
-        res = await db.add(IDB_VAR.TOPICS, {
-          title,
-        } as Partial<TopicData>);
-      else
-        res = await db.put(IDB_VAR.TOPICS, {
-          id: topicID,
-          title,
-        });
-      topics.value = await db.getAll(IDB_VAR.TOPICS);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      taskCount.value--;
-      return res;
-    }
-  };
-  // TODO: updateTopic需要删除，并且所有api应该改为此种格式
-  const updateTopic2 = async (topicData?: Partial<TopicData>) => {
-    let res: IDBValidKey | undefined;
-    const clonedData = cloneDeep(topicData);
-    try {
-      if (!clonedData) throw new Error("could not clone data");
       taskCount.value++;
       const db = await iDB.onDBReady();
       if (topicData?.id === undefined)
@@ -85,7 +62,6 @@ export const topicStore = defineStore("topic-store", () => {
     topics,
     isPending,
     updateTopic,
-    updateTopic2,
     removeTopic,
     getTopicData,
     updateCache,
