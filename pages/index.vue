@@ -12,13 +12,7 @@
         <div class="flex gap1">
           <Setting />
           <I18nSwitch />
-          <XCommonBtn
-            variant="text"
-            icon
-            @click="theme.global.name.value = isDarkTheme ? 'light' : 'dark'"
-            :use-tooltip="$t('setting.switchTheme')"
-            use-icon="mdi-theme-light-dark"
-          />
+          <ThemeSwitch />
         </div>
       </div>
       <BottomSnackBar />
@@ -26,20 +20,12 @@
     <VMain class="max-h-100dvh">
       <AdjustableView v-model="vt" />
     </VMain>
-    <div
-      ref="dragger"
-      class="dragger offset-x top-0px fixed h-100dvh cursor-col-resize"
-      :class="{ active: isDragging }"
-      :style="{ left: `${position.x}px` }"
-    ></div>
+    <NavListResizer v-model="width" />
   </VLayout>
 </template>
 <script setup lang="tsx">
-const theme = useTheme();
-const isDarkTheme = computed(() => theme.global.current.value.dark);
-
 import { ChatTabs } from "#components";
-const dragger = ref<HTMLElement | null>(null);
+const width = ref(200);
 
 const vt = ref(
   new ViewTree(
@@ -80,31 +66,6 @@ const handleAddChatTabs = async (topic: TopicData) => {
   await nextTick();
   focusedChat.chatTabsExpose?.add(topic);
 };
-
-const { isDragging, position } = useMouseDrag(
-  dragger,
-  {
-    init: { x: 200, y: 0 },
-  },
-  {
-    onTryDrag: (pos) => {
-      const max = window.innerWidth / 3;
-      const min = Math.min(max / 3, 100);
-      if (pos.x > max) return { x: max };
-      else if (pos.x > min) return pos;
-      else return { x: min };
-    },
-  }
-);
-const width = ref(position.value.x);
-watchDebounced(
-  () => position.value.x,
-  () => (width.value = position.value.x),
-  {
-    debounce: 50,
-    maxWait: 50,
-  }
-);
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *;
