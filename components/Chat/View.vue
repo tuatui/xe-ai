@@ -269,6 +269,7 @@ const updateHandle = async () => {
       chat.context += context;
       updateDebounced(data, chat);
     }
+    updateTopic({ id: props.topics.id });
   } catch (error) {
   } finally {
     data.value.isProducing = false;

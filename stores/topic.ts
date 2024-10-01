@@ -44,7 +44,9 @@ export const topicStore = defineStore("topic-store", () => {
   // TODO: 所有api应该改为此种格式
   const updateTopic = async (topicData?: Partial<TopicData>) => {
     let res: IDBValidKey | undefined;
-    const clonedData = cloneDeep(topicData ?? { title: "" });
+    const clonedData = cloneDeep(
+      topicData ?? { title: "", updateTime: new Date() }
+    );
     try {
       taskCount.value++;
       const db = await iDB.onDBReady();
@@ -53,9 +55,10 @@ export const topicStore = defineStore("topic-store", () => {
       else {
         const oldData: TopicData = await db.get(IDB_VAR.TOPICS, topicData.id);
         const mergedData = mergeDeep(oldData, clonedData);
+        mergedData.updateTime = new Date();
         res = await db.put(IDB_VAR.TOPICS, mergedData);
       }
-      topics.value = await db.getAll(IDB_VAR.TOPICS);
+      topics.value = await getTopicData();
     } catch (error) {
       console.error(error);
     } finally {
