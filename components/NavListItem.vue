@@ -4,19 +4,21 @@
       <h2 class="grow v-list-item-title">{{ value }}</h2>
       <VSpeedDial
         open-delay="200"
+        close-delay="200"
+        close-on-content-click
+        submenu
         location="right center"
         transition="scale-transition"
         open-on-hover
       >
         <template v-slot:activator="{ props: activatorProps }">
-          <XCommonBtn
+          <VBtn
             v-bind="activatorProps"
             :class="{ dialog: activatorProps['aria-expanded'] === 'false' }"
             size="small"
-            icon
+            icon="mdi-dots-vertical"
             variant="text"
-            use-icon="mdi-dots-vertical"
-            :use-tooltip="$t('common.moreOptions')"
+            :title="$t('common.moreOptions')"
           />
         </template>
         <XCommonBtn
@@ -25,6 +27,7 @@
           @click="isEdit = true"
           use-icon="mdi-pencil"
           :use-tooltip="$t('common.edit')"
+          tooltip-location="top"
         />
         <XCommonBtn
           key="2"
@@ -33,15 +36,18 @@
           @click="$emit('remove')"
           use-icon="mdi-delete"
           :use-tooltip="$t('common.delete')"
+          tooltip-location="top"
         />
       </VSpeedDial>
     </div>
 
     <VTextField
       v-if="isEdit"
+      autofocus
       v-click-outside="handleUpdate"
       @click.stop
-      @keydown.esc="handleEscape"
+      @keydown.enter="handleUpdate"
+      @keydown.esc.tab="handleEscape"
       variant="outlined"
       v-model="valueCopy"
       hide-details
