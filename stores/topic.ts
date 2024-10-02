@@ -7,7 +7,7 @@ export interface TopicData {
 
 export const topicStore = defineStore("topic-store", () => {
   const iDB = useIndexedDBStore();
-  const topics = ref<TopicData[]>([]);
+  const topics = shallowRef<TopicData[]>([]);
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
   const getTopicData = async (id?: IDBValidKey): Promise<TopicData[]> => {
@@ -34,15 +34,23 @@ export const topicStore = defineStore("topic-store", () => {
 
   // TODO: 需要重构IDB模块
 
-  // 删除后不会自动更新
-  const removeTopic = async (topicID: number) => {
+  const removeTopic = async (topicID: number, autoUpdateCache = true) => {
     const idb = await iDB.onDBReady();
     await idb.delete(IDB_VAR.TOPICS, topicID);
+    if (autoUpdateCache) {
+      const res = topics.value.findIndex((topic) => topic.id === topicID);
+      if (res < 0) return;
+      topics.value.splice(res, 1);
+      triggerRef(topics);
+    }
   };
   const updateCache = async () => (topics.value = await getTopicData());
 
   // TODO: 所有api应该改为此种格式
-  const updateTopic = async (topicData?: Partial<TopicData>) => {
+  const updateTopic = async (
+    topicData?: Partial<TopicData>,
+    autoUpdateCache = true
+  ) => {
     let res: IDBValidKey | undefined;
     const clonedData = cloneDeep(
       topicData ?? { title: "", updateTime: new Date() }
@@ -50,15 +58,27 @@ export const topicStore = defineStore("topic-store", () => {
     try {
       taskCount.value++;
       const db = await iDB.onDBReady();
-      if (topicData?.id === undefined)
+      if (topicData?.id === undefined) {
         res = await db.add(IDB_VAR.TOPICS, clonedData);
-      else {
+        if (autoUpdateCache) {
+          clonedData.id = res as number;
+          topics.value.unshift(clonedData as TopicData);
+          triggerRef(topics);
+        }
+      } else {
         const oldData: TopicData = await db.get(IDB_VAR.TOPICS, topicData.id);
         const mergedData = mergeDeep(oldData, clonedData);
         mergedData.updateTime = new Date();
         res = await db.put(IDB_VAR.TOPICS, mergedData);
+        if (autoUpdateCache) {
+          const index = topics.value.findIndex((topic) => topic.id === res);
+          if (index >= 0) {
+            topics.value.splice(index, 1);
+            topics.value.unshift(mergedData);
+            triggerRef(topics);
+          }
+        }
       }
-      topics.value = await getTopicData();
     } catch (error) {
       console.error(error);
     } finally {
