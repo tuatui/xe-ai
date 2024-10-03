@@ -12,9 +12,13 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.3",
+    "@trpc/client": "^10.45.2",
+    "@trpc/server": "^10.45.2",
     "idb": "^8.0.0",
     "nuxt": "^3.13.2",
-    "vue": "latest"
+    "trpc-nuxt": "^0.10.22",
+    "vue": "latest",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@iconify-json/logos": "^1.2.0",
