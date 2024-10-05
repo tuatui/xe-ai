@@ -1,0 +1,59 @@
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String
+  password    String
+  posts       Topic[]
+  BotProvider BotProvider[]
+}
+
+model Topic {
+  id         Int      @id @default(autoincrement())
+  title      String?
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId   Int
+  upDateTime DateTime
+  Chat       Chat[]
+}
+
+model Chat {
+  id      Int    @id @default(autoincrement())
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  topicId Int
+  context String
+  from    Int // enum ChatRole
+}
+
+model BotProvider {
+  id             Int         @id @default(autoincrement())
+  localId        Int // 浏览器INDEX DB存储的id
+  owner          User        @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId        Int
+  provider       Int // enum Provider
+  secretKey      String
+  iv             String
+  nickName       String
+  name           String
+  apiUrl         String
+  availableModel ModelList[]
+}
+
+model ModelList {
+  id Int @id @default(autoincrement())
+
+  name  String
+  owner String //是AI模型的提供商名字，并非用户名
+
+  BotProvider   BotProvider @relation(fields: [botProviderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  botProviderId Int
+}

@@ -1,5 +1,5 @@
 <template>
-  <VDialog v-model="model" class="max-w-[max(40dvw,500px)]">
+  <VDialog v-model="model" class="max-w-[max(40dvw,700px)]">
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
@@ -16,7 +16,7 @@
         <VListItem
           v-for="bot in bots"
           :subtitle="formatTitle(bot)"
-          :title="bot.nick_name"
+          :title="bot.nickName"
           @click="openDialog(bot)"
         >
           <template v-slot:prepend>
@@ -80,7 +80,7 @@ const formatTitle = (bot: Partial<BotsData>) => {
     if (info) title += info.provider + " ";
   }
 
-  if (bot.secret_key !== undefined) title += hidePartialStr(bot.secret_key);
+  if (bot.secretKey !== undefined) title += hidePartialStr(bot.secretKey);
   return title;
 };
 </script>

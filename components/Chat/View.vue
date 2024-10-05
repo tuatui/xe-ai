@@ -52,12 +52,13 @@
       </div>
       <VToolbar density="compact">
         <VSelect
+          variant="filled"
           class="max-w50 ml1"
           density="compact"
           :items="bots"
           v-model="selectedBots"
           @update:model-value="handleUpdateSelectedBots"
-          :item-props="(item) => ({ title: item.nick_name })"
+          :item-props="(item) => ({ title: item.nickName })"
           return-object
           hide-details
         >
@@ -73,6 +74,7 @@
           </template>
         </VSelect>
         <VSelect
+          variant="filled"
           class="max-w50 ml1"
           density="compact"
           :items="modelList"
@@ -236,7 +238,7 @@ watch(selectedBots, (newVal) => {
     return;
   }
   gptChat = GPTChatService.createChatSession({
-    apiKey: newVal.secret_key,
+    apiKey: newVal.secretKey,
     baseURL: newVal.apiUrl,
   });
 });
@@ -347,7 +349,6 @@ const takeSnapshot = async () => {
     contentBody.value.classList[0],
     contentBody.value.classList[1],
   ];
-  console.log(isDark);
   toSnapshot({
     careClassNames,
     isDark,

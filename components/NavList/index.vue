@@ -1,9 +1,9 @@
 <template>
   <VList
-    class="flex flex-col grow min-h-0"
+    class="flex flex-col grow min-h-0 !pb0"
     :aria-label="$t('aria.chatHistory')"
   >
-    <VListItem lines="two">
+    <VListItem lines="two" class="pt1">
       <VBtn
         variant="tonal"
         prepend-icon="mdi-plus"
@@ -11,7 +11,7 @@
         >开始新对话</VBtn
       >
     </VListItem>
-    <div class="grow min-h-0 overflow-auto relative">
+    <div class="grow min-h-0 overflow-auto relative pb2">
       <template v-for="[timeStr, topicList] in relativeTimeTopic">
         <div class="sticky top-0 z-10 bg-surface">
           <VDivider />

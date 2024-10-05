@@ -19,6 +19,10 @@ export default {
     close: "关闭",
     language: "语言",
     notEnoughSpace: "空间不足",
+    password: "密码",
+    account: "账号",
+    login: "登录",
+    loginOut: "注销",
   },
   aria: {
     sideNav: "侧边导航栏",
@@ -50,6 +54,7 @@ export default {
       noData: "没有数据，尝试获取一下或者手动创建",
       fetch: "获取模型",
     },
+    user: "用户",
   },
   module: {
     config: "配置模型",

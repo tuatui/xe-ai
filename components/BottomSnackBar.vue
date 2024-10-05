@@ -2,7 +2,6 @@
   <VSnackbar
     :model-value="Boolean(curr)"
     transition="slide-y-reverse-transition"
-    @update:model-value="console.log('sb')"
     :timeout="-1"
     location="bottom left"
   >

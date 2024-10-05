@@ -78,10 +78,9 @@ const handleEscape = () => {
 const isEdit = ref(false);
 </script>
 <style lang="css">
-.dialog {
-  opacity: 0;
-}
-.nav-h-root:hover .dialog {
-  opacity: 1;
+.nav-h-root:not(:hover, :focus) .dialog {
+  opacity: 0.3;
+  overflow: hidden;
+  width: 0;
 }
 </style>

@@ -26,6 +26,7 @@ export default defineNuxtConfig({
     "vuetify-nuxt-module",
     "unplugin-icons/nuxt",
     "@nuxtjs/i18n",
+    "nuxt-auth-utils",
   ],
   vuetify: {
     // 手动控制导入，以解决自带的类名和unocss冲突的问题

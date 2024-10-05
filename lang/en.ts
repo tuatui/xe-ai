@@ -17,6 +17,10 @@ export default {
     close: "Close",
     language: "Language",
     notEnoughSpace: "Not Enough Space",
+    password: "Password",
+    account: "Account",
+    login: "Login",
+    loginOut: "Login Out"
   },
   aria: {
     sideNav: "Side Navigation",
@@ -49,6 +53,7 @@ export default {
         "No data available. Please try fetching data or add one manually.",
       fetch: "Fetch Model",
     },
+    user: "User",
   },
   module: {
     config: "Configure Module",

@@ -28,11 +28,11 @@
             placeholder="https://"
           />
           <VTextField
-            v-model="botsInfoClone.nick_name"
+            v-model="botsInfoClone.nickName"
             :label="$t('common.name')"
           />
           <VTextField
-            v-model="botsInfoClone.secret_key"
+            v-model="botsInfoClone.secretKey"
             type="password"
             :label="$t('module.secretKey')"
           />
@@ -117,8 +117,8 @@ const emit = defineEmits<{
   newBotInfo: [Partial<BotsData>];
 }>();
 const createBotsInfo = (): Partial<BotsData> => ({
-  nick_name: "",
-  secret_key: "",
+  nickName: "",
+  secretKey: "",
   name: "chat-gpt-3.5",
   availableModel: [],
   provider: Provider.OpenAI,
@@ -156,7 +156,7 @@ const handleGetModelList = async () => {
     const services = Services[botsInfoClone.value.provider];
     if (!services) return;
     const session = services.createChatSession({
-      apiKey: botsInfoClone.value.secret_key,
+      apiKey: botsInfoClone.value.secretKey,
       baseURL: botsInfoClone.value.apiUrl,
     });
 
@@ -165,7 +165,7 @@ const handleGetModelList = async () => {
     isFetchingModelList.value = true;
     modelList.value = await session.getModelList();
   } catch (err) {
-    console.log(err);
+    console.warn(err);
   } finally {
     isFetchingModelList.value = false;
   }

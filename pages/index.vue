@@ -16,6 +16,7 @@
           <Setting />
           <I18nSwitch />
           <ThemeSwitch />
+          <SettingUser />
         </div>
       </div>
       <BottomSnackBar />
@@ -28,7 +29,7 @@
 </template>
 <script setup lang="tsx">
 import { ChatTabs } from "#components";
-const width = ref(200);
+const width = ref(205);
 
 const vt = ref(
   new ViewTree(

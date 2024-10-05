@@ -10,11 +10,12 @@ export default defineNuxtPlugin(() => {
    */
   const client = createTRPCNuxtClient<AppRouter>({
     links: [
+      customErrorHandleLink,
       httpBatchLink({
         url: "/api/trpc",
       }),
     ],
   });
-
+  
   return { provide: { client } };
 });

@@ -6,7 +6,7 @@ export interface ChatData {
 }
 
 export enum ChatRole {
-  system,
+  system = 0,
   user,
   assistant,
 }
