@@ -14,12 +14,12 @@
       </template>
       <VCardText>
         <VTextField
+          autocomplete="username"
           :label="$t('common.account')"
           v-model="form.name"
           :disabled="isSubmitting"
         />
-        <VTextField
-          type="password"
+        <XInputPwd
           :label="$t('common.password')"
           v-model="form.password"
           :disabled="isSubmitting"
@@ -69,6 +69,7 @@ const form = ref(createLoginForm());
 
 const isSubmitting = ref(false);
 const { diffServerAndLocalBot } = useBots();
+const { pushNotification } = notificationStore();
 const handleSubmit = async (ev: SubmitEventPromise) => {
   const res = await ev;
   if (!res.valid) return;
@@ -85,10 +86,19 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   });
   emit("unLockWin");
   isSubmitting.value = false;
-  if (!loginRes) return;
+  if (!loginRes) {
+    pushNotification({
+      content: "账号或密码错误",
+      timeout: 3000,
+      allowClose: false,
+    });
+    return;
+  }
 
   //TODO 原始密码改为派生密码
   await diffServerAndLocalBot(password);
   loginStore().userInfo = { ...loginRes.res, derivedPassword: password };
+
+  emit("close");
 };
 </script>

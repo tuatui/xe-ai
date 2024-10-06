@@ -19,8 +19,7 @@
 import type { VTooltip } from "vuetify/components";
 import type { VBtn } from "vuetify/components";
 type TextFieldSlots = InstanceType<typeof VTooltip>["location"];
-type VBtnProps = InstanceType<typeof VBtn>["$props"];
-
+type VBtnProps = VBtn["$props"];
 const cID = useId();
 interface Props extends /* @vue-ignore */ VBtnProps {
   useIcon?: string;

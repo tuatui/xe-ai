@@ -14,6 +14,7 @@
       </template>
       <VCardText>
         <VTextField
+          autocomplete="username"
           :label="$t('common.account')"
           v-model="form.name"
           :rules="[handleCheckName]"
@@ -24,10 +25,20 @@
         />
         <VTextField
           type="password"
+          autocomplete="new-password"
           :rules="[handlePasswordRule]"
           validate-on="invalid-input lazy"
           :label="$t('common.password')"
           v-model="form.password"
+          :hint="passwordHint"
+          :disabled="isSubmitting"
+        /><VTextField
+          type="password"
+          autocomplete="new-password"
+          :rules="[handlePasswordRepeatRule]"
+          validate-on="invalid-input lazy"
+          label="重复密码"
+          v-model="form.passwordRepeat"
           :hint="passwordHint"
           :disabled="isSubmitting"
         />
@@ -38,7 +49,6 @@
         <VBtn
           :disabled="isSubmitting"
           size="large"
-          type="submit"
           color="primary"
           :text="'返回'"
           @click="$emit('change')"
@@ -72,6 +82,7 @@ const $client = useNuxtApp().$client;
 const createLoginForm = () => ({
   name: "",
   password: "",
+  passwordRepeat: "",
 });
 const form = ref(createLoginForm());
 
@@ -98,6 +109,10 @@ const handlePasswordRule = (pwd: string) => {
   else if (pwd.length > 64) return "密码过长";
   return true;
 };
+const handlePasswordRepeatRule = () => {
+  if (form.value.password === form.value.passwordRepeat) return true;
+  return "前后输入的密码不一致";
+};
 
 const passwordStrong = ref(0);
 const passwordHint = computed(() => {
@@ -114,20 +129,23 @@ watch(
 
 const isSubmitting = ref(false);
 const handleSubmit = async (ev: SubmitEventPromise) => {
+  ev.preventDefault();
   const res = await ev;
   if (!res.valid) return;
 
   isSubmitting.value = true;
   emit("lockWin");
+  const pwd = form.value.password;
+  const pwdEncoded = await pbkdf2Crypto(form.value.name, pwd);
 
-  const pwdEncoded = await pbkdf2Crypto(form.value.name, form.value.password);
-
-  await $client.user.register.mutate({
+  const reg = await $client.user.register.mutate({
     name: form.value.name,
     password: pwdEncoded,
   });
 
   emit("unLockWin");
   isSubmitting.value = false;
+  loginStore().userInfo = { ...reg, derivedPassword: pwd };
+  emit("close");
 };
 </script>
