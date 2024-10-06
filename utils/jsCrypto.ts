@@ -1,4 +1,7 @@
-export const pbkdf2Crypto = async (name: string, pwd: string) => {
+export const pbkdf2Crypto = async (
+  name: string,
+  pwd: string
+): Promise<string> => {
   if (!crypto?.subtle) throw new Error("you should use https or localhost");
 
   const username = new TextEncoder().encode(name);
@@ -34,7 +37,14 @@ export const pbkdf2Crypto = async (name: string, pwd: string) => {
 
   return u8a2String(new Uint8Array(buf));
 };
-export const gcmCryptoEncrypt = async (key: string, data: string) => {
+export const gcmCryptoEncrypt = async (
+  key: string,
+  data: string
+): Promise<{
+  data: string;
+  iv: string;
+  key: string;
+}> => {
   const uData = new TextEncoder().encode(data);
 
   const uKey = await crypto.subtle.deriveBits(
@@ -82,7 +92,7 @@ export const gcmCryptoDecrypt = async ({
   key: string;
   data: string;
   iv: string;
-}) => {
+}): Promise<string> => {
   const uKey = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
@@ -116,7 +126,7 @@ export const gcmCryptoDecrypt = async ({
   return new TextDecoder().decode(decrypted);
 };
 export const u8a2String = (i: Uint8Array) => String.fromCharCode(...i);
-export const string2U8a = (i: string) => {
+export const string2U8a = (i: string): Uint8Array<ArrayBuffer> => {
   const u = new Uint8Array(i.length);
   for (let index = 0; index < i.length; index++) u[index] = i.charCodeAt(index);
   return u;

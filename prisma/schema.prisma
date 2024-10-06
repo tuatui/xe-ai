@@ -15,6 +15,10 @@ model User {
   password    String
   posts       Topic[]
   BotProvider BotProvider[]
+
+  localBotsLen   Int @default(0)
+  localTopicsLen Int @default(0)
+  localChatsLen  Int @default(0)
 }
 
 model Topic {
@@ -45,6 +49,7 @@ model BotProvider {
   nickName       String
   name           String
   apiUrl         String
+  createTime     String
   availableModel ModelList[]
 }
 

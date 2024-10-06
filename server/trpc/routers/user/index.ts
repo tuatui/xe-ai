@@ -1,6 +1,7 @@
 import { publicProcedure, router } from "~/server/trpc/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { authorizedProcedure } from "../../procedures";
 
 export const user = router({
   login: publicProcedure
@@ -39,14 +40,15 @@ export const user = router({
           code: "BAD_REQUEST",
           message: "用户名不可用",
         });
-      const { id } = await db.user.create({
+      const newUser = await db.user.create({
+        select: { id: true, name: true },
         data: {
           password,
           name,
         },
       });
-      await setUserSession(ev, { user: { id } });
-      return;
+      await setUserSession(ev, { user: { id: newUser.id } });
+      return newUser;
     }),
   checkName: publicProcedure
     .input(
@@ -62,4 +64,14 @@ export const user = router({
 
       return { isAvailable: !res };
     }),
+  getLocalDBLen: authorizedProcedure.query(({ ctx: { db, user } }) =>
+    db.user.findUniqueOrThrow({
+      where: { id: user.id },
+      select: {
+        localBotsLen: true,
+        localChatsLen: true,
+        localTopicsLen: true,
+      },
+    })
+  ),
 });

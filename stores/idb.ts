@@ -53,10 +53,16 @@ export const useIndexedDBStore = defineStore("idb-store", () => {
       blocking: () => console.warn("版本有更新"),
     });
   })();
-  const onDBReady = async () => {
+  const onDBReady = async (): Promise<IDBPDatabase<unknown>> => {
+    if (DB.value) return DB.value;
     await until(() => DB.value).toBeTruthy();
-
-    return DB.value as IDBPDatabase;
+    return DB.value as unknown as IDBPDatabase;
   };
-  return { DB, isAvailable, onDBReady };
+  const findLast = async (storeName: string) => {
+    const db = await onDBReady();
+    const idbIndex = db.transaction(storeName).store;
+    for await (const { value } of idbIndex.iterate(undefined, "prev"))
+      return value;
+  };
+  return { DB, isAvailable, onDBReady, findLast };
 });

@@ -4,10 +4,12 @@ export interface Notification {
   cancelable?: boolean;
   onCancel?: () => void;
   onFinish?: () => void;
+  allowClose?: boolean;
 }
 const defaultNotification: Notification = {
   content: "",
   timeout: 6000,
+  allowClose: true,
 };
 class NotificationElement {
   public cancelJob = () => {};

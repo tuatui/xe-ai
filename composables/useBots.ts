@@ -6,8 +6,10 @@ export interface BotsData {
   availableModel: ModelList[];
   name: string;
   apiUrl: string;
+  createTime: Date;
 }
-
+export type BotCreationData = Omit<BotsData, "id"> &
+  Pick<Partial<BotsData>, "id">;
 export const useBots = () => {
   const $client = useNuxtApp().$client;
   const iDB = useIndexedDBStore();
@@ -25,57 +27,105 @@ export const useBots = () => {
   };
 
   getBotsData().then((val) => (bots.value = val));
+  const lastBot = async (): Promise<BotsData | undefined> =>
+    iDB.findLast(IDB_VAR.BOTS);
 
-  const localBot2ServeBot = async (pwd: string, bot: BotsData) => {
-    const res = await gcmCryptoEncrypt(pwd, bot.secretKey);
-    if (!Array.isArray(bot.availableModel)) {
-      bot.availableModel = [];
-      console.warn("availableModel 需要是数组");
+  const localBot2ServeBot = async <
+    T extends {
+      secretKey: string;
+      createTime: Date;
     }
+  >(
+    pwd: string,
+    bot: T
+  ) => {
+    const res = await gcmCryptoEncrypt(pwd, bot.secretKey);
     return {
       ...bot,
       iv: res.iv,
       secretKey: res.data,
+      createTime: bot.createTime.toJSON(),
     };
   };
-  
-  const updateBot = async (data: Partial<BotsData>) => {
+  const updateBotNotSync = async (data: Partial<BotsData>) => {
     const db = await iDB.onDBReady();
+
     try {
       // vue的代理对象会导致序列化失败
       const clonedData = cloneDeep(data);
       clonedData.availableModel ??= [];
-      const userInfo = loginStore().userInfo;
-
+      let res: IDBValidKey;
       if (data.id === undefined) {
-        const res = await db.add(IDB_VAR.BOTS, clonedData);
-        if (userInfo) {
-          const [bot] = await getBotsData(res);
-          const sBot = await localBot2ServeBot(userInfo.derivedPassword, bot);
-          await $client.bot.create.mutate([sBot]);
-        }
+        clonedData.createTime ??= new Date();
+        res = await db.add(IDB_VAR.BOTS, clonedData);
       } else {
-        await db.put(IDB_VAR.BOTS, clonedData);
-        if (userInfo) {
-          const sBot = await localBot2ServeBot(
-            userInfo.derivedPassword,
-            clonedData as BotsData
-          );
-          await $client.bot.update.mutate(sBot);
-        }
+        res = await db.put(IDB_VAR.BOTS, clonedData);
       }
       bots.value = await getBotsData();
+      return res;
     } catch (error) {
       console.error(error);
-      console.warn("数据更新失败", data);
+      console.warn("IDB数据更新失败", data);
     }
   };
+  const updateBot = async (
+    data: BotCreationData
+  ): Promise<IDBValidKey | void> => {
+    const userInfo = loginStore().userInfo;
+    if (!userInfo) {
+      const id = await updateBotNotSync(data);
+      return id;
+    } else {
+      if (data.id === undefined) {
+        const sBot = await localBot2ServeBot(userInfo.derivedPassword, data);
+        const res = await $client.bot.create.mutate(sBot);
+        const id = await updateBotNotSync({
+          ...data,
+          id: res.localId,
+        });
+        return id;
+      } else {
+        const id = await updateBotNotSync(data);
+        const sBot = await localBot2ServeBot(
+          userInfo.derivedPassword,
+          data as BotsData
+        );
+        await $client.bot.update.mutate(sBot);
+        return id;
+      }
+    }
+  };
+  const deleteBotNotSync = async (id: IDBValidKey, autoUpdate = true) => {
+    const db = await iDB.onDBReady();
+    try {
+      await db.delete(IDB_VAR.BOTS, id);
+      if (!autoUpdate) return;
 
+      const index = bots.value.findIndex((bot) => bot.id == id);
+      if (index >= 0) bots.value.splice(index, 1);
+    } catch (error) {
+      console.error(error);
+      console.warn("数据更新失败");
+    }
+  };
+  const deleteBot = async (id: number) => {
+    const userInfo = loginStore().userInfo;
+    if (!userInfo) {
+      await deleteBotNotSync(id);
+      return;
+    } else {
+      await $client.bot.delete.mutate(id);
+      await deleteBotNotSync(id);
+    }
+  };
   const diffServerAndLocalBot = async (pwd: string) => {
-    const [serverSideBots, localSideBots] = await Promise.all([
-      $client.bot.getAll.query(),
-      getBotsData(),
-    ]);
+    const [
+      {
+        bots: serverSideBots,
+        info: { localBotsLen },
+      },
+      localSideBots,
+    ] = await Promise.all([$client.bot.getAll.query(), getBotsData()]);
 
     type ServerSideBot = (typeof serverSideBots)[0];
     const serveSideBotIdMap = new Map<number, ServerSideBot>();
@@ -89,7 +139,33 @@ export const useBots = () => {
 
     const needDecrypt = serveSideBotIdSet.difference(localSideBotIdSet);
     const needUpload = localSideBotIdSet.difference(serveSideBotIdSet);
+    const needCheck = localSideBotIdSet.intersection(serveSideBotIdSet);
 
+    await Promise.all(
+      (() => {
+        if (needCheck.size === 0) return [];
+        let idCursor = localBotsLen;
+        return needCheck
+          .values()
+          .filter((value) => {
+            const sBot = serveSideBotIdMap.get(value);
+            const lBot = localSideBotIdMap.get(value);
+            if (!sBot || !lBot) return false;
+            // 已同步的信息，就不动他
+            return sBot.createTime !== lBot.createTime.toJSON();
+          })
+          .map(async (value) => {
+            const lBot = localSideBotIdMap.get(value)!;
+            const newId = ++idCursor;
+            await deleteBotNotSync(value);
+            lBot.id = newId;
+            await updateBotNotSync(lBot);
+            localSideBotIdMap.set(newId, lBot);
+            needUpload.add(newId);
+            needDecrypt.add(value);
+          });
+      })()
+    );
     await Promise.all([
       Promise.all(
         needDecrypt.values().map(async (value) => {
@@ -101,7 +177,11 @@ export const useBots = () => {
           });
           bot.secretKey = secretKey;
 
-          await updateBot({ ...bot, id: bot.localId });
+          await updateBot({
+            ...bot,
+            id: bot.localId,
+            createTime: new Date(bot.createTime),
+          });
         })
       ),
       (async () => {
@@ -111,9 +191,16 @@ export const useBots = () => {
             return await localBot2ServeBot(pwd, bot);
           })
         );
-        await $client.bot.create.mutate(bots);
+        await $client.bot.sync.mutate(bots);
       })(),
     ]);
   };
-  return { bots, updateBot, getBotsData, diffServerAndLocalBot };
+  return {
+    bots,
+    updateBot,
+    getBotsData,
+    diffServerAndLocalBot,
+    lastBot,
+    deleteBot,
+  };
 };
