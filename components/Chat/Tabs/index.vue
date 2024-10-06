@@ -151,13 +151,11 @@ defineExpose(expose);
 const { pushNotification } = notificationStore();
 const { t } = useI18n();
 
-let canShow = true;
 const showWarn = () => {
-  if (!canShow) return;
-  canShow = false;
   pushNotification({
     content: t("common.notEnoughSpace"),
-    onFinish: () => (canShow = true),
+    allowClose: false,
+    timeout: 3000,
   });
 };
 

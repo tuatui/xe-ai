@@ -17,10 +17,10 @@
         撤销
       </VBtn>
       <VBtn
-        v-else
+        v-else-if="curr.notification.allowClose"
         variant="text"
         @click="curr.finishJob()"
-       color="#2196F3"
+        color="#2196F3"
         class="font-extrabold"
       >
         关闭
