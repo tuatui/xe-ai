@@ -45,6 +45,7 @@
         v-model="isBotsInfoDialogOpen"
         :bot-info="botsInfo"
         @new-bot-info="(n) => updateBot(n)"
+        @delete="deleteBot"
       />
       <template v-slot:actions>
         <div class="w-full">
@@ -62,18 +63,18 @@
 </template>
 <script setup lang="ts">
 const model = defineModel({ default: false });
-const { bots, updateBot } = useBots();
+const { bots, updateBot, deleteBot } = useBots();
 const dBot = defaultBotStore();
 const preferBotID = computed(() => dBot.defaultBotInfo.preferBotID);
 const isBotsInfoDialogOpen = ref(false);
 
-const botsInfo = ref<Partial<BotsData>>();
+const botsInfo = ref<BotCreationData>();
 const openDialog = (data?: BotsData) => {
   botsInfo.value = data;
   isBotsInfoDialogOpen.value = true;
 };
 
-const formatTitle = (bot: Partial<BotsData>) => {
+const formatTitle = (bot: BotCreationData) => {
   let title = "";
   if (bot.provider !== undefined) {
     const info = Services[bot.provider]?.info;

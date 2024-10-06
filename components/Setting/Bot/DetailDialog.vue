@@ -93,7 +93,7 @@
             color="error"
             :text="$t('common.delete')"
             variant="text"
-            @click="handleUpdate"
+            @click="handleDelete(botsInfoClone.id!)"
           />
           <VBtn
             size="large"
@@ -111,14 +111,16 @@
 <script setup lang="ts">
 const model = defineModel({ default: false });
 const props = defineProps<{
-  botInfo?: Partial<BotsData>;
+  botInfo?: BotCreationData;
 }>();
 const emit = defineEmits<{
-  newBotInfo: [Partial<BotsData>];
+  newBotInfo: [BotCreationData];
+  delete: [number];
 }>();
-const createBotsInfo = (): Partial<BotsData> => ({
+const createBotsInfo = (): BotCreationData => ({
   nickName: "",
   secretKey: "",
+  createTime: new Date(),
   name: "chat-gpt-3.5",
   availableModel: [],
   provider: Provider.OpenAI,
@@ -130,7 +132,11 @@ const handleUpdate = () => {
   emit("newBotInfo", botsInfoClone.value);
   model.value = false;
 };
-const botsInfoClone = ref<Partial<BotsData>>(props.botInfo ?? createBotsInfo());
+const handleDelete = (id: number) => {
+  emit("delete", id);
+  model.value = false;
+};
+const botsInfoClone = ref<BotCreationData>(props.botInfo ?? createBotsInfo());
 const isUpdate = computed(() => botsInfoClone.value.id !== undefined);
 watch(
   () => props.botInfo,
