@@ -1,88 +1,78 @@
-export interface ChatData {
-  id: number;
-  topic_id: number;
-  context: string;
-  from: ChatRole;
-}
-
-export enum ChatRole {
-  system = 0,
-  user,
-  assistant,
+export interface UseChatTempStore {
+  scrollTop?: number;
 }
 
 export type useChatReturn = Ref<{
   chats: ChatData[];
-  tempStore: {
-    scrollTop?: number;
-  };
+  tempStore: UseChatTempStore;
   isPending: boolean;
   isProducing: boolean;
   updateChat: (
-    context: string,
-    from?: number,
-    id?: IDBValidKey
-  ) => Promise<IDBValidKey | void>;
+    data: { context: string; from: number; id?: number },
+    autoUpdateCache?: boolean
+  ) => Promise<number>;
   chatRefCount: number;
   stopChatting: () => void;
 }>;
 
-export const useChats = (topicID: number): useChatReturn => {
-  const iDB = useIndexedDBStore();
+export const useChats = (topicId: number): useChatReturn => {
+  const chatLocal = new ChatLocal();
+  const chatServer = new ChatServer();
+  const ts = loginStore();
+
   const chats = ref<ChatData[]>([]);
-  const tempStore = ref({});
+  const tempStore = ref<UseChatTempStore>({});
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
   const isProducing = ref(false);
   const stopChatting = ref(() => {});
 
   const getChatsData = async (): Promise<ChatData[]> => {
-    if (!iDB.isAvailable) return [];
-    const db = await iDB.onDBReady();
-    try {
-      return await db.getAllFromIndex(IDB_VAR.CHATS, "topic_id", topicID);
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
+    taskCount.value++;
+    const chatData = ts.isLogin
+      ? await chatServer.get(topicId)
+      : await chatLocal.get(topicId);
+    taskCount.value--;
+
+    return chatData;
   };
 
-  taskCount.value++;
-  getChatsData().then((val) => {
-    chats.value = val;
-    taskCount.value--;
-  });
+  getChatsData().then((val) => (chats.value = val));
 
   const updateChat = async (
-    context: string,
-    from?: number,
-    id?: IDBValidKey
+    data: {
+      context: string;
+      from: number;
+      id?: number;
+    },
+    autoUpdateCache = true
   ) => {
-    const db = await iDB.onDBReady();
-
-    try {
-      taskCount.value++;
-      let key;
-      if (id === undefined)
-        key = await db.add(IDB_VAR.CHATS, {
-          context,
-          from,
-          topic_id: topicID,
-        } as Partial<ChatData>);
-      else
-        key = await db.put(IDB_VAR.CHATS, {
-          id,
-          context,
-          from,
-          topic_id: topicID,
-        } as Partial<ChatData>);
-      chats.value = await getChatsData();
-      return key;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      taskCount.value--;
+    taskCount.value++;
+    const res = ts.isLogin
+      ? await chatServer.update({
+          ...data,
+          topicId,
+        })
+      : await chatLocal.update({
+          ...data,
+          topicId,
+        });
+    if (autoUpdateCache) {
+      if (data.id === undefined) {
+        chats.value.push({
+          ...data,
+          id: res,
+          topicId,
+        });
+      } else {
+        const index = chats.value.findLastIndex((chat) => chat.id === data.id);
+        if (index >= 0) {
+          chats.value[index] = { ...data, id: res, topicId };
+        }
+      }
     }
+    taskCount.value--;
+    return res;
   };
   const chatRefCount = ref(0);
   return ref({

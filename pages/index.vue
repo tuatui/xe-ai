@@ -73,10 +73,10 @@ const handleAddChatTabs = async (topic: TopicData) => {
 };
 
 const handleAddTopic = async () => {
-  const res = await updateTopic();
-  if (res === undefined) return;
-  const [newTopic] = await getTopicData(res);
-  handleAddChatTabs(newTopic);
+  const newTopic = { title: "" };
+  const res = await updateTopic(newTopic);
+
+  handleAddChatTabs(res);
 };
 </script>
 <style lang="scss" scoped>

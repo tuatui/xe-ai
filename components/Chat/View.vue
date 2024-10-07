@@ -247,10 +247,15 @@ const updateHandle = async () => {
   if (!gptChat) return;
   if (data.value.isProducing) return;
 
-  await data.value.updateChat(userInput.value, ChatRole.user);
+  await data.value.updateChat({
+    context: userInput.value,
+    from: ChatRole.user,
+  });
   userInput.value = "";
-
-  const res = await data.value.updateChat("", ChatRole.assistant);
+  const res = await data.value.updateChat({
+    context: "",
+    from: ChatRole.assistant,
+  });
   if (res === undefined) return;
   const chat = data.value.chats.findLast((c) => c.id === res);
   if (chat === undefined) return;
@@ -271,7 +276,6 @@ const updateHandle = async () => {
       chat.context += context;
       updateDebounced(data, chat);
     }
-    updateTopic({ id: props.topics.id });
   } catch (error) {
   } finally {
     data.value.isProducing = false;
@@ -279,7 +283,11 @@ const updateHandle = async () => {
 };
 const updateDebounced = useDebounceFn(
   (data: useChatReturn, chat: ChatData) =>
-    data.value.updateChat(chat.context, ChatRole.assistant, chat.id),
+    data.value.updateChat({
+      context: chat.context,
+      from: ChatRole.assistant,
+      id: chat.id,
+    }),
   100
 );
 
@@ -297,27 +305,22 @@ const determineSetting = async () => {
 };
 determineSetting();
 
-const handleUpdateSelectedModel = (newVal?: string) => {
-  if (newVal !== undefined && selectedBots.value?.id !== undefined)
-    updateTopic({
-      id: props.topics.id,
-      preferSetting: {
-        preferBotID: selectedBots.value?.id,
-        preferModelName: newVal,
-      },
-    });
-};
-const handleUpdateSelectedBots = (newVal?: BotsData) => {
-  if (newVal !== undefined && selectedModel.value !== undefined)
-    updateTopic({
-      id: props.topics.id,
-      preferSetting: {
-        preferBotID: newVal.id,
-        preferModelName: selectedModel.value,
-      },
-    });
-};
-
+const handleUpdateSelectedModel = (newVal?: string) =>
+  updateTopic({
+    id: props.topics.id,
+    preferSetting: {
+      preferBotID: selectedBots.value?.id,
+      preferModelName: newVal,
+    },
+  });
+const handleUpdateSelectedBots = (newVal?: BotsData) =>
+  updateTopic({
+    id: props.topics.id,
+    preferSetting: {
+      preferBotID: newVal?.id,
+      preferModelName: selectedModel.value,
+    },
+  });
 const contentBody = ref<HTMLDivElement>();
 const isScrollToEnd = ref(true);
 const handleScroll = (ev: Event) => {

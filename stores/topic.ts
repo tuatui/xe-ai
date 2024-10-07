@@ -1,97 +1,78 @@
-export interface TopicData {
-  id: number;
-  title: string;
-  preferSetting?: DefaultBotSetting;
-  updateTime: Date;
-}
+type UseTopicCreationData = Omit<TopicCreationData, "updateTime"> &
+  Pick<Partial<TopicCreationData>, "updateTime">;
 
 export const topicStore = defineStore("topic-store", () => {
-  const iDB = useIndexedDBStore();
+  const topicLocal = new TopicInLocal();
+  const topicServer = new TopicInServer();
+
+  const ls = loginStore();
   const topics = shallowRef<TopicData[]>([]);
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
-  const getTopicData = async (id?: IDBValidKey): Promise<TopicData[]> => {
-    let res: TopicData[] = [];
-    try {
-      taskCount.value++;
-      const db = await iDB.onDBReady();
-      if (id === undefined) {
-        res = [];
-        const i = db
-          .transaction(IDB_VAR.TOPICS)
-          .store.index(IDB_VAR.TOPICS_KEY.UPDATE_TIME_INDEX);
-        for await (const { value } of i.iterate(undefined, "prev"))
-          res.push(value);
-      } else res = [await db.get(IDB_VAR.TOPICS, id)];
-    } catch (error) {
-      console.error(error);
-    } finally {
-      taskCount.value--;
-      return res;
-    }
-  };
-  getTopicData().then((v) => (topics.value = v));
 
-  // TODO: 需要重构IDB模块
+  const updateTopic = async (
+    data: UseTopicCreationData,
+    autoUpdateCache = true
+  ): Promise<TopicData> => {
+    const isCreate = data.id === undefined;
 
-  const removeTopic = async (topicID: number, autoUpdateCache = true) => {
-    const idb = await iDB.onDBReady();
-    await idb.delete(IDB_VAR.TOPICS, topicID);
+    let res: number;
+    taskCount.value++;
+    data.updateTime = new Date();
+    if (ls.isLogin) res = await topicServer.update(data as TopicCreationData);
+    else res = await topicLocal.update(data as TopicCreationData);
+    data.id = res;
+    taskCount.value--;
+
     if (autoUpdateCache) {
-      const res = topics.value.findIndex((topic) => topic.id === topicID);
+      if (isCreate) {
+        topics.value.unshift(data as TopicData);
+
+        triggerRef(topics);
+      } else {
+        const index = topics.value.findIndex((topic) => topic.id === res);
+        if (index >= 0) {
+          topics.value.splice(index, 1);
+          topics.value.unshift(data as TopicData);
+          triggerRef(topics);
+        }
+      }
+    }
+    return data as TopicData;
+  };
+
+  const getTopic = async (id?: number) => {
+    let res: TopicData[];
+
+    taskCount.value++;
+    if (ls.isLogin) res = await topicServer.get(id);
+    else res = await topicLocal.get(id);
+    taskCount.value--;
+
+    return res;
+  };
+
+  getTopic().then((v) => (topics.value = v));
+  const removeTopic = async (id: number, autoUpdateCache = true) => {
+    if (ls.isLogin) await topicServer.get(id);
+    else await topicLocal.get(id);
+
+    if (autoUpdateCache) {
+      const res = topics.value.findIndex((topic) => topic.id === id);
       if (res < 0) return;
       topics.value.splice(res, 1);
       triggerRef(topics);
     }
   };
-  const updateCache = async () => (topics.value = await getTopicData());
 
-  // TODO: 所有api应该改为此种格式
-  const updateTopic = async (
-    topicData?: Partial<TopicData>,
-    autoUpdateCache = true
-  ) => {
-    let res: IDBValidKey | undefined;
-    const clonedData = cloneDeep(
-      topicData ?? { title: "", updateTime: new Date() }
-    );
-    try {
-      taskCount.value++;
-      const db = await iDB.onDBReady();
-      if (topicData?.id === undefined) {
-        res = await db.add(IDB_VAR.TOPICS, clonedData);
-        if (autoUpdateCache) {
-          clonedData.id = res as number;
-          topics.value.unshift(clonedData as TopicData);
-          triggerRef(topics);
-        }
-      } else {
-        const oldData: TopicData = await db.get(IDB_VAR.TOPICS, topicData.id);
-        const mergedData = mergeDeep(oldData, clonedData);
-        mergedData.updateTime = new Date();
-        res = await db.put(IDB_VAR.TOPICS, mergedData);
-        if (autoUpdateCache) {
-          const index = topics.value.findIndex((topic) => topic.id === res);
-          if (index >= 0) {
-            topics.value.splice(index, 1);
-            topics.value.unshift(mergedData);
-            triggerRef(topics);
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      taskCount.value--;
-      return res;
-    }
-  };
+  const updateCache = async () => (topics.value = await getTopic());
+
   return {
     topics,
     isPending,
     updateTopic,
     removeTopic,
-    getTopicData,
+    getTopicData: getTopic,
     updateCache,
   };
 });
