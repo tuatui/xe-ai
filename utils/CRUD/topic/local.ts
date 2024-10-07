@@ -17,9 +17,8 @@ export class Topic implements TopicInterface {
       } else res = [await db.get(IDB_VAR.TOPICS, id)];
     } catch (error) {
       console.error(error);
-    } finally {
-      return res;
     }
+    return res;
   };
   public update = async (topicData: TopicCreationData) => {
     let res: number = -1;
@@ -36,9 +35,8 @@ export class Topic implements TopicInterface {
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      return res;
     }
+    return res;
   };
   public remove = async (topicID: number) => {
     const idb = await this.iDB.onDBReady();

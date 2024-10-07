@@ -92,7 +92,7 @@
 </template>
 <script setup lang="ts">
 // 不能动态改动uniqueKey，有需要可以再创建新的组件实例
-const { uniqueKey } = defineProps<{ uniqueKey: Symbol }>();
+const { uniqueKey } = defineProps<{ uniqueKey: symbol }>();
 const store = chatTabsStore();
 const divElem = ref<HTMLDivElement>();
 const untitledStr = useT("chat.untitled");
@@ -111,7 +111,7 @@ watch(
   () => data.value.topics.length,
   (newVal, oldVal) => {
     if (newVal > oldVal) data.value.currTab = data.value.topics.at(-1)?.id;
-  }
+  },
 );
 
 const remove = (topic: TopicData) => {

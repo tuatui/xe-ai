@@ -9,7 +9,22 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "db:generate": "prisma migrate dev",
-    "db:migrate": "prisma migrate deploy"
+    "db:migrate": "prisma migrate deploy",
+    "lint": "oxlint",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,vue}": [
+      "oxlint --max-warnings 0",
+      "bash -c 'vue-tsc --noEmit --skipLibCheck'",
+      "prettier --ignore-unknown --write"
+    ],
+    "*.{css,scss,sass,md,json}": [
+      "prettier --ignore-unknown --write"
+    ],
+    "!(pnpm-lock).yml": [
+      "prettier --ignore-unknown --write"
+    ]
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -33,14 +48,19 @@
     "dayjs": "^1.11.13",
     "github-markdown-css": "^5.6.1",
     "highlight.js": "^11.10.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "marked": "^14.1.2",
     "marked-highlight": "^2.1.4",
     "openai": "^4.58.2",
+    "oxlint": "^0.9.9",
+    "prettier": "3.3.3",
     "prisma": "^5.20.0",
     "ress": "^5.0.2",
     "sass-embedded": "1.78.0",
     "unocss": "^0.62.3",
     "unplugin-icons": "^0.19.3",
+    "vue-tsc": "^2.1.6",
     "vuetify": "3.7.1",
     "vuetify-nuxt-module": "0.18.2"
   }

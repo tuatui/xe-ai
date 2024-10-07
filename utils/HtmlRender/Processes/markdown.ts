@@ -15,7 +15,7 @@ const marked = new Marked(
   markedHighlight({
     async: true,
     langPrefix: "hljs language-",
-    async highlight(code, lang, info) {
+    async highlight(code, lang) {
       lang = lang.toLowerCase();
       if (lang && !hljsCore.getLanguage(lang)) {
         const target = languagesList[langAliasMap.get(lang) ?? -1];
@@ -31,7 +31,7 @@ const marked = new Marked(
       const language = hljsCore.getLanguage(lang) ? lang : "plaintext";
       return hljsCore.highlight(code, { language }).value;
     },
-  })
+  }),
 );
 
 export default (text: string) => marked.parse(text);

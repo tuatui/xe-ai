@@ -1,13 +1,13 @@
 export const chatTabsStore = defineStore("chat-tabs", () => {
   const globalSharedTabs = ref(
     new Map<
-      Symbol,
+      symbol,
       Ref<{
         topics: TopicData[];
         currTab: number | undefined;
-        expose?: ChatTabsExpose
+        expose?: ChatTabsExpose;
       }>
-    >()
+    >(),
   );
 
   return { globalSharedTabs };

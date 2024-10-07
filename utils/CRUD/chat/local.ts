@@ -25,8 +25,7 @@ export class ChatLocal implements ChatInterface {
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      return id as number;
     }
+    return id as number;
   };
 }

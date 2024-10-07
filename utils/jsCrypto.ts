@@ -1,6 +1,6 @@
 export const pbkdf2Crypto = async (
   name: string,
-  pwd: string
+  pwd: string,
 ): Promise<string> => {
   if (!crypto?.subtle) throw new Error("you should use https or localhost");
 
@@ -12,7 +12,7 @@ export const pbkdf2Crypto = async (
     password,
     "PBKDF2",
     false,
-    ["deriveBits"]
+    ["deriveBits"],
   );
   const salt = await crypto.subtle.deriveBits(
     {
@@ -22,7 +22,7 @@ export const pbkdf2Crypto = async (
       iterations: 1024,
     },
     baseKey,
-    512
+    512,
   );
   const buf = await crypto.subtle.deriveBits(
     {
@@ -32,14 +32,14 @@ export const pbkdf2Crypto = async (
       iterations: 1e6,
     },
     baseKey,
-    256
+    256,
   );
 
   return u8a2String(new Uint8Array(buf));
 };
 export const gcmCryptoEncrypt = async (
   key: string,
-  data: string
+  data: string,
 ): Promise<{
   data: string;
   iv: string;
@@ -59,9 +59,9 @@ export const gcmCryptoEncrypt = async (
       new TextEncoder().encode(key),
       "PBKDF2",
       false,
-      ["deriveBits"]
+      ["deriveBits"],
     ),
-    256
+    256,
   );
 
   const baseKey = await crypto.subtle.importKey("raw", uKey, "AES-GCM", false, [
@@ -74,7 +74,7 @@ export const gcmCryptoEncrypt = async (
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv } satisfies AesGcmParams,
     baseKey,
-    uData
+    uData,
   );
 
   return {
@@ -105,9 +105,9 @@ export const gcmCryptoDecrypt = async ({
       new TextEncoder().encode(key),
       "PBKDF2",
       false,
-      ["deriveBits"]
+      ["deriveBits"],
     ),
-    256
+    256,
   );
   const baseKey = await crypto.subtle.importKey("raw", uKey, "AES-GCM", false, [
     "encrypt",
@@ -120,13 +120,13 @@ export const gcmCryptoDecrypt = async ({
   const decrypted = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: uIv } satisfies AesGcmParams,
     baseKey,
-    uData
+    uData,
   );
 
   return new TextDecoder().decode(decrypted);
 };
 export const u8a2String = (i: Uint8Array) => String.fromCharCode(...i);
-export const string2U8a = (i: string): Uint8Array<ArrayBuffer> => {
+export const string2U8a = (i: string): Uint8Array => {
   const u = new Uint8Array(i.length);
   for (let index = 0; index < i.length; index++) u[index] = i.charCodeAt(index);
   return u;

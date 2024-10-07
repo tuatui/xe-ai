@@ -4,11 +4,17 @@ export class Topic implements TopicInterface {
   constructor(private $client = useNuxtApp().$client) {}
   public get = async (id?: number): Promise<TopicData[]> => {
     try {
-      return (await this.$client.topic.get.mutate({ id })).map((topic) => ({
-        ...topic,
-        updateTime: new Date(topic.updateTime),
-        title: topic.title ?? "",
-      }));
+      return (await this.$client.topic.get.mutate({ id })).map(
+        ({ preferSetting: { preferBotID, preferModelName }, ...topic }) => ({
+          ...topic,
+          updateTime: new Date(topic.updateTime),
+          title: topic.title ?? "",
+          preferSetting: {
+            preferBotID: preferBotID ?? undefined,
+            preferModelName: preferModelName ?? undefined,
+          },
+        }),
+      );
     } catch (error) {
       console.error(error);
       return [];

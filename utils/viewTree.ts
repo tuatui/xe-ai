@@ -3,11 +3,11 @@ export class ViewTree {
   public view?: VNode;
   constructor(
     public isLeaf: boolean,
-    public createVNode?: (uniqueKey: Symbol) => VNode,
+    public createVNode?: (uniqueKey: symbol) => VNode,
 
     public isVertical: boolean = false,
     public children: ViewTree[] = [],
-    public space: number = 1
+    public space: number = 1,
   ) {
     if (createVNode) this.view = createVNode(this.uniqueKey);
   }
