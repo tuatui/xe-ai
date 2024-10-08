@@ -6,10 +6,10 @@ export class ChatServer implements ChatInterface {
     let chatData: ChatData[];
     try {
       const res = await this.$client.chat.getFromTopic.query(topicId);
-      chatData = res.Chat;
+      chatData = res.chats;
     } catch (error) {
       chatData = [];
-      console.log(error);
+      console.error(error);
     }
     return chatData;
   };
@@ -23,7 +23,7 @@ export class ChatServer implements ChatInterface {
         return id;
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return -1;
     }
   };

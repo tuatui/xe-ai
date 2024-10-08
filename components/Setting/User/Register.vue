@@ -124,9 +124,9 @@ const passwordHint = computed(() => {
 });
 watch(
   () => form.value.password,
-  (newPwd) => (passwordStrong.value = testPasswordStrong(newPwd))
+  (newPwd) => (passwordStrong.value = testPasswordStrong(newPwd)),
 );
-
+const { diffServerAndLocalBot } = useBots();
 const isSubmitting = ref(false);
 const handleSubmit = async (ev: SubmitEventPromise) => {
   ev.preventDefault();
@@ -136,16 +136,18 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   isSubmitting.value = true;
   emit("lockWin");
   const pwd = form.value.password;
-  const pwdEncoded = await pbkdf2Crypto(form.value.name, pwd);
+  const pwdEncoded = await derivePwd(form.value.name, pwd);
 
   const reg = await $client.user.register.mutate({
     name: form.value.name,
     password: pwdEncoded,
   });
+  loginStore().userInfo = { ...reg, derivedPassword: pwdEncoded };
+  await diffServerAndLocalBot(pwdEncoded);
 
   emit("unLockWin");
   isSubmitting.value = false;
-  loginStore().userInfo = { ...reg, derivedPassword: pwd };
+
   emit("close");
 };
 </script>

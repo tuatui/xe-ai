@@ -2,6 +2,7 @@ import { publicProcedure, router } from "~/server/trpc/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { authorizedProcedure } from "../../procedures";
+import { checkDerivePwdFast, derivePwdFast } from "~/utils/jsCrypto";
 
 export const user = router({
   login: publicProcedure
@@ -9,16 +10,19 @@ export const user = router({
       z.object({
         name: z.string(),
         password: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx: { db, ev } }) => {
       const res = await db.user.findFirst({
-        select: { name: true, id: true },
+        select: { name: true, id: true, password: true },
         where: {
-          AND: [{ name: input.name }, { password: input.password }],
+          AND: [{ name: input.name }],
         },
       });
       if (!res) return null;
+      const isCorrect = checkDerivePwdFast(input.password, res.password);
+      if (!isCorrect) return null;
+
       await setUserSession(ev, { user: { id: res.id } });
       return { res };
     }),
@@ -27,7 +31,7 @@ export const user = router({
       z.object({
         name: z.string(),
         password: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input: { password, name }, ctx: { db, ev } }) => {
       const res = await db.user.findFirst({
@@ -43,7 +47,7 @@ export const user = router({
       const newUser = await db.user.create({
         select: { id: true, name: true },
         data: {
-          password,
+          password: await derivePwdFast(password),
           name,
         },
       });
@@ -54,7 +58,7 @@ export const user = router({
     .input(
       z.object({
         name: z.string(),
-      })
+      }),
     )
     .query(async ({ input: { name }, ctx: { db } }) => {
       const res = await db.user.findFirst({
@@ -72,6 +76,6 @@ export const user = router({
         localChatsLen: true,
         localTopicsLen: true,
       },
-    })
+    }),
   ),
 });

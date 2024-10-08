@@ -1,10 +1,31 @@
-export const pbkdf2Crypto = async (
-  name: string,
+export const derivePwd = async (name: string, pwd: string): Promise<string> =>
+  pbkdf2Crypto(pwd, 1e6, name);
+
+const SALT_LEN = 16;
+const SALT_ITER = 1e5;
+export const derivePwdFast = async (pwd: string): Promise<string> => {
+  const salt = crypto.getRandomValues(new Uint8Array(SALT_LEN));
+  const res = await pbkdf2Crypto(pwd, SALT_ITER, salt);
+  return u8a2String(salt) + res;
+};
+
+export const checkDerivePwdFast = async (
   pwd: string,
+  sk: string,
+): Promise<boolean> => {
+  const salt = string2U8a(sk.slice(0, SALT_LEN));
+  const derivePwd = sk.slice(SALT_LEN);
+  const res = await pbkdf2Crypto(pwd, SALT_ITER, salt);
+  return derivePwd === res;
+};
+
+const pbkdf2Crypto = async (
+  pwd: string,
+  iterations: number,
+  useSalt?: Uint8Array | string,
 ): Promise<string> => {
   if (!crypto?.subtle) throw new Error("you should use https or localhost");
 
-  const username = new TextEncoder().encode(name);
   const password = new TextEncoder().encode(pwd);
 
   const baseKey = await crypto.subtle.importKey(
@@ -14,29 +35,37 @@ export const pbkdf2Crypto = async (
     false,
     ["deriveBits"],
   );
-  const salt = await crypto.subtle.deriveBits(
+
+  const salt =
+    typeof useSalt !== "string"
+      ? useSalt
+      : new Uint8Array(
+          await crypto.subtle.deriveBits(
+            {
+              name: "PBKDF2",
+              hash: "SHA-512",
+              salt: new TextEncoder().encode(useSalt),
+              iterations: 1024,
+            },
+            baseKey,
+            512,
+          ),
+        );
+
+  const buf = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
       hash: "SHA-512",
-      salt: username,
-      iterations: 1024,
+      salt,
+      iterations,
     },
     baseKey,
     512,
   );
-  const buf = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      hash: "SHA-256",
-      salt: new Uint8Array(salt),
-      iterations: 1e6,
-    },
-    baseKey,
-    256,
-  );
 
   return u8a2String(new Uint8Array(buf));
 };
+
 export const gcmCryptoEncrypt = async (
   key: string,
   data: string,

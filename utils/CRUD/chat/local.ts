@@ -28,7 +28,7 @@ export class ChatLocal implements ChatInterface {
         await db.put(IDB_VAR.CHATS, mergedVal);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     return id as number;
   };

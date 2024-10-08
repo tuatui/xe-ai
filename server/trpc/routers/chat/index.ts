@@ -10,7 +10,7 @@ export const chat = router({
         context: z.string(),
         from: z.nativeEnum(ChatRole),
         topicId: z.number(),
-      })
+      }),
     )
     .mutation(async ({ ctx: { db, user }, input }) => {
       await db.topic.findUniqueOrThrow({
@@ -32,7 +32,7 @@ export const chat = router({
         id: z.number(),
         context: z.string().optional(),
         from: z.nativeEnum(ChatRole).optional(),
-      })
+      }),
     )
     .mutation(({ ctx: { db, user }, input }) =>
       db.chat.update({
@@ -45,7 +45,7 @@ export const chat = router({
           context: input.context,
           from: input.from,
         },
-      })
+      }),
     ),
   delete: authorizedProcedure
     .input(z.object({ id: z.number() }))
@@ -55,14 +55,14 @@ export const chat = router({
           id: input.id,
           authorId: user.id,
         },
-      })
+      }),
     ),
   getFromTopic: authorizedProcedure
     .input(z.number())
     .query(({ ctx: { db, user }, input }) =>
       db.topic.findUniqueOrThrow({
-        include: { Chat: true },
+        include: { chats: true },
         where: { id: input, authorId: user.id },
-      })
+      }),
     ),
 });

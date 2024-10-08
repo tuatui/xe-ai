@@ -84,7 +84,7 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   emit("lockWin");
 
   const password = form.value.password;
-  const pwdEncoded = await pbkdf2Crypto(form.value.name, password);
+  const pwdEncoded = await derivePwd(form.value.name, password);
 
   const loginRes = await $client.user.login.mutate({
     name: form.value.name,
@@ -102,8 +102,9 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   }
 
   //TODO 原始密码改为派生密码
-  await diffServerAndLocalBot(password);
-  loginStore().userInfo = { ...loginRes.res, derivedPassword: password };
+  await diffServerAndLocalBot(pwdEncoded);
+
+  loginStore().userInfo = { ...loginRes.res, derivedPassword: pwdEncoded };
 
   emit("close");
   if (form.value.syncAll) setTimeout(() => topicStore().syncTopic(), 1000);

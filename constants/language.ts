@@ -14,4 +14,3 @@ const formatter = (s: string, map: Map<string, string>) => {
 export const langAliasMap = formatter(aliasOrigin, new Map());
 export const langAliasAddition = formatter(aliasAddition, new Map());
 for (const item of langAliasAddition) langAliasMap.set(...item);
-console.log(langAliasMap);

@@ -34,10 +34,10 @@ export const useBots = () => {
     T extends {
       secretKey: string;
       createTime: Date;
-    }
+    },
   >(
     pwd: string,
-    bot: T
+    bot: T,
   ) => {
     const res = await gcmCryptoEncrypt(pwd, bot.secretKey);
     return {
@@ -69,7 +69,7 @@ export const useBots = () => {
     }
   };
   const updateBot = async (
-    data: BotCreationData
+    data: BotCreationData,
   ): Promise<IDBValidKey | void> => {
     const userInfo = loginStore().userInfo;
     if (!userInfo) {
@@ -88,7 +88,7 @@ export const useBots = () => {
         const id = await updateBotNotSync(data);
         const sBot = await localBot2ServeBot(
           userInfo.derivedPassword,
-          data as BotsData
+          data as BotsData,
         );
         await $client.bot.update.mutate(sBot);
         return id;
@@ -164,12 +164,30 @@ export const useBots = () => {
             needUpload.add(newId);
             needDecrypt.add(value);
           });
-      })()
+      })(),
     );
     await Promise.all([
       Promise.all(
         needDecrypt.values().map(async (value) => {
           const bot = serveSideBotIdMap.get(value)!;
+          try {
+            await gcmCryptoDecrypt({
+              key: pwd,
+              data: bot.secretKey,
+              iv: bot.iv,
+            });
+          } catch (error) {
+            console.error("Decrypt Error", {
+              error,
+              ...loginStore(),
+              bot,
+              input: {
+                key: pwd,
+                data: bot.secretKey,
+                iv: bot.iv,
+              },
+            });
+          }
           const secretKey = await gcmCryptoDecrypt({
             key: pwd,
             data: bot.secretKey,
@@ -177,19 +195,19 @@ export const useBots = () => {
           });
           bot.secretKey = secretKey;
 
-          await updateBot({
+          await updateBotNotSync({
             ...bot,
             id: bot.localId,
             createTime: new Date(bot.createTime),
           });
-        })
+        }),
       ),
       (async () => {
         const bots = await Promise.all(
           needUpload.values().map(async (value) => {
             const bot = localSideBotIdMap.get(value)!;
             return await localBot2ServeBot(pwd, bot);
-          })
+          }),
         );
         await $client.bot.sync.mutate(bots);
       })(),
