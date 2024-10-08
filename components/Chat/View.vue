@@ -11,10 +11,11 @@
           :key="i.id"
           :is-scroll-to-end="isScrollToEnd"
           :chat="i"
-          @should-scroll="() => {
-            scrollToEnd(contentBody!, { behavior: 'instant' });
-            isScrollToEnd = true;
-          }
+          @should-scroll="
+            () => {
+              scrollToEnd(contentBody!, { behavior: 'instant' });
+              isScrollToEnd = true;
+            }
           "
           class="max-w-full text-wrap break-words mt16"
         />
@@ -159,17 +160,17 @@ const { isDragging } = useMouseDrag(
       const { bottom, top } = el.getBoundingClientRect();
       const targetMinHeight = Math.min(
         bottom - Math.max(pos.y, top),
-        el.scrollHeight - 64 /* 为了不占满空间 */
+        el.scrollHeight - 64 /* 为了不占满空间 */,
       );
       inputAreaHeight.value = targetMinHeight < 100 ? 100 : targetMinHeight;
       if (isScrollToEnd.value)
         nextTick().then(
           () =>
             contentBody.value &&
-            scrollToEnd(contentBody.value, { behavior: "instant" })
+            scrollToEnd(contentBody.value, { behavior: "instant" }),
         );
     },
-  }
+  },
 );
 
 if (!globalSharedChats.has(props.topics.id)) {
@@ -195,7 +196,7 @@ watch(
     data.value.tempStore.scrollTop = contentBody.value.scrollTop;
     isScrollToEnd.value = true;
   },
-  { once: true }
+  { once: true },
 );
 
 const selectedBots = ref<BotsData>();
@@ -210,7 +211,7 @@ const dBot = defaultBotStore();
 
 (async () => {
   await until(() => dBot.defaultBotInfo.preferBotID).toMatch(
-    (v) => v !== undefined
+    (v) => v !== undefined,
   );
   if (selectedBots.value !== undefined) return;
   const res = await getBotsData(dBot.defaultBotInfo.preferBotID);
@@ -228,7 +229,7 @@ watch(
     if (!newVal) return;
     if (selectedModel.value !== undefined) return;
     selectedModel.value = modelList.value[0].name;
-  }
+  },
 );
 
 let gptChat: ChatSession | undefined | null;
@@ -269,7 +270,7 @@ const updateHandle = async () => {
     data.value.isProducing = true;
     const chatSteam = await gptChat.createChat(
       data.value.chats,
-      selectedModel.value
+      selectedModel.value,
     );
     data.value.stopChatting = chatSteam.stop;
     for await (const { context } of chatSteam) {
@@ -288,11 +289,12 @@ const updateDebounced = useDebounceFn(
       from: ChatRole.assistant,
       id: chat.id,
     }),
-  100
+  100,
 );
 
 const determineSetting = async () => {
   const [res] = await getTopicData(props.topics.id);
+  if (!res) return;
   if (res.preferSetting) {
     selectedModel.value = res.preferSetting.preferModelName;
     [selectedBots.value] = await getBotsData(res.preferSetting.preferBotID);
@@ -306,21 +308,27 @@ const determineSetting = async () => {
 determineSetting();
 
 const handleUpdateSelectedModel = (newVal?: string) =>
-  updateTopic({
-    id: props.topics.id,
-    preferSetting: {
-      preferBotID: selectedBots.value?.id,
-      preferModelName: newVal,
+  updateTopic(
+    {
+      id: props.topics.id,
+      preferSetting: {
+        preferBotID: selectedBots.value?.id,
+        preferModelName: newVal,
+      },
     },
-  });
+    false,
+  );
 const handleUpdateSelectedBots = (newVal?: BotsData) =>
-  updateTopic({
-    id: props.topics.id,
-    preferSetting: {
-      preferBotID: newVal?.id,
-      preferModelName: selectedModel.value,
+  updateTopic(
+    {
+      id: props.topics.id,
+      preferSetting: {
+        preferBotID: newVal?.id,
+        preferModelName: selectedModel.value,
+      },
     },
-  });
+    false,
+  );
 const contentBody = ref<HTMLDivElement>();
 const isScrollToEnd = ref(true);
 const handleScroll = (ev: Event) => {

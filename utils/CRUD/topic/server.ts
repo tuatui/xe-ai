@@ -1,4 +1,8 @@
-import type { TopicInterface } from "./type";
+import type { TopicInterface, TopicCreationData } from "./type";
+import type { ChatCreationData } from "~/utils";
+interface SyncTopicInput extends TopicCreationData {
+  chats: ChatCreationData[];
+}
 
 export class Topic implements TopicInterface {
   constructor(private $client = useNuxtApp().$client) {}
@@ -43,4 +47,6 @@ export class Topic implements TopicInterface {
       return -1;
     }
   };
+  public sync = (data: SyncTopicInput[]) =>
+    this.$client.topic.sync.mutate(data);
 }

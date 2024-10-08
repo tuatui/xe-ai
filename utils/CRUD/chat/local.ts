@@ -5,7 +5,11 @@ export class ChatLocal implements ChatInterface {
   get = async (id: number) => {
     const db = await this.iDB.onDBReady();
     try {
-      return await db.getAllFromIndex(IDB_VAR.CHATS, "topic_id", id);
+      return (await db.getAllFromIndex(
+        IDB_VAR.CHATS,
+        "topicId",
+        id,
+      )) as ChatData[];
     } catch (error) {
       console.error(error);
       return [];

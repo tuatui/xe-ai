@@ -1,12 +1,9 @@
 <template>
   <VTextField :type="isShow ? 'text' : 'password'">
     <template v-slot:append-inner>
-      <VIcon
-        tabindex="-1"
-        class="pl3"
-        @click="isShow = !isShow"
-        :icon="isShow ? 'mdi-eye-off' : 'mdi-eye'"
-      />
+      <VBtn @click="isShow = !isShow" class="ml3" icon variant="text">
+        <VIcon :icon="isShow ? 'mdi-eye-off' : 'mdi-eye'" />
+      </VBtn>
     </template>
   </VTextField>
 </template>

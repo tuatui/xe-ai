@@ -25,12 +25,16 @@
           :disabled="isSubmitting"
         />
         <p class="text-body-2 text-medium-emphasis">
-          登录后，会自动同步你的密钥和聊天记录等信息。密钥在上传前会被加密。
+          登录后，会自动同步你的模型和密钥信息。密钥在上传前会被加密。
         </p>
+        <SettingUserSyncCheckBox
+          v-model="form.syncAll"
+          :disabled="isSubmitting"
+        />
       </VCardText>
       <VDivider />
       <VCardActions>
-        <VSpacer></VSpacer>
+        <VSpacer />
         <VBtn
           size="large"
           type="submit"
@@ -64,12 +68,14 @@ const $client = useNuxtApp().$client;
 const createLoginForm = () => ({
   name: "",
   password: "",
+  syncAll: true,
 });
 const form = ref(createLoginForm());
 
 const isSubmitting = ref(false);
 const { diffServerAndLocalBot } = useBots();
 const { pushNotification } = notificationStore();
+
 const handleSubmit = async (ev: SubmitEventPromise) => {
   const res = await ev;
   if (!res.valid) return;
@@ -100,5 +106,6 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   loginStore().userInfo = { ...loginRes.res, derivedPassword: password };
 
   emit("close");
+  if (form.value.syncAll) setTimeout(() => topicStore().syncTopic(), 1000);
 };
 </script>

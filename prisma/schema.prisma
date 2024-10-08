@@ -27,8 +27,8 @@ model Topic {
   title           String?
   author          User                    @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId        Int
-  updateTime      DateTime // TODO: FIX TYPO
-  Chat            Chat[]
+  updateTime      DateTime
+  chats            Chat[]
   preferBotID     Int?
   preferModelName String?
 }

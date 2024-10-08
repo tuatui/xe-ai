@@ -7,11 +7,12 @@ export const loginStore = defineStore("login-store", () => {
     derivedPassword: string;
     id?: number;
   }>();
-  {
-    const name = localStorage.getItem(USER_NAME);
-    const derivedPassword = localStorage.getItem(PASSWORD);
-    if (name && derivedPassword) userInfo.value = { name, derivedPassword };
-  }
+
+  const name = localStorage.getItem(USER_NAME);
+  const derivedPassword = localStorage.getItem(PASSWORD);
+  if (name && derivedPassword) userInfo.value = { name, derivedPassword };
+  const startOnLogin = Boolean(userInfo.value);
+
   watch(userInfo, () => {
     if (!userInfo.value) {
       localStorage.removeItem(USER_NAME);
@@ -23,5 +24,5 @@ export const loginStore = defineStore("login-store", () => {
   });
 
   const isLogin = computed(() => Boolean(userInfo.value));
-  return { userInfo, isLogin };
+  return { userInfo, isLogin, startOnLogin };
 });

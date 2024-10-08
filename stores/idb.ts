@@ -1,12 +1,14 @@
 export const IDB_VAR = Object.freeze({
   DB_NAME: "xe_chat",
-  DB_VERSION: 4,
+  DB_VERSION: 5,
   TOPICS: "topics",
   TOPICS_KEY: {
-    UPDATE_TIME_INDEX: "by date",
     UPDATE_TIME: "updateTime",
-  },
+  } as const,
   CHATS: "chats",
+  CHATS_KEY: {
+    TOPIC_ID: "topicId",
+  } as const,
   BOTS: "bots",
   DEFAULT_BOT_SETTING: "default_bot_setting",
   DEFAULT_BOT_KEY: 0,
@@ -24,24 +26,41 @@ export const useIndexedDBStore = defineStore("idb-store", () => {
             keyPath: "id",
             autoIncrement: true,
           });
-          store.createIndex("by date", IDB_VAR.TOPICS_KEY.UPDATE_TIME, {
-            unique: false,
-          });
+          store.createIndex(
+            IDB_VAR.TOPICS_KEY.UPDATE_TIME,
+            IDB_VAR.TOPICS_KEY.UPDATE_TIME,
+            {
+              unique: false,
+            },
+          );
         } else {
           const store = transaction.objectStore(IDB_VAR.TOPICS);
           if (!store.indexNames.contains(IDB_VAR.TOPICS_KEY.UPDATE_TIME))
-            store.createIndex("by date", IDB_VAR.TOPICS_KEY.UPDATE_TIME, {
-              unique: false,
-            });
+            store.createIndex(
+              IDB_VAR.TOPICS_KEY.UPDATE_TIME,
+              IDB_VAR.TOPICS_KEY.UPDATE_TIME,
+              {
+                unique: false,
+              },
+            );
         }
 
         if (!upgradeDB.objectStoreNames.contains(IDB_VAR.CHATS))
-          upgradeDB
-            .createObjectStore(IDB_VAR.CHATS, {
-              keyPath: "id",
-              autoIncrement: true,
-            })
-            .createIndex("topic_id", "topic_id", { unique: false });
+          upgradeDB.createObjectStore(IDB_VAR.CHATS, {
+            keyPath: "id",
+            autoIncrement: true,
+          });
+
+        const store = transaction.objectStore(IDB_VAR.CHATS);
+        if (!store.indexNames.contains(IDB_VAR.CHATS_KEY.TOPIC_ID))
+          store.createIndex(
+            IDB_VAR.CHATS_KEY.TOPIC_ID,
+            IDB_VAR.CHATS_KEY.TOPIC_ID,
+            {
+              unique: false,
+            },
+          );
+
         if (!upgradeDB.objectStoreNames.contains(IDB_VAR.BOTS))
           upgradeDB.createObjectStore(IDB_VAR.BOTS, {
             keyPath: "id",

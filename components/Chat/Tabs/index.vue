@@ -1,7 +1,7 @@
 <template>
   <div
     class="flex flex-col h-full"
-    @focus="handleClickChatTabs"
+    @focusin="handleClickChatTabs"
     tabindex="0"
     ref="divElem"
   >

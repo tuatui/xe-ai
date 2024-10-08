@@ -12,7 +12,10 @@
       >
     </VListItem>
     <div class="grow min-h-0 overflow-auto relative pb2">
-      <template v-for="[timeStr, topicList] in relativeTimeTopic">
+      <template
+        v-for="[timeStr, topicList] in relativeTimeTopic"
+        :key="timeStr"
+      >
         <div class="sticky top-0 z-10 bg-surface">
           <VDivider />
           <VListSubheader>{{ timeStr }}</VListSubheader>
@@ -67,7 +70,7 @@ const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
           removeTopic(topic.id, false);
           tabsStore.globalSharedTabs.forEach((each) => {
             const res = each.value.topics.findIndex(
-              (_topic) => _topic.id == topic.id
+              (_topic) => _topic.id == topic.id,
             );
             if (res >= 0) each.value.topics.splice(res, 1);
           });
@@ -111,6 +114,6 @@ watch(
     });
     relativeTimeTopic.value = map;
   },
-  { deep: true, immediate: true }
+  { deep: true, immediate: true },
 );
 </script>

@@ -34,7 +34,7 @@ export const bot = router({
           input[index].availableModel.map((model) => ({
             ...model,
             botProviderId: id,
-          }))
+          })),
         ),
       });
       const { localBotsLen } = await db.user.findUniqueOrThrow({
@@ -60,10 +60,10 @@ export const bot = router({
         apiUrl: z.string(),
         provider: z.number(),
         availableModel: z.array(
-          z.object({ name: z.string(), owner: z.string() })
+          z.object({ name: z.string(), owner: z.string() }),
         ),
         createTime: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx: { db, user }, input }) => {
       const { localBotsLen } = await db.user.findUniqueOrThrow({
@@ -95,7 +95,7 @@ export const bot = router({
     .mutation(async ({ ctx: { db, user }, input }) => {
       const res = await db.botProvider.findFirstOrThrow({
         select: { ownerId: true, id: true },
-        where: { localId: input.id, ownerId: user.id },
+        where: { id: input.id, ownerId: user.id },
       });
       if (res.ownerId !== user.id)
         throw new TRPCError({ code: "UNAUTHORIZED" });
