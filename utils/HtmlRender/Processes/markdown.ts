@@ -6,10 +6,9 @@ import xml from "highlight.js/lib/languages/xml";
 
 hljsCore.registerLanguage("plaintext", plaintext);
 hljsCore.registerLanguage("xml", xml); // JSX语法需要
-langAliasAddition.forEach(([alias, target]) => {
-  const languageName = languagesList[target];
-  if (languageName) hljsCore.registerAliases([alias], { languageName });
-});
+langAliasAddition.forEach(([alias, languageName]) =>
+  hljsCore.registerAliases([alias], { languageName }),
+);
 
 const marked = new Marked(
   markedHighlight({
@@ -18,7 +17,7 @@ const marked = new Marked(
     async highlight(code, lang) {
       lang = lang.toLowerCase();
       if (lang && !hljsCore.getLanguage(lang)) {
-        const target = languagesList[langAliasMap.get(lang) ?? -1];
+        const target = langAliasMap.get(lang);
         //if (!target) console.log(`missing ${lang}`);
 
         if (target !== undefined) {
