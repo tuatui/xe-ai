@@ -6,9 +6,11 @@ import xml from "highlight.js/lib/languages/xml";
 
 hljsCore.registerLanguage("plaintext", plaintext);
 hljsCore.registerLanguage("xml", xml); // JSX语法需要
-langAliasAddition.forEach(([alias, languageName]) =>
-  hljsCore.registerAliases([alias], { languageName }),
-);
+langAliasAddition
+  .entries()
+  .forEach(([alias, languageName]) =>
+    hljsCore.registerAliases([alias], { languageName }),
+  );
 
 const marked = new Marked(
   markedHighlight({
