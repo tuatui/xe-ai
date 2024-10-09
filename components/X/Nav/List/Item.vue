@@ -44,7 +44,7 @@
       autofocus
       v-click-outside="handleUpdate"
       @click.stop
-      @keydown.enter="handleUpdate"
+      @keydown.enter.stop="handleUpdate"
       @keydown.esc.tab="handleEscape"
       variant="outlined"
       v-model="valueCopy"
