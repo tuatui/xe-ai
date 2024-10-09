@@ -10,7 +10,7 @@ const defaultConf: Readonly<HidePartialStrConf> = {
 };
 export const hidePartialStr = (
   input: string,
-  conf?: HidePartialStrConf
+  conf?: HidePartialStrConf,
 ): string => {
   if (!input) return "";
   const finalConf = conf ? { ...defaultConf, ...conf } : defaultConf;

@@ -22,7 +22,7 @@ const { isDragging, position } = useMouseDrag(
       else if (pos.x > min) return pos;
       else return { x: min };
     },
-  }
+  },
 );
 
 watchDebounced(
@@ -31,6 +31,6 @@ watchDebounced(
   {
     debounce: 50,
     maxWait: 50,
-  }
+  },
 );
 </script>

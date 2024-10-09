@@ -37,8 +37,8 @@ const vt = ref(
     undefined,
     false,
     [new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 1)],
-    1
-  )
+    1,
+  ),
 );
 const { updateTopic, getTopicData } = topicStore();
 const tabsStore = chatTabsStore();
@@ -65,7 +65,7 @@ const handleAddChatTabs = async (topic: TopicData) => {
     (key) => <ChatTabs uniqueKey={key} />,
     false,
     [],
-    1
+    1,
   );
   vt.value.children.push(newVT);
   await nextTick();

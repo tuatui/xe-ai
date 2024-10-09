@@ -6,5 +6,5 @@ export const authorizedProcedure = publicProcedure.use(
     if (ses.user === undefined) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({ ctx: { ...other, ev, user: ses.user } });
-  }
+  },
 );

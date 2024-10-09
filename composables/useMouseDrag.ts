@@ -4,7 +4,7 @@ interface MousePosition {
 }
 type tryDragFn = (
   pos: MousePosition,
-  ev: { mouseEvent?: MouseEvent; resizeObserverSize?: ResizeObserverSize }
+  ev: { mouseEvent?: MouseEvent; resizeObserverSize?: ResizeObserverSize },
 ) => Partial<MousePosition> | void;
 
 interface UseMouseDragConf {
@@ -20,7 +20,7 @@ const defaultConf: UseMouseDragConf = {
 export const useMouseDrag = (
   htmlRef: MaybeRefOrGetter<HTMLElement | undefined | null>,
   useConf: Partial<UseMouseDragConf> = {},
-  event = { onTryDrag: ((pos) => pos) as tryDragFn }
+  event = { onTryDrag: ((pos) => pos) as tryDragFn },
 ) => {
   const conf = { ...defaultConf, ...useConf };
   const htmlElem = toRef(htmlRef);
@@ -29,7 +29,7 @@ export const useMouseDrag = (
   const handleMouseMove = (ev: MouseEvent) => {
     Object.assign(
       position.value,
-      event.onTryDrag({ x: ev.pageX, y: ev.pageY }, { mouseEvent: ev })
+      event.onTryDrag({ x: ev.pageX, y: ev.pageY }, { mouseEvent: ev }),
     );
   };
   const handleStart = () => {
@@ -56,7 +56,7 @@ export const useMouseDrag = (
     if (!size) return;
     Object.assign(
       position.value,
-      event.onTryDrag({ ...position.value }, { resizeObserverSize: size })
+      event.onTryDrag({ ...position.value }, { resizeObserverSize: size }),
     );
   });
   onMounted(() => {

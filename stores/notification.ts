@@ -14,7 +14,10 @@ const defaultNotification: Notification = {
 class NotificationElement {
   public cancelJob = () => {};
   public finishJob = () => {};
-  constructor(public notification: Notification, public onFinish?: () => void) {
+  constructor(
+    public notification: Notification,
+    public onFinish?: () => void,
+  ) {
     new Promise<void>((resolve, reject) => {
       setTimeout(resolve, notification.timeout);
       this.finishJob = resolve;
@@ -41,10 +44,10 @@ export const notificationStore = defineStore("global-notification", () => {
       { ...defaultNotification, ...notification },
       () => {
         const index = notificationStack.value.findIndex(
-          (each) => toRaw(each) === ne
+          (each) => toRaw(each) === ne,
         );
         if (index >= 0) notificationStack.value.splice(index, 1);
-      }
+      },
     );
     notificationStack.value.unshift(ne);
   };

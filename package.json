@@ -15,7 +15,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [
-      "oxlint --max-warnings 0",
+      "oxlint --no-ignore --max-warnings 0",
       "bash -c 'vue-tsc --noEmit --skipLibCheck'",
       "prettier --ignore-unknown --write"
     ],
@@ -25,6 +25,9 @@
     "!(pnpm-lock).yml": [
       "prettier --ignore-unknown --write"
     ]
+  },
+  "prettier": {
+    "trailingComma": "all"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",

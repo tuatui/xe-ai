@@ -47,7 +47,8 @@ export default {
       press: "Appuyer sur",
       enter: "Entrer",
       toAdd: "pour en créer un nouveau",
-      noData: "Aucune donnée disponible. Essayez de récupérer des données ou d'en ajouter manuellement.",
+      noData:
+        "Aucune donnée disponible. Essayez de récupérer des données ou d'en ajouter manuellement.",
       fetch: "Récupérer le Modèle",
     },
   },

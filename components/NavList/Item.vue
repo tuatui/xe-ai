@@ -64,7 +64,7 @@ const emit = defineEmits<{
 const valueCopy = ref(props.value);
 watch(
   () => props.value,
-  (newVal) => (valueCopy.value = newVal)
+  (newVal) => (valueCopy.value = newVal),
 );
 const handleUpdate = () => {
   if (!valueCopy.value) valueCopy.value = props.value;

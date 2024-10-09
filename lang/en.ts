@@ -20,7 +20,7 @@ export default {
     password: "Password",
     account: "Account",
     login: "Login",
-    loginOut: "Login Out"
+    loginOut: "Login Out",
   },
   aria: {
     sideNav: "Side Navigation",

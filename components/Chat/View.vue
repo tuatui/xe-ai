@@ -147,7 +147,7 @@ const { getTopicData, updateTopic } = topicStore();
 const { Services } = chatServices();
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
-
+const a = "";
 const chatInputArea = ref<HTMLElement | null>(null);
 const inputAreaHeight = ref(200);
 const dragger = ref<HTMLElement | null>(null);

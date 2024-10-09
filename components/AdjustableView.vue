@@ -66,7 +66,7 @@ const handleSplit = (isVertical: boolean, index: number) => {
     viewTree.value.isVertical = isVertical;
     target.space = 0.5;
     viewTree.value.children.push(
-      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5)
+      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5),
     );
   } else {
     if (isVertical === viewTree.value.isVertical) {
@@ -79,8 +79,8 @@ const handleSplit = (isVertical: boolean, index: number) => {
           (key) => <ChatTabs uniqueKey={key} />,
           false,
           [],
-          newSpace
-        )
+          newSpace,
+        ),
       );
     } else {
       viewTree.value.children[index] = new ViewTree(
@@ -94,10 +94,10 @@ const handleSplit = (isVertical: boolean, index: number) => {
             (key) => <ChatTabs uniqueKey={key} />,
             false,
             [],
-            0.5
+            0.5,
           ),
         ],
-        target.space
+        target.space,
       );
       target.space = 0.5;
       target.isLeaf = true;
@@ -158,7 +158,7 @@ const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
             viewTree.value.children[i],
             leftPX,
             viewTree.value.isVertical,
-            viewTree.value.children[i].space * elSize
+            viewTree.value.children[i].space * elSize,
           );
           if (!res) continue;
           leftPX -= res.consumePX;
@@ -182,7 +182,7 @@ const handleMouseDrag = (firstEv: MouseEvent, index: number) => {
             viewTree.value.children[i],
             leftPX,
             viewTree.value.isVertical,
-            viewTree.value.children[i].space * elSize
+            viewTree.value.children[i].space * elSize,
           );
           if (!res) continue;
           leftPX -= res.consumePX;
@@ -211,7 +211,7 @@ const resizeNegotiate = (
   vt: ViewTree,
   expectPX: number,
   isVertical: boolean,
-  spacePX: number
+  spacePX: number,
 ): {
   startResize: ResizeFn;
   consumePX: number;
@@ -236,7 +236,7 @@ const resizeNegotiate = (
         vtc,
         expectPX,
         isVertical,
-        spacePX * vtc.space
+        spacePX * vtc.space,
       );
       if (!res || !res.consumePX) continue;
       leftPX -= res.consumePX;

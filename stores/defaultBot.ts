@@ -11,7 +11,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
       try {
         return await db.get(
           IDB_VAR.DEFAULT_BOT_SETTING,
-          IDB_VAR.DEFAULT_BOT_KEY
+          IDB_VAR.DEFAULT_BOT_KEY,
         );
       } catch (error) {
         console.error(error);
@@ -21,7 +21,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
   getDefaultBotInfo().then((info) => {
     if (info) defaultBotInfo.value = info;
   });
-  
+
   const updateDefaultBotInfo = async (info: Partial<DefaultBotSetting>) => {
     const db = await iDB.onDBReady();
     try {
@@ -29,7 +29,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
       const res = await db.put(
         IDB_VAR.DEFAULT_BOT_SETTING,
         clonedData,
-        IDB_VAR.DEFAULT_BOT_KEY
+        IDB_VAR.DEFAULT_BOT_KEY,
       );
       defaultBotInfo.value = info;
       return res;
@@ -37,5 +37,8 @@ export const defaultBotStore = defineStore("default-bot", () => {
       console.error(error);
     }
   };
-  return { defaultBotInfo: defaultBotInfo, updateDefaultBotInfo: updateDefaultBotInfo };
+  return {
+    defaultBotInfo: defaultBotInfo,
+    updateDefaultBotInfo: updateDefaultBotInfo,
+  };
 });

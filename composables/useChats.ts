@@ -9,7 +9,7 @@ export type useChatReturn = Ref<{
   isProducing: boolean;
   updateChat: (
     data: { context: string; from: number; id?: number },
-    autoUpdateCache?: boolean
+    autoUpdateCache?: boolean,
   ) => Promise<number>;
   chatRefCount: number;
   stopChatting: () => void;
@@ -45,7 +45,7 @@ export const useChats = (topicId: number): useChatReturn => {
       from: number;
       id?: number;
     },
-    autoUpdateCache = true
+    autoUpdateCache = true,
   ) => {
     taskCount.value++;
     const res = ts.isLogin

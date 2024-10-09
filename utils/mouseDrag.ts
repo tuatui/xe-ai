@@ -9,7 +9,7 @@ const defaultConf: MouseDragImpConf = {
 export const mouseDragImp = <T = null>(
   ev: MouseEvent,
   useConf: Partial<MouseDragImpConf<T>> = {},
-  meta: T = null as T
+  meta: T = null as T,
 ) => {
   const target = ev.target;
   const conf = { ...defaultConf, ...useConf };
