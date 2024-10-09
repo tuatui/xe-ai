@@ -189,7 +189,7 @@ const ts = topicStore();
 const handleNewChat = async () => {
   const res = await ts.updateTopic({ title: "" });
   if (!res) return;
-  const newTopic = ts.topics.at(-1);
+  const newTopic = ts.topics.find((topic) => topic.id === res.id);
   if (newTopic) add(newTopic);
 };
 </script>
