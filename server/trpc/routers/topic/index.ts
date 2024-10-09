@@ -121,6 +121,7 @@ export const topic = router({
         return (
           await db.topic.findMany({
             where: { authorId: user.id },
+            orderBy: { updateTime: "desc" },
           })
         ).map(({ preferBotID, preferModelName, ...left }) => ({
           ...left,

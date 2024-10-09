@@ -23,14 +23,16 @@ model User {
 }
 
 model Topic {
-  id              Int                     @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   title           String?
-  author          User                    @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  author          User     @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   authorId        Int
   updateTime      DateTime
-  chats            Chat[]
+  chats           Chat[]
   preferBotID     Int?
   preferModelName String?
+
+  @@index([authorId, updateTime(sort: Desc)])
 }
 
 model Chat {
