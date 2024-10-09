@@ -29,7 +29,7 @@
     </div>
     <BottomSnackBar />
     <Teleport to="body">
-      <XNavResizer v-model="width" />
+      <XNavResizer v-model="width" v-show="!isRail" />
     </Teleport>
   </VNavigationDrawer>
 </template>
