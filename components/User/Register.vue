@@ -8,6 +8,7 @@
       </template>
       <VCardText>
         <VTextField
+          class="mb3"
           variant="outlined"
           autocomplete="username"
           :label="$t('common.account')"
@@ -19,6 +20,7 @@
           :disabled="isSubmitting"
         />
         <VTextField
+          class="mb3"
           variant="outlined"
           type="password"
           autocomplete="new-password"
@@ -30,6 +32,7 @@
           :disabled="isSubmitting"
         />
         <VTextField
+          class="mb1"
           variant="outlined"
           type="password"
           autocomplete="new-password"
@@ -46,6 +49,7 @@
       </VCardText>
       <VDivider />
       <VCardActions>
+        <I18nSwitch />
         <VSpacer></VSpacer>
         <VBtn
           :disabled="isSubmitting"
@@ -72,21 +76,19 @@ import { VTextField } from "vuetify/components";
 
 const emit = defineEmits<{
   change: [];
-  close: [];
-  lockWin: [];
-  unLockWin: [];
+  success: [sync: boolean];
 }>();
 
 const nameTextField = ref<InstanceType<typeof VTextField>>();
 
 const $client = useNuxtApp().$client;
-const createLoginForm = () => ({
+const createRegForm = () => ({
   name: "",
   password: "",
   passwordRepeat: "",
   syncAll: true,
 });
-const form = ref(createLoginForm());
+const form = ref(createRegForm());
 
 const isCheckingName = ref(false);
 const handleCheckName = async () => {
@@ -128,15 +130,13 @@ watch(
   () => form.value.password,
   (newPwd) => (passwordStrong.value = testPasswordStrong(newPwd)),
 );
-const { diffServerAndLocalBot } = useBots();
 const isSubmitting = ref(false);
 const handleSubmit = async (ev: SubmitEventPromise) => {
   ev.preventDefault();
   const res = await ev;
   if (!res.valid) return;
-
   isSubmitting.value = true;
-  emit("lockWin");
+
   const pwd = form.value.password;
   const pwdEncoded = await derivePwd(form.value.name, pwd);
 
@@ -144,12 +144,11 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
     name: form.value.name,
     password: pwdEncoded,
   });
+  if (!reg) return;
+
   loginStore().userInfo = { ...reg, derivedPassword: pwdEncoded };
-  await diffServerAndLocalBot(pwdEncoded);
-
-  emit("unLockWin");
   isSubmitting.value = false;
-
-  emit("close");
+  emit("success", form.value.syncAll);
+  form.value = createRegForm();
 };
 </script>

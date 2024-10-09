@@ -8,12 +8,15 @@
       </template>
       <VCardText>
         <VTextField
+          class="mb3"
+          variant="outlined"
           autocomplete="username"
           :label="$t('common.account')"
           v-model="form.name"
           :disabled="isSubmitting"
         />
         <XInputPwd
+          variant="outlined"
           :label="$t('common.password')"
           v-model="form.password"
           :disabled="isSubmitting"
@@ -25,6 +28,7 @@
       </VCardText>
       <VDivider />
       <VCardActions>
+        <I18nSwitch />
         <VSpacer />
         <VBtn
           size="large"
@@ -51,9 +55,7 @@ import type { SubmitEventPromise } from "vuetify";
 import { VTextField } from "vuetify/components";
 const emit = defineEmits<{
   change: [];
-  close: [];
-  lockWin: [];
-  unLockWin: [];
+  success: [sync: boolean];
 }>();
 const $client = useNuxtApp().$client;
 const createLoginForm = () => ({
@@ -64,7 +66,6 @@ const createLoginForm = () => ({
 const form = ref(createLoginForm());
 
 const isSubmitting = ref(false);
-const { diffServerAndLocalBot } = useBots();
 const { pushNotification } = notificationStore();
 
 const handleSubmit = async (ev: SubmitEventPromise) => {
@@ -72,7 +73,6 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   if (!res.valid) return;
 
   isSubmitting.value = true;
-  emit("lockWin");
 
   const password = form.value.password;
   const pwdEncoded = await derivePwd(form.value.name, password);
@@ -81,8 +81,7 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
     name: form.value.name,
     password: pwdEncoded,
   });
-  emit("unLockWin");
-  isSubmitting.value = false;
+
   if (!loginRes) {
     pushNotification({
       content: "账号或密码错误",
@@ -91,13 +90,9 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
     });
     return;
   }
-
-  //TODO 原始密码改为派生密码
-  await diffServerAndLocalBot(pwdEncoded);
-
   loginStore().userInfo = { ...loginRes.res, derivedPassword: pwdEncoded };
-
-  emit("close");
-  if (form.value.syncAll) setTimeout(() => topicStore().syncTopic(), 1000);
+  isSubmitting.value = false;
+  emit("success", form.value.syncAll);
+  form.value = createLoginForm();
 };
 </script>
