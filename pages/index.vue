@@ -1,35 +1,13 @@
 <template>
   <VLayout>
-    <VNavigationDrawer
-      disable-resize-watcher
-      permanent
-      :width="width"
-      :aria-label="$t('aria.sideNav')"
-    >
-      <div class="h-full w-full flex flex-col">
-        <NavList
-          @add-chat="handleAddChatTabs"
-          @new-topic-with-chat="handleAddTopic"
-        />
-        <VDivider />
-        <div class="flex gap1">
-          <Setting />
-          <I18nSwitch />
-          <ThemeSwitch />
-          <UserLogout />
-        </div>
-      </div>
-      <BottomSnackBar />
-    </VNavigationDrawer>
+    <XNav @add-chat-tab="handleAddChatTabs" />
     <VMain class="max-h-100dvh">
       <AdjustableView v-model="vt" />
     </VMain>
-    <NavListResizer v-model="width" />
   </VLayout>
 </template>
 <script setup lang="tsx">
 import { ChatTabs } from "#components";
-const width = ref(205);
 
 const vt = ref(
   new ViewTree(
@@ -40,7 +18,6 @@ const vt = ref(
     1,
   ),
 );
-const { updateTopic, getTopicData } = topicStore();
 const tabsStore = chatTabsStore();
 const focusedChat = focusedChatStore();
 const handleAddChatTabs = async (topic: TopicData) => {
@@ -71,17 +48,4 @@ const handleAddChatTabs = async (topic: TopicData) => {
   await nextTick();
   focusedChat.chatTabsExpose?.add(topic);
 };
-
-const handleAddTopic = async () => {
-  const newTopic = { title: "" };
-  const res = await updateTopic(newTopic);
-
-  handleAddChatTabs(res);
-};
 </script>
-<style lang="scss" scoped>
-@use "/assets/tab.scss" as *;
-.dragger {
-  @include dragger-base();
-}
-</style>

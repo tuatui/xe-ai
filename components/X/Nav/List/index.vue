@@ -1,24 +1,33 @@
 <template>
   <VList
-    class="flex flex-col grow min-h-0 !pb0"
+    class="flex flex-col grow min-h-0 bg-surface-light !py0"
     :aria-label="$t('aria.chatHistory')"
   >
-    <VListItem lines="two" class="pt1">
-      <VBtn
+    <VListItem lines="two" :class="{ '!px1 !py2': rail }">
+      <XCommonBtn
+        :icon="rail"
+        use-icon="mdi-plus"
         role="option"
         variant="tonal"
-        prepend-icon="mdi-plus"
         @click="$emit('newTopicWithChat')"
-        >开始新对话</VBtn
+        use-tooltip="开始新对话"
+        tooltip-location="right center"
       >
+        <div :hidden="rail">开始新对话</div>
+      </XCommonBtn>
     </VListItem>
-    <div class="grow min-h-0 overflow-auto relative pb2">
+    <VDivider role="none" />
+    <VSpacer v-show="rail" />
+    <div
+      v-show="!rail"
+      class="grow min-h-0 overflow-auto relative pb2 bg-inherit"
+    >
       <template
-        v-for="[timeStr, topicList] in relativeTimeTopic"
+        v-for="([timeStr, topicList], i) in relativeTimeTopic"
         :key="timeStr"
       >
-        <div class="sticky top-0 z-10 bg-surface">
-          <VDivider role="none" />
+        <div class="sticky top-0 z-10 bg-inherit">
+          <!-- <VDivider role="none" v-if="i !== 0" /> -->
           <VListSubheader>{{ timeStr }}</VListSubheader>
         </div>
 
@@ -29,7 +38,7 @@
           :key="topic.id"
           color="primary"
         >
-          <NavListItem
+          <XNavListItem
             :value="topic.title || untitledStr"
             @remove="handleRemoveTopic(topicList, i)"
             @update="(v) => handleUpdateTopic(v, topic)"
@@ -43,7 +52,7 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-
+defineProps<{ rail: boolean }>();
 const untitledStr = useT("chat.untitled");
 const { locale } = useI18n();
 

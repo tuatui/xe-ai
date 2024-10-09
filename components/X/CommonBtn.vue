@@ -1,7 +1,7 @@
 <template>
   <VBtn :aria-labelledby="`common-btn-${cID}`">
-    <slot></slot>
     <VIcon v-if="useIcon !== undefined" :icon="useIcon" />
+    <slot></slot>
     <VTooltip
       open-delay="200"
       v-if="useTooltip !== undefined"
