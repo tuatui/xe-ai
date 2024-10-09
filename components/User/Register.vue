@@ -4,17 +4,11 @@
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
           <h3>注册</h3>
-          <VBtn
-            icon="mdi-close"
-            variant="text"
-            @click="$emit('close')"
-            :disabled="isSubmitting"
-            :title="$t('common.close')"
-          />
         </VCardTitle>
       </template>
       <VCardText>
         <VTextField
+          variant="outlined"
           autocomplete="username"
           :label="$t('common.account')"
           v-model="form.name"
@@ -25,6 +19,7 @@
           :disabled="isSubmitting"
         />
         <VTextField
+          variant="outlined"
           type="password"
           autocomplete="new-password"
           :rules="[handlePasswordRule]"
@@ -33,16 +28,21 @@
           v-model="form.password"
           :hint="passwordHint"
           :disabled="isSubmitting"
-        /><VTextField
+        />
+        <VTextField
+          variant="outlined"
           type="password"
           autocomplete="new-password"
           :rules="[handlePasswordRepeatRule]"
           validate-on="invalid-input lazy"
           label="重复密码"
           v-model="form.passwordRepeat"
-          :hint="passwordHint"
           :disabled="isSubmitting"
         />
+        <p class="text-body-2 text-medium-emphasis">
+          注册后，会自动同步你的模型和密钥信息。密钥在上传前会被加密。
+        </p>
+        <UserSyncCheckBox v-model="form.syncAll" :disabled="isSubmitting" />
       </VCardText>
       <VDivider />
       <VCardActions>
@@ -84,6 +84,7 @@ const createLoginForm = () => ({
   name: "",
   password: "",
   passwordRepeat: "",
+  syncAll: true,
 });
 const form = ref(createLoginForm());
 

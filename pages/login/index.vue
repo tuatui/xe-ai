@@ -1,9 +1,7 @@
 <template>
-  <VDialog
-    v-model="dialog"
-    class="max-w-[max(30dvw,500px)]"
-    :persistent="isPersistent"
-  >
+  <div class="w-full h-full flex bg-#f0f4f9">
+    <div class="w-full max-w-[460px] ma">
+      <!-- <VDialog v-model="dialog" :persistent="isPersistent">
     <template v-slot:activator="{ props: activatorProps }">
       <XCommonBtn
         icon
@@ -22,23 +20,25 @@
         </VBadge>
       </XCommonBtn>
     </template>
-    <VScrollXReverseTransition hide-on-leave>
-      <SettingUserLogin
-        v-if="!isRegister"
-        @close="dialog = false"
-        @change="isRegister = !isRegister"
-        @lock-win="isPersistent = true"
-        @un-lock-win="isPersistent = false"
-      />
-      <SettingUserRegister
-        v-if="isRegister"
-        @close="dialog = false"
-        @change="isRegister = !isRegister"
-        @lock-win="isPersistent = true"
-        @un-lock-win="isPersistent = false"
-      />
-    </VScrollXReverseTransition>
-  </VDialog>
+  </VDialog> -->
+      <VScrollXReverseTransition hide-on-leave>
+        <UserLogin
+          v-if="!isRegister"
+          @close="dialog = false"
+          @change="isRegister = !isRegister"
+          @lock-win="isPersistent = true"
+          @un-lock-win="isPersistent = false"
+        />
+        <UserRegister
+          v-if="isRegister"
+          @close="dialog = false"
+          @change="isRegister = !isRegister"
+          @lock-win="isPersistent = true"
+          @un-lock-win="isPersistent = false"
+        />
+      </VScrollXReverseTransition>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 const dialog = ref(false);

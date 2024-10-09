@@ -4,13 +4,6 @@
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
           <h3>登录</h3>
-          <VBtn
-            icon="mdi-close"
-            variant="text"
-            @click="$emit('close')"
-            :title="$t('common.close')"
-            :disabled="isSubmitting"
-          />
         </VCardTitle>
       </template>
       <VCardText>
@@ -28,10 +21,7 @@
         <p class="text-body-2 text-medium-emphasis">
           登录后，会自动同步你的模型和密钥信息。密钥在上传前会被加密。
         </p>
-        <SettingUserSyncCheckBox
-          v-model="form.syncAll"
-          :disabled="isSubmitting"
-        />
+        <UserSyncCheckBox v-model="form.syncAll" :disabled="isSubmitting" />
       </VCardText>
       <VDivider />
       <VCardActions>
