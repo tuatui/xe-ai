@@ -144,6 +144,7 @@ const props = defineProps<{ topics: TopicData }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
 const { getTopicData, updateTopic } = topicStore();
+const { Services } = chatServices();
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
 
@@ -238,7 +239,7 @@ watch(selectedBots, (newVal) => {
     gptChat = undefined;
     return;
   }
-  gptChat = GPTChatService.createChatSession({
+  gptChat = Services[newVal.provider]?.createChatSession({
     apiKey: newVal.secretKey,
     baseURL: newVal.apiUrl,
   });

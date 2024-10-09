@@ -67,7 +67,7 @@ const { bots, updateBot, deleteBot } = useBots();
 const dBot = defaultBotStore();
 const preferBotID = computed(() => dBot.defaultBotInfo.preferBotID);
 const isBotsInfoDialogOpen = ref(false);
-
+const { Services } = chatServices();
 const botsInfo = ref<BotCreationData>();
 const openDialog = (data?: BotsData) => {
   botsInfo.value = data;

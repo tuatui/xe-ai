@@ -95,7 +95,7 @@ export const bot = router({
     .mutation(async ({ ctx: { db, user }, input }) => {
       const res = await db.botProvider.findFirstOrThrow({
         select: { ownerId: true, id: true },
-        where: { id: input.id, ownerId: user.id },
+        where: { localId: input.id, ownerId: user.id },
       });
       if (res.ownerId !== user.id)
         throw new TRPCError({ code: "UNAUTHORIZED" });

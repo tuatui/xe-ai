@@ -89,7 +89,6 @@
           <VBtn
             v-if="isUpdate"
             size="large"
-            type="submit"
             color="error"
             :text="$t('common.delete')"
             variant="text"
@@ -97,10 +96,10 @@
           />
           <VBtn
             size="large"
+            variant="elevated"
             type="submit"
             color="primary"
             :text="$t('common.submit')"
-            variant="text"
             @click="handleUpdate"
           />
         </VCardActions>
@@ -117,6 +116,7 @@ const emit = defineEmits<{
   newBotInfo: [BotCreationData];
   delete: [number];
 }>();
+const { Services } = chatServices();
 const createBotsInfo = (): BotCreationData => ({
   nickName: "",
   secretKey: "",
@@ -143,14 +143,14 @@ watch(
   (newVal) => {
     if (!newVal) botsInfoClone.value = createBotsInfo();
     else botsInfoClone.value = structuredClone(toRaw(newVal));
-  }
+  },
 );
 watch(
   () => botsInfoClone.value.provider,
   (newVal) => {
     if (!newVal) return;
     botsInfoClone.value.apiUrl = Services[newVal].info.defaultBaseUrl;
-  }
+  },
 );
 const modelSearch = ref("");
 const modelList = ref<ModelList[]>([]);
@@ -192,6 +192,6 @@ watch(
       name: str,
       owner: "user input",
     };
-  }
+  },
 );
 </script>

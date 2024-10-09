@@ -1,6 +1,6 @@
 import type { ChatChunk, ChatService, ChatStream } from "../base";
-import { defaultChatSessionConf } from "../base";
-import { Provider } from "../all";
+import { defaultChatSessionConf, Provider } from "../base";
+
 import { icon } from "./icon";
 
 import OpenAI from "openai";
@@ -9,7 +9,7 @@ import type { Stream } from "openai/streaming.mjs";
 
 class OpenAIStream implements ChatStream {
   constructor(
-    public steam: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+    public steam: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>,
   ) {}
   stop = () => this.steam.controller.abort();
   [Symbol.asyncIterator] = () => {

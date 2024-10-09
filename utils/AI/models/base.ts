@@ -1,5 +1,9 @@
 import type { VNode } from "vue";
-import { Provider } from "./all";
+
+export enum Provider {
+  OpenAI,
+  //...
+}
 
 export interface ChatChunk {
   context: string;

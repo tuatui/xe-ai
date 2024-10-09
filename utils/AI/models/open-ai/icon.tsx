@@ -1,4 +1,4 @@
 //https://icon-sets.iconify.design/logos/?keyword=logos
-import LogosOpenaiIcon from "~icons/logos/openai-icon";
+import LogosOpenAiIcon from "~icons/logos/openai-icon";
 
-export const icon = <LogosOpenaiIcon />;
+export const icon = <LogosOpenAiIcon />;
