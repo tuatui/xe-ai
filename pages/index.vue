@@ -16,7 +16,7 @@
           <Setting />
           <I18nSwitch />
           <ThemeSwitch />
-          <SettingUser />
+          <UserLogout />
         </div>
       </div>
       <BottomSnackBar />

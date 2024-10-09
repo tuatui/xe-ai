@@ -22,7 +22,7 @@ export default {
     password: "密码",
     account: "账号",
     login: "登录",
-    loginOut: "注销",
+    logout: "注销",
   },
   aria: {
     sideNav: "侧边导航栏",

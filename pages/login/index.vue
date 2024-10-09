@@ -19,8 +19,11 @@
   </div>
 </template>
 <script setup lang="ts">
+if (loginStore().isLogin) useRouter().push("/");
+
 const dialog = ref(false);
 const isRegister = ref(false);
+
 const handleLoginSuccess = (syncAll: boolean) => {
   const userInfo = loginStore().userInfo;
   if (!userInfo) return;
