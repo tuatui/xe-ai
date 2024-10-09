@@ -8,6 +8,7 @@
             icon="mdi-close"
             variant="text"
             @click="$emit('close')"
+            :title="$t('common.close')"
             :disabled="isSubmitting"
           />
         </VCardTitle>

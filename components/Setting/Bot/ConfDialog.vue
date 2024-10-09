@@ -15,6 +15,7 @@
         />
         <VListItem
           v-for="bot in bots"
+          :key="bot.id"
           :subtitle="formatTitle(bot)"
           :title="bot.nickName"
           @click="openDialog(bot)"

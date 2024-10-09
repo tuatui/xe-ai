@@ -1,7 +1,13 @@
 <template>
   <VTextField :type="isShow ? 'text' : 'password'">
     <template v-slot:append-inner>
-      <VBtn @click="isShow = !isShow" class="ml3" icon variant="text">
+      <VBtn
+        @click="isShow = !isShow"
+        class="ml3"
+        icon
+        variant="text"
+        title="切换显示/隐藏密码"
+      >
         <VIcon :icon="isShow ? 'mdi-eye-off' : 'mdi-eye'" />
       </VBtn>
     </template>

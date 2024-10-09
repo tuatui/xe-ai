@@ -9,6 +9,7 @@
             variant="text"
             @click="$emit('close')"
             :disabled="isSubmitting"
+            :title="$t('common.close')"
           />
         </VCardTitle>
       </template>

@@ -5,6 +5,7 @@
   >
     <VListItem lines="two" class="pt1">
       <VBtn
+        role="option"
         variant="tonal"
         prepend-icon="mdi-plus"
         @click="$emit('newTopicWithChat')"
@@ -17,7 +18,7 @@
         :key="timeStr"
       >
         <div class="sticky top-0 z-10 bg-surface">
-          <VDivider />
+          <VDivider role="none" />
           <VListSubheader>{{ timeStr }}</VListSubheader>
         </div>
 
