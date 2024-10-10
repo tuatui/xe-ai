@@ -12,9 +12,8 @@
         @click="$emit('newTopicWithChat')"
         use-tooltip="开始新对话"
         tooltip-location="right center"
-      >
-        <div :hidden="rail">开始新对话</div>
-      </XCommonBtn>
+        :embed-tooltip="!rail"
+      />
     </VListItem>
     <VDivider role="none" />
     <VSpacer v-show="rail" />

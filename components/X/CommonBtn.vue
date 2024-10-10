@@ -1,18 +1,23 @@
 <template>
   <VBtn :aria-labelledby="`common-btn-${cID}`">
-    <VIcon v-if="useIcon !== undefined" :icon="useIcon" />
     <slot></slot>
-    <VTooltip
-      open-delay="200"
-      v-if="useTooltip !== undefined"
-      activator="parent"
-      :location="tooltipLocation ?? 'bottom'"
-      :aria-labelledby="`common-btn-${cID}`"
-    >
-      <div :id="`common-btn-${cID}`">
+    <VIcon v-if="useIcon !== undefined" :icon="useIcon" />
+    <template v-if="useTooltip !== undefined">
+      <div :id="`common-btn-${cID}`" v-if="embedTooltip">
         {{ useTooltip }}
       </div>
-    </VTooltip>
+      <VTooltip
+        v-else
+        open-delay="200"
+        activator="parent"
+        :location="tooltipLocation ?? 'bottom'"
+        :aria-labelledby="`common-btn-${cID}`"
+      >
+        <div :id="`common-btn-${cID}`">
+          {{ useTooltip }}
+        </div>
+      </VTooltip>
+    </template>
   </VBtn>
 </template>
 <script lang="ts" setup>
@@ -24,6 +29,7 @@ const cID = useId();
 interface Props extends /* @vue-ignore */ VBtnProps {
   useIcon?: string;
   useTooltip?: string;
+  embedTooltip?: boolean;
   tooltipLocation?: TextFieldSlots;
 }
 defineProps<Props>();
