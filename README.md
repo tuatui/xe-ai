@@ -7,26 +7,23 @@
 - [x] 基本框架
 - [x] 横竖分屏，大小调整
 - [x] 本地聊天保存
+- [x] 账号注册和跨端信息共享
 - [ ] 其他API供应商支持
-- [ ] 账号注册和跨端信息共享
 
-## Setup
+## 安装
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 Make sure to install the dependencies:
 
 ```bash
-# npm
-npm install
-
-# pnpm
+# node >= 20
 pnpm install
+```
 
-# yarn
-yarn install
+## 生成数据库和类型（必须）
 
-# bun
-bun install
+```bash
+pnpm db:generate
 ```
 
 ## Development Server
