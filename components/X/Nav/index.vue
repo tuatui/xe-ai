@@ -9,7 +9,14 @@
   >
     <div class="h-full w-full flex flex-col">
       <VToolbar density="compact">
-        <VBtn icon="mdi-menu" variant="text" @click="isRail = !isRail" />
+        <XCommonBtn
+          icon
+          use-icon="mdi-menu"
+          variant="text"
+          @click="isRail = !isRail"
+          tooltip-location="right center"
+          :use-tooltip="isRail ? `展开菜单` : `收起菜单`"
+        />
       </VToolbar>
 
       <XNavList
