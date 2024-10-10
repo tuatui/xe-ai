@@ -53,9 +53,3 @@ const handleAddTopic = async () => {
   emit("addChatTab", res);
 };
 </script>
-<style lang="scss" scoped>
-@use "/assets/tab.scss" as *;
-.dragger {
-  @include dragger-base();
-}
-</style>

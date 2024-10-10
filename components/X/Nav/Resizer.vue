@@ -34,3 +34,14 @@ watchDebounced(
   },
 );
 </script>
+<style lang="scss" scoped>
+@use "/assets/tab.scss" as *
+  with(
+    $highlight-color: black,
+    $view-border-width: 0rem,
+    $view-dragger-width: 0.2rem
+  );
+.dragger {
+  @include dragger-base();
+}
+</style>
