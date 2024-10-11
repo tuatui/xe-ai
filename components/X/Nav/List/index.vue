@@ -17,15 +17,12 @@
     </VListItem>
     <VDivider role="none" />
     <VSpacer v-show="rail" />
-    <div
-      v-show="!rail"
-      class="grow min-h-0 overflow-auto relative pb2 bg-inherit"
-    >
+    <div v-show="!rail" class="grow min-h-0 overflow-auto relative pb2">
       <template
         v-for="([timeStr, topicList], i) in relativeTimeTopic"
         :key="timeStr"
       >
-        <div class="sticky top-0 z-10 bg-inherit">
+        <div class="sticky top-0 z-10 bg-surface-light">
           <!-- <VDivider role="none" v-if="i !== 0" /> -->
           <VListSubheader>{{ timeStr }}</VListSubheader>
         </div>
