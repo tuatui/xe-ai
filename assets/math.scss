@@ -1,0 +1,9 @@
+math.tml-display {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+math * {
+  // 重设受ress影响的样式
+  margin: revert;
+  padding: revert;
+}
