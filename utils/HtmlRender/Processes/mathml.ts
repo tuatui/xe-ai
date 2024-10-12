@@ -44,8 +44,7 @@ export default (input: string) => {
       inputIndex = right + InlineRight.length;
     } else inputIndex++;
   }
-  console.log(resInline);
-  console.log(resBlock);
+
   let output: string = "";
   let cursor = 0;
   for (let iI = 0, iB = 0; iI < resInline.length || iB < resBlock.length; ) {

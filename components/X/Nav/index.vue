@@ -27,7 +27,7 @@
       />
 
       <VDivider />
-      <div class="flex gap1 bg-surface-light flex-wrap p1">
+      <div class="bg-surface-light flex flex-wrap box-border p1">
         <Setting />
         <I18nSwitch />
         <ThemeSwitch />
@@ -35,6 +35,7 @@
       </div>
     </div>
     <BottomSnackBar />
+    <ChatViewConfDialog />
     <Teleport to="body">
       <XNavResizer v-model="width" v-show="!isRail" />
     </Teleport>
@@ -44,7 +45,7 @@
 const emit = defineEmits<{ addChatTab: [topic: TopicData] }>();
 
 const isRail = ref(false);
-const width = ref(213);
+const width = ref(200);
 const { updateTopic } = topicStore();
 
 const handleAddTopic = async () => {

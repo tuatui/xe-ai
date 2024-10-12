@@ -45,3 +45,15 @@ export const testPasswordStrong = (pwd: string) => {
   if (pwd.length >= 10) point++;
   return point;
 };
+
+export const deleteUndefined = <
+  T extends Record<string | symbol, unknown> | undefined,
+>(
+  obj: T,
+): T => {
+  if (obj === undefined) return obj;
+  Object.entries(obj).forEach(([k, v]) => {
+    if (v === undefined) delete obj[k];
+  });
+  return obj;
+};

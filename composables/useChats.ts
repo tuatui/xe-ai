@@ -1,5 +1,9 @@
 export interface UseChatTempStore {
   scrollTop?: number;
+  chatSetting?: {
+    useBotData?: BotsData;
+    useModelName?: string;
+  };
 }
 
 export type useChatReturn = Ref<{

@@ -1,0 +1,81 @@
+<template>
+  <VDialog
+    v-model="isShow"
+    class="max-w-[min(100%,476px)]"
+    @update:model-value="isShow || cancelSetting()"
+  >
+    <VForm @submit.prevent>
+      <VCard>
+        <template v-slot:title>
+          <VCardTitle class="!flex items-center justify-between">
+            <h3>话题设置</h3>
+          </VCardTitle>
+        </template>
+        <VCardText>
+          <p class="text-body-2 text-medium-emphasis mb4">
+            在这里做出的改动只会影响当前话题
+          </p>
+          <VSelect
+            variant="outlined"
+            :items="bots"
+            v-model="selectedBot"
+            @update:model-value="selectedModel = undefined"
+            :item-props="(item) => ({ title: item.nickName })"
+            return-object
+            label="模型提供商"
+          >
+            <template v-slot:item="{ props, item }">
+              <VListItem
+                v-bind="props"
+                class="overflow-hidden min-w0 text-wrap break-all"
+              >
+                <template v-slot:append>
+                  <component :is="Services[item.value.provider]?.info?.icon" />
+                </template>
+              </VListItem>
+            </template>
+          </VSelect>
+          <VSelect
+            variant="outlined"
+            :items="modelList"
+            v-model="selectedModel"
+            :item-props="
+              (item) => ({
+                title: item.name,
+                subtitle: item.owner,
+                value: item.name,
+              })
+            "
+            label="模型"
+          />
+        </VCardText>
+
+        <VCardActions>
+          <VSpacer></VSpacer>
+          <VBtn
+            size="large"
+            variant="elevated"
+            type="submit"
+            color="primary"
+            :text="`保存`"
+            @click="
+              confirmSetting({
+                newBot: selectedBot,
+                newModelName: selectedModel,
+              }),
+                (isShow = false)
+            "
+          />
+        </VCardActions>
+      </VCard>
+    </VForm>
+  </VDialog>
+</template>
+<script setup lang="ts">
+const { isShow, selectedBot, selectedModel, confirmSetting, cancelSetting } =
+  storeToRefs(topicConf());
+
+const modelList = computed(() => selectedBot.value?.availableModel ?? []);
+const { Services } = chatServices();
+const { bots } = useBots();
+</script>

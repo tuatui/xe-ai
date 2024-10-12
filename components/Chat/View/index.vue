@@ -39,6 +39,7 @@
         </div>
       </div>
     </div>
+    <VDivider />
     <div
       class="flex flex-col min-h-0px"
       :style="{ height: `${inputAreaHeight}px` }"
@@ -51,82 +52,9 @@
           :class="{ active: isDragging }"
         ></div>
       </div>
-      <VToolbar density="compact">
-        <VSelect
-          variant="filled"
-          class="max-w50 ml1"
-          density="compact"
-          :items="bots"
-          v-model="selectedBots"
-          @update:model-value="handleUpdateSelectedBots"
-          :item-props="(item) => ({ title: item.nickName })"
-          return-object
-          hide-details
-        >
-          <template v-slot:item="{ props, item }">
-            <VListItem
-              v-bind="props"
-              class="overflow-hidden min-w0 text-wrap break-all"
-            >
-              <template v-slot:append>
-                <component :is="Services[item.value.provider]?.info?.icon" />
-              </template>
-            </VListItem>
-          </template>
-        </VSelect>
-        <VSelect
-          variant="filled"
-          class="max-w50 ml1"
-          density="compact"
-          :items="modelList"
-          v-model="selectedModel"
-          @update:model-value="handleUpdateSelectedModel"
-          :item-props="
-            (item) => ({
-              title: item.name,
-              subtitle: item.owner,
-              value: item.name,
-            })
-          "
-          hide-details
-        />
-        <XCommonBtn
-          icon
-          density="comfortable"
-          class="ml4"
-          @click="takeSnapshot"
-          use-icon="mdi-download"
-          :use-tooltip="$t('chat.download')"
-          tooltip-location="top"
-        />
-        <VSpacer />
-        <VExpandXTransition>
-          <XCommonBtn
-            @click="data.stopChatting()"
-            v-show="data.isProducing"
-            density="comfortable"
-            icon
-            use-icon="mdi-stop"
-            color="error"
-            variant="elevated"
-            class="mr1"
-            rounded
-            :use-tooltip="$t('chat.stop')"
-            tooltip-location="top"
-          />
-        </VExpandXTransition>
 
-        <VBtn
-          prepend-icon="mdi-send"
-          color="primary"
-          variant="elevated"
-          @click="updateHandle"
-          :disabled="!selectedBots || data.isProducing"
-          :loading="data.isProducing"
-          >{{ $t("chat.send") }}</VBtn
-        >
-      </VToolbar>
       <VTextarea
+        variant="solo"
         rows="1.5"
         row-height="0"
         class="custom-flex-v-textarea"
@@ -136,6 +64,72 @@
         hide-details
         no-resize
       />
+      <VDivider />
+      <VToolbar density="compact">
+        <VBtn
+          class="relative z-6 mr1"
+          prepend-icon="mdi-send"
+          color="primary"
+          variant="elevated"
+          @click="updateHandle"
+          :disabled="!selectedBots || data.isProducing"
+          :loading="data.isProducing"
+          >{{ $t("chat.send") }}</VBtn
+        >
+
+        <XCommonBtn
+          @click="data.stopChatting()"
+          class="relative z-5 mr1 btn-t"
+          :class="{ active: data.isProducing }"
+          :disabled="!data.isProducing"
+          density="comfortable"
+          icon
+          use-icon="mdi-stop"
+          color="error"
+          variant="elevated"
+          rounded
+          :use-tooltip="$t('chat.stop')"
+          tooltip-location="top"
+        />
+
+        <XCommonBtn
+          class="mr1"
+          icon
+          density="comfortable"
+          rounded
+          @click="handleConf"
+          use-icon="mdi-message-settings-outline"
+          :use-tooltip="$t('chat.download')"
+          tooltip-location="top"
+        />
+        <XCommonBtn
+          class="mr1"
+          icon
+          density="comfortable"
+          rounded
+          @click="takeSnapshot"
+          use-icon="mdi-download-box-outline"
+          :use-tooltip="$t('chat.download')"
+          tooltip-location="top"
+        />
+        <!-- <XCommonBtn
+          class="mr1"
+          icon
+          density="comfortable"
+          rounded
+          @click="data.isProducing = !data.isProducing"
+          use-icon="mdi-download-box-outline"
+          :use-tooltip="$t('chat.download')"
+          tooltip-location="top"
+        /> -->
+        <VSpacer />
+        <div class="text-body-2 text-medium-emphasis ellipsis-text">
+          <VIcon icon="mdi-robot" size="small" />
+          <p>{{ selectedBots?.nickName || "未选择" }}</p>
+          <VIcon icon="mdi-brain" size="small" />
+          <p>{{ selectedModel || "未选择" }}</p>
+        </div>
+      </VToolbar>
     </div>
   </div>
 </template>
@@ -143,11 +137,86 @@
 const props = defineProps<{ topics: TopicData }>();
 const userInput = ref("");
 const { globalSharedChats } = chatsStore();
-const { getTopicData, updateTopic } = topicStore();
-const { Services } = chatServices();
+const { updateTopic } = topicStore();
+
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
-const a = "";
+
+const defaultBot = defaultBotStore();
+const selectedBots = ref<BotsData>();
+const selectedModel = ref<string>();
+const { getBotsData } = useBots();
+
+const { chatSetting } = data.value.tempStore;
+if (chatSetting) {
+  selectedBots.value = chatSetting.useBotData;
+  selectedModel.value = chatSetting.useModelName;
+} else {
+  (async (): Promise<void> => {
+    const conf: Partial<globalThis.DefaultBotSetting> = {
+      ...deleteUndefined(defaultBot.defaultBotInfo),
+      ...deleteUndefined(props.topics.preferSetting),
+    };
+    data.value.tempStore.chatSetting = {
+      useBotData: (await getBotsData(conf.preferBotID)).pop(),
+      useModelName: conf.preferModelName,
+    };
+  })();
+}
+let chatSession: ChatSession | undefined | null;
+const { Services } = chatServices();
+
+watch(
+  () => data.value.tempStore.chatSetting,
+  (newSetting) => {
+    selectedBots.value = newSetting?.useBotData;
+    selectedModel.value = newSetting?.useModelName;
+    if (selectedBots.value) {
+      chatSession = Services[selectedBots.value.provider]?.createChatSession({
+        apiKey: selectedBots.value.secretKey,
+        baseURL: selectedBots.value.apiUrl,
+      });
+    } else chatSession = null;
+  },
+);
+
+const handleConf = async () => {
+  try {
+    const res = await topicConf().showTopicConfDialog(
+      selectedBots.value,
+      selectedModel.value,
+    );
+    data.value.tempStore.chatSetting = {
+      useBotData: res.newBot,
+      useModelName: res.newModelName,
+    };
+    await updateTopic(
+      {
+        id: props.topics.id,
+        preferSetting: {
+          preferBotID: res.newBot?.id,
+          preferModelName: res.newModelName,
+        },
+      },
+      false,
+    );
+  } catch (_) {
+    /* ignore */
+  }
+};
+
+if (!globalSharedChats.has(props.topics.id)) {
+  globalSharedChats.set(props.topics.id, data);
+  data.value.chatRefCount = 1;
+} else data.value.chatRefCount++;
+
+onUnmounted(() => {
+  if (data.value.chatRefCount === 1) {
+    globalSharedChats.delete(props.topics.id);
+    data.value.chatRefCount = 0;
+  } else data.value.chatRefCount--;
+});
+
 const chatInputArea = ref<HTMLElement | null>(null);
 const inputAreaHeight = ref(200);
 const dragger = ref<HTMLElement | null>(null);
@@ -161,9 +230,9 @@ const { isDragging } = useMouseDrag(
       const { bottom, top } = el.getBoundingClientRect();
       const targetMinHeight = Math.min(
         bottom - Math.max(pos.y, top),
-        el.scrollHeight - 64 /* 为了不占满空间 */,
+        el.scrollHeight - 65 /* 为了不占满空间 */,
       );
-      inputAreaHeight.value = targetMinHeight < 100 ? 100 : targetMinHeight;
+      inputAreaHeight.value = targetMinHeight < 102 ? 102 : targetMinHeight;
       if (isScrollToEnd.value)
         nextTick().then(
           () =>
@@ -174,17 +243,6 @@ const { isDragging } = useMouseDrag(
   },
 );
 
-if (!globalSharedChats.has(props.topics.id)) {
-  globalSharedChats.set(props.topics.id, data);
-  data.value.chatRefCount = 1;
-} else data.value.chatRefCount++;
-
-onUnmounted(() => {
-  if (data.value.chatRefCount === 1) {
-    globalSharedChats.delete(props.topics.id);
-    data.value.chatRefCount = 0;
-  } else data.value.chatRefCount--;
-});
 watch(
   () => data.value.chats.length,
   async (newVal, oldVal) => {
@@ -200,53 +258,8 @@ watch(
   { once: true },
 );
 
-const selectedBots = ref<BotsData>();
-
-const { bots, getBotsData } = useBots();
-
-/* until(() => bots.value.length)
-  .toBeTruthy()
-  .then(() => (selectedBots.value = bots.value.at(-1)));
- */
-const dBot = defaultBotStore();
-
-(async () => {
-  await until(() => dBot.defaultBotInfo.preferBotID).toMatch(
-    (v) => v !== undefined,
-  );
-  if (selectedBots.value !== undefined) return;
-  const res = await getBotsData(dBot.defaultBotInfo.preferBotID);
-  if (!res) return;
-  selectedBots.value = res.pop();
-})();
-
-const modelList = computed(() => {
-  return selectedBots.value?.availableModel ?? [];
-});
-const selectedModel = ref<string>();
-watch(
-  () => modelList.value.length,
-  (newVal) => {
-    if (!newVal) return;
-    if (selectedModel.value !== undefined) return;
-    selectedModel.value = modelList.value[0].name;
-  },
-);
-
-let gptChat: ChatSession | undefined | null;
-watch(selectedBots, (newVal) => {
-  if (!newVal) {
-    gptChat = undefined;
-    return;
-  }
-  gptChat = Services[newVal.provider]?.createChatSession({
-    apiKey: newVal.secretKey,
-    baseURL: newVal.apiUrl,
-  });
-});
-
 const updateHandle = async () => {
-  if (!gptChat) return;
+  if (!chatSession) return;
   if (data.value.isProducing) return;
 
   await data.value.updateChat({
@@ -269,7 +282,7 @@ const updateHandle = async () => {
 
   try {
     data.value.isProducing = true;
-    const chatSteam = await gptChat.createChat(
+    const chatSteam = await chatSession.createChat(
       data.value.chats,
       selectedModel.value,
     );
@@ -293,43 +306,6 @@ const updateDebounced = useDebounceFn(
   100,
 );
 
-const determineSetting = async () => {
-  const [res] = await getTopicData(props.topics.id);
-  if (!res) return;
-  if (res.preferSetting) {
-    selectedModel.value = res.preferSetting.preferModelName;
-    [selectedBots.value] = await getBotsData(res.preferSetting.preferBotID);
-    return;
-  }
-  if (dBot.defaultBotInfo.preferModelName !== undefined)
-    selectedModel.value = dBot.defaultBotInfo.preferModelName;
-  if (dBot.defaultBotInfo.preferBotID !== undefined)
-    [selectedBots.value] = await getBotsData(dBot.defaultBotInfo.preferBotID);
-};
-determineSetting();
-
-const handleUpdateSelectedModel = (newVal?: string) =>
-  updateTopic(
-    {
-      id: props.topics.id,
-      preferSetting: {
-        preferBotID: selectedBots.value?.id,
-        preferModelName: newVal,
-      },
-    },
-    false,
-  );
-const handleUpdateSelectedBots = (newVal?: BotsData) =>
-  updateTopic(
-    {
-      id: props.topics.id,
-      preferSetting: {
-        preferBotID: newVal?.id,
-        preferModelName: selectedModel.value,
-      },
-    },
-    false,
-  );
 const contentBody = ref<HTMLDivElement>();
 const isScrollToEnd = ref(true);
 const handleScroll = (ev: Event) => {
@@ -392,10 +368,35 @@ const takeSnapshot = async () => {
 .custom-flex-v-textarea {
   &.v-input--horizontal {
     grid-template-rows: 1fr auto;
+    .v-field--variant-solo {
+      box-shadow: none;
+    }
     textarea {
       height: 100%;
       min-height: 0px;
     }
+  }
+}
+.btn-t {
+  transform: translateX(-100%) scale(0.5);
+  :first-child {
+    transition: opacity 0.2s ease-in-out;
+  }
+  &.active {
+    transform: translateX(0px) scale(1);
+  }
+}
+.ellipsis-text {
+  min-width: 0px;
+  margin-right: 0.25rem;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 0 0.25rem;
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>
