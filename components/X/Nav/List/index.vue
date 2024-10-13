@@ -22,8 +22,8 @@
         v-for="([timeStr, topicList], i) in relativeTimeTopic"
         :key="timeStr"
       >
+        <VDivider v-if="i > 0" role="none" class="relative z-11" />
         <div class="sticky top-0 z-10 bg-surface-light">
-          <!-- <VDivider role="none" v-if="i !== 0" /> -->
           <VListSubheader>{{ timeStr }}</VListSubheader>
         </div>
 
