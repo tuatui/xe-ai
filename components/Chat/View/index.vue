@@ -41,6 +41,13 @@
       </div>
     </div>
     <VDivider />
+    <div class="view-dragger-parent">
+      <div
+        class="view-dragger offset-y"
+        ref="dragger"
+        :class="{ active: isDragging }"
+      ></div>
+    </div>
     <VExpandTransition>
       <div
         class="flex flex-col min-h-0px"
@@ -48,14 +55,6 @@
         :style="{ height: `${inputAreaHeight}px` }"
         ref="chatInputArea"
       >
-        <div class="view-dragger-parent">
-          <div
-            class="view-dragger offset-y"
-            ref="dragger"
-            :class="{ active: isDragging }"
-          ></div>
-        </div>
-
         <VTextarea
           autofocus
           variant="solo"
