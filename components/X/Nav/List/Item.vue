@@ -41,7 +41,7 @@
 
     <VTextField
       v-if="isEdit"
-      autofocus
+      :autofocus="isEdit"
       v-click-outside="handleUpdate"
       @click.stop
       @keydown.enter.stop="handleUpdate"

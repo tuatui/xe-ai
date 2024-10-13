@@ -44,7 +44,7 @@
     <VExpandTransition>
       <div
         class="flex flex-col min-h-0px"
-        v-show="!isCollapse"
+        v-if="!isCollapse"
         :style="{ height: `${inputAreaHeight}px` }"
         ref="chatInputArea"
       >
@@ -57,6 +57,7 @@
         </div>
 
         <VTextarea
+          autofocus
           variant="solo"
           rows="1.5"
           row-height="0"
