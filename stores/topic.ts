@@ -53,8 +53,8 @@ export const topicStore = defineStore("topic-store", () => {
   };
 
   const removeTopic = async (id: number, autoUpdateCache = true) => {
-    if (ls.isLogin) await topicServer.get(id);
-    else await topicLocal.get(id);
+    if (ls.isLogin) await topicServer.remove(id);
+    else await topicLocal.remove(id);
 
     if (autoUpdateCache) {
       const res = topics.value.findIndex((topic) => topic.id === id);
