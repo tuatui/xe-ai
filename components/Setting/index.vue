@@ -23,7 +23,7 @@
           <VListSubheader>{{ $t("common.model") }}</VListSubheader>
 
           <VListItem
-            :title="$t('module.config')"
+            :title="$t('model.config')"
             @click="isModelDialogOpen = true"
           >
             <template v-slot:append>

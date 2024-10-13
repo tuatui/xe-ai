@@ -15,7 +15,9 @@
           variant="text"
           @click="isRail = !isRail"
           tooltip-location="right center"
-          :use-tooltip="isRail ? `展开菜单` : `收起菜单`"
+          :use-tooltip="
+            isRail ? $t('tips.expandMenu') : $t('tips.collapseMenu')
+          "
         />
       </VToolbar>
 

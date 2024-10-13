@@ -34,7 +34,7 @@
           <VTextField
             v-model="botsInfoClone.secretKey"
             type="password"
-            :label="$t('module.secretKey')"
+            :label="$t('model.secretKey')"
           />
 
           <div class="flex gap4">

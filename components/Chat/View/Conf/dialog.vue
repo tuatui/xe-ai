@@ -8,12 +8,12 @@
       <VCard>
         <template v-slot:title>
           <VCardTitle class="!flex items-center justify-between">
-            <h3>话题设置</h3>
+            <h3>{{ $t("setting.topic.title") }}</h3>
           </VCardTitle>
         </template>
         <VCardText>
           <p class="text-body-2 text-medium-emphasis mb4">
-            在这里做出的改动只会影响当前话题
+            {{ $t("setting.topic.tip") }}
           </p>
           <VSelect
             variant="outlined"
@@ -22,7 +22,7 @@
             @update:model-value="selectedModel = undefined"
             :item-props="(item) => ({ title: item.nickName })"
             return-object
-            label="模型提供商"
+            :label="$t('common.notSelected')"
           >
             <template v-slot:item="{ props, item }">
               <VListItem
@@ -46,7 +46,7 @@
                 value: item.name,
               })
             "
-            label="模型"
+            :label="$t('common.model')"
           />
         </VCardText>
 
@@ -57,7 +57,7 @@
             variant="elevated"
             type="submit"
             color="primary"
-            :text="`保存`"
+            :text="$t('common.save')"
             @click="
               confirmSetting({
                 newBot: selectedBot,

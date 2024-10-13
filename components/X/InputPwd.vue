@@ -6,7 +6,7 @@
         class="ml3"
         icon
         variant="text"
-        title="切换显示/隐藏密码"
+        :title="$t('tips.hidePwd')"
       >
         <VIcon :icon="isShow ? 'mdi-eye-off' : 'mdi-eye'" />
       </VBtn>

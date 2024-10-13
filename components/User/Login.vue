@@ -3,7 +3,7 @@
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
-          <h3>登录</h3>
+          <h3>{{ $t("common.login") }}</h3>
         </VCardTitle>
       </template>
       <VCardText>
@@ -22,7 +22,7 @@
           :disabled="isSubmitting"
         />
         <p class="text-body-2 text-medium-emphasis">
-          登录后，会自动同步你的模型和密钥信息。密钥在上传前会被加密。
+          {{ $t("tips.loginAndSync") }}
         </p>
         <UserSyncCheckBox v-model="form.syncAll" :disabled="isSubmitting" />
       </VCardText>
@@ -34,7 +34,7 @@
           size="large"
           type="submit"
           color="primary"
-          :text="'注册'"
+          :text="$t('common.register')"
           @click="$emit('change')"
           :disabled="isSubmitting"
         />
@@ -63,6 +63,7 @@ const createLoginForm = () => ({
   password: "",
   syncAll: true,
 });
+const { t } = useI18n();
 const form = ref(createLoginForm());
 
 const isSubmitting = ref(false);
@@ -84,7 +85,7 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
 
   if (!loginRes) {
     pushNotification({
-      content: "账号或密码错误",
+      content: t("tips.loginFail"),
       timeout: 3000,
       allowClose: false,
     });

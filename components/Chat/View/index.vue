@@ -102,7 +102,7 @@
             rounded
             @click="handleConf"
             use-icon="mdi-message-settings-outline"
-            use-tooltip="聊天设置"
+            :use-tooltip="$t('chat.setting')"
             tooltip-location="top"
           />
           <XCommonBtn
@@ -122,7 +122,7 @@
             rounded
             @click="isCollapse = true"
             use-icon="mdi-arrow-collapse"
-            use-tooltip="收起输入框（双击展开）"
+            :use-tooltip="$t('chat.collapse')"
             tooltip-location="top"
           />
 
@@ -139,9 +139,9 @@
           <VSpacer />
           <div class="text-body-2 text-medium-emphasis ellipsis-text">
             <VIcon icon="mdi-robot" size="small" />
-            <p>{{ selectedBots?.nickName || "未选择" }}</p>
+            <p>{{ selectedBots?.nickName || $t("common.notSelected") }}</p>
             <VIcon icon="mdi-brain" size="small" />
-            <p>{{ selectedModel || "未选择" }}</p>
+            <p>{{ selectedModel || $t("common.notSelected") }}</p>
           </div>
         </VToolbar>
       </div>

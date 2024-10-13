@@ -3,7 +3,7 @@
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
-          <h3>注册</h3>
+          <h3>{{ $t("common.register") }}</h3>
         </VCardTitle>
       </template>
       <VCardText>
@@ -38,12 +38,12 @@
           autocomplete="new-password"
           :rules="[handlePasswordRepeatRule]"
           validate-on="invalid-input lazy"
-          label="重复密码"
+          :label="$t('common.repeatPwd')"
           v-model="form.passwordRepeat"
           :disabled="isSubmitting"
         />
         <p class="text-body-2 text-medium-emphasis">
-          注册后，会自动同步你的模型和密钥信息。密钥在上传前会被加密。
+          {{ $t("tips.regAndSync") }}
         </p>
         <UserSyncCheckBox v-model="form.syncAll" :disabled="isSubmitting" />
       </VCardText>
@@ -55,7 +55,7 @@
           :disabled="isSubmitting"
           size="large"
           color="primary"
-          :text="'返回'"
+          :text="$t('common.back')"
           @click="$emit('change')"
         />
         <VBtn
@@ -63,7 +63,7 @@
           size="large"
           type="submit"
           color="primary"
-          :text="`注册`"
+          :text="$t('common.register')"
           variant="elevated"
         />
       </VCardActions>
@@ -80,7 +80,7 @@ const emit = defineEmits<{
 }>();
 
 const nameTextField = ref<InstanceType<typeof VTextField>>();
-
+const { t } = useI18n();
 const $client = useNuxtApp().$client;
 const createRegForm = () => ({
   name: "",
@@ -92,7 +92,7 @@ const form = ref(createRegForm());
 
 const isCheckingName = ref(false);
 const handleCheckName = async () => {
-  if (form.value.name === "") return "必填项";
+  if (form.value.name === "") return t("tips.mustExist");
 
   isCheckingName.value = true;
   const { isAvailable } = await $client.user.checkName.query({
@@ -101,7 +101,7 @@ const handleCheckName = async () => {
   isCheckingName.value = false;
 
   if (isAvailable) return true;
-  else return "这个名字已经被使用了";
+  else return t("tips.nameAlreadyUse");
 };
 const handleTrigger = useDebounceFn(async () => {
   nameTextField.value?.validate();
@@ -109,22 +109,22 @@ const handleTrigger = useDebounceFn(async () => {
 watch(() => form.value.name, handleTrigger);
 
 const handlePasswordRule = (pwd: string) => {
-  if (pwd.length < 5) return "密码不应小于六位数";
-  else if (pwd.length > 64) return "密码过长";
+  if (pwd.length < 5) return t("tips.pwdTooShort");
+  else if (pwd.length > 64) return t("tips.pwdTooLooong");
   return true;
 };
 const handlePasswordRepeatRule = () => {
   if (form.value.password === form.value.passwordRepeat) return true;
-  return "前后输入的密码不一致";
+  return t("tips.pwdIsDiff");
 };
 
 const passwordStrong = ref(0);
 const passwordHint = computed(() => {
   let a: string | undefined;
-  if (passwordStrong.value <= 2) a = "低";
-  else if (passwordStrong.value <= 4) a = "中";
-  else a = "高";
-  return "强度：" + a;
+  if (passwordStrong.value <= 2) a = t("common.low");
+  else if (passwordStrong.value <= 4) a = t("common.middle");
+  else a = t("common.high");
+  return t("common.strength") + a;
 });
 watch(
   () => form.value.password,

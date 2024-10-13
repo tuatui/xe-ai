@@ -10,7 +10,7 @@
         role="option"
         variant="tonal"
         @click="$emit('newTopicWithChat')"
-        use-tooltip="开始新对话"
+        :use-tooltip="$t('tips.newChatLong')"
         tooltip-location="right center"
         :embed-tooltip="!rail"
       />
@@ -61,7 +61,7 @@ defineEmits<{
 const ts = topicStore();
 const { pushNotification } = notificationStore();
 const { updateTopic, removeTopic, updateCache } = ts;
-
+const { t } = useI18n();
 let jobCount = 0;
 const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
   const [topic] = topicsInMap.splice(index, 1);
@@ -70,7 +70,9 @@ const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
     jobCount++;
     await new Promise<void>((resolve) => {
       pushNotification({
-        content: `已删除 "${topic.title || "无标题"}"`,
+        content: t("action.deleteSome", {
+          item: topic.title || t("chat.untitled"),
+        }),
         cancelable: true,
         onFinish: () => {
           removeTopic(topic.id, false);
