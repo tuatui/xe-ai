@@ -2,6 +2,7 @@
   <div class="h-full flex flex-col overflow-hidden">
     <div
       class="markdown-body h0 flex-grow-1 relative overflow-y-auto py4"
+      @dblclick="isCollapse = false"
       ref="contentBody"
       @scroll="handleScroll"
     >
@@ -40,79 +41,92 @@
       </div>
     </div>
     <VDivider />
-    <div
-      class="flex flex-col min-h-0px"
-      :style="{ height: `${inputAreaHeight}px` }"
-      ref="chatInputArea"
-    >
-      <div class="view-dragger-parent">
-        <div
-          class="view-dragger offset-y"
-          ref="dragger"
-          :class="{ active: isDragging }"
-        ></div>
-      </div>
+    <VExpandTransition>
+      <div
+        class="flex flex-col min-h-0px"
+        v-show="!isCollapse"
+        :style="{ height: `${inputAreaHeight}px` }"
+        ref="chatInputArea"
+      >
+        <div class="view-dragger-parent">
+          <div
+            class="view-dragger offset-y"
+            ref="dragger"
+            :class="{ active: isDragging }"
+          ></div>
+        </div>
 
-      <VTextarea
-        variant="solo"
-        rows="1.5"
-        row-height="0"
-        class="custom-flex-v-textarea"
-        rounded="0"
-        :label="$t('chat.inputTips')"
-        v-model="userInput"
-        hide-details
-        no-resize
-      />
-      <VDivider />
-      <VToolbar density="compact">
-        <VBtn
-          class="relative z-6 mr1"
-          prepend-icon="mdi-send"
-          color="primary"
-          variant="elevated"
-          @click="updateHandle"
-          :disabled="!selectedBots || data.isProducing"
-          :loading="data.isProducing"
-          >{{ $t("chat.send") }}</VBtn
-        >
+        <VTextarea
+          variant="solo"
+          rows="1.5"
+          row-height="0"
+          class="custom-flex-v-textarea"
+          rounded="0"
+          :label="$t('chat.inputTips')"
+          v-model="userInput"
+          hide-details
+          no-resize
+        />
+        <VDivider />
+        <VToolbar density="compact">
+          <VBtn
+            class="relative z-6 mr1"
+            prepend-icon="mdi-send"
+            color="primary"
+            variant="elevated"
+            @click="updateHandle"
+            :disabled="!selectedBots || data.isProducing"
+            :loading="data.isProducing"
+            >{{ $t("chat.send") }}</VBtn
+          >
 
-        <XCommonBtn
-          @click="data.stopChatting()"
-          class="relative z-5 mr1 btn-t"
-          :class="{ active: data.isProducing }"
-          :disabled="!data.isProducing"
-          density="comfortable"
-          icon
-          use-icon="mdi-stop"
-          color="error"
-          variant="elevated"
-          rounded
-          :use-tooltip="$t('chat.stop')"
-          tooltip-location="top"
-        />
+          <XCommonBtn
+            @click="data.stopChatting()"
+            class="relative z-5 mr1 btn-t"
+            :class="{ active: data.isProducing }"
+            :disabled="!data.isProducing"
+            density="comfortable"
+            icon
+            use-icon="mdi-stop"
+            color="error"
+            variant="elevated"
+            rounded
+            :use-tooltip="$t('chat.stop')"
+            tooltip-location="top"
+          />
 
-        <XCommonBtn
-          class="mr1"
-          icon
-          density="comfortable"
-          rounded
-          @click="handleConf"
-          use-icon="mdi-message-settings-outline"
-          :use-tooltip="$t('chat.download')"
-          tooltip-location="top"
-        />
-        <XCommonBtn
-          class="mr1"
-          icon
-          density="comfortable"
-          rounded
-          @click="takeSnapshot"
-          use-icon="mdi-download-box-outline"
-          :use-tooltip="$t('chat.download')"
-          tooltip-location="top"
-        />
-        <!-- <XCommonBtn
+          <XCommonBtn
+            class="mr1"
+            icon
+            density="comfortable"
+            rounded
+            @click="handleConf"
+            use-icon="mdi-message-settings-outline"
+            use-tooltip="聊天设置"
+            tooltip-location="top"
+          />
+          <XCommonBtn
+            class="mr1"
+            icon
+            density="comfortable"
+            rounded
+            @click="takeSnapshot"
+            use-icon="mdi-download-box-outline"
+            :use-tooltip="$t('chat.download')"
+            tooltip-location="top"
+          />
+          <XCommonBtn
+            class="mr1"
+            icon
+            density="comfortable"
+            rounded
+            @click="isCollapse = true"
+            use-icon="mdi-arrow-collapse"
+            use-tooltip="收起输入框（双击展开）"
+            tooltip-location="top"
+          />
+
+          <!-- <XCommonBtn
           class="mr1"
           icon
           density="comfortable"
@@ -122,15 +136,16 @@
           :use-tooltip="$t('chat.download')"
           tooltip-location="top"
         /> -->
-        <VSpacer />
-        <div class="text-body-2 text-medium-emphasis ellipsis-text">
-          <VIcon icon="mdi-robot" size="small" />
-          <p>{{ selectedBots?.nickName || "未选择" }}</p>
-          <VIcon icon="mdi-brain" size="small" />
-          <p>{{ selectedModel || "未选择" }}</p>
-        </div>
-      </VToolbar>
-    </div>
+          <VSpacer />
+          <div class="text-body-2 text-medium-emphasis ellipsis-text">
+            <VIcon icon="mdi-robot" size="small" />
+            <p>{{ selectedBots?.nickName || "未选择" }}</p>
+            <VIcon icon="mdi-brain" size="small" />
+            <p>{{ selectedModel || "未选择" }}</p>
+          </div>
+        </VToolbar>
+      </div>
+    </VExpandTransition>
   </div>
 </template>
 <script setup lang="ts">
@@ -141,6 +156,18 @@ const { updateTopic } = topicStore();
 
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
+
+if (!globalSharedChats.has(props.topics.id)) {
+  globalSharedChats.set(props.topics.id, data);
+  data.value.chatRefCount = 1;
+} else data.value.chatRefCount++;
+
+onUnmounted(() => {
+  if (data.value.chatRefCount === 1) {
+    globalSharedChats.delete(props.topics.id);
+    data.value.chatRefCount = 0;
+  } else data.value.chatRefCount--;
+});
 
 const defaultBot = defaultBotStore();
 const selectedBots = ref<BotsData>();
@@ -204,18 +231,6 @@ const handleConf = async () => {
     /* ignore */
   }
 };
-
-if (!globalSharedChats.has(props.topics.id)) {
-  globalSharedChats.set(props.topics.id, data);
-  data.value.chatRefCount = 1;
-} else data.value.chatRefCount++;
-
-onUnmounted(() => {
-  if (data.value.chatRefCount === 1) {
-    globalSharedChats.delete(props.topics.id);
-    data.value.chatRefCount = 0;
-  } else data.value.chatRefCount--;
-});
 
 const chatInputArea = ref<HTMLElement | null>(null);
 const inputAreaHeight = ref(200);
@@ -345,6 +360,8 @@ const takeSnapshot = async () => {
     title: props.topics.title || t("chat.untitled"),
   });
 };
+
+const isCollapse = ref(false);
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *

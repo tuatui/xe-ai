@@ -27,7 +27,10 @@
       />
 
       <VDivider />
-      <div class="bg-surface-light flex flex-wrap box-border p1">
+      <div
+        class="bg-surface-light flex flex-wrap box-border px1"
+        :class="{ py1: isRail }"
+      >
         <Setting />
         <I18nSwitch />
         <ThemeSwitch />
