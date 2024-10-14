@@ -32,15 +32,7 @@ export default defineNuxtConfig({
     // 手动控制导入，以解决自带的类名和unocss冲突的问题
     moduleOptions: { disableVuetifyStyles: true },
   },
-  imports: {
-    dirs: ["./constants"],
-    presets: [
-      {
-        from: "unocss",
-        imports: [{ name: "clone", as: "cloneDeep" }, { name: "mergeDeep" }],
-      },
-    ],
-  },
+  imports: { dirs: ["./constants"] },
   i18n: {
     locales,
     lazy: true,
