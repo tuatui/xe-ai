@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { presetUno, presetIcons } from "unocss";
 import { locales } from "./lang/config/locales.config";
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -66,4 +67,7 @@ export default defineNuxtConfig({
     "~/assets/math.scss",
   ],
   ssr: false,
+  nitro: {
+    compressPublicAssets: true,
+  },
 });
