@@ -28,7 +28,7 @@
               density="comfortable"
               size="small"
               @click.stop="remove(i)"
-              use-icon="mdi-window-close"
+              use-icon="i-mdi-window-close"
               :use-tooltip="$t('common.close')"
             />
           </template>
@@ -47,7 +47,7 @@
           <VMenu open-on-hover location="bottom end">
             <template v-slot:activator="{ props }">
               <VBtn
-                icon="mdi-dots-vertical"
+                icon="i-mdi-dots-vertical"
                 variant="text"
                 v-bind="props"
                 :aria-label="$t('common.moreOptions')"
@@ -82,7 +82,7 @@
         v-if="data.topics.length === 0"
         class="ma"
         color="primary"
-        prepend-icon="mdi-forum-plus"
+        prepend-icon="i-mdi-forum-plus"
         @click="handleNewChat"
       >
         {{ $t("chat.new") }}

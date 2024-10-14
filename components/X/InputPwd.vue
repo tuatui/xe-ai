@@ -8,7 +8,7 @@
         variant="text"
         :title="$t('tips.hidePwd')"
       >
-        <VIcon :icon="isShow ? 'mdi-eye-off' : 'mdi-eye'" />
+        <VIcon :icon="isShow ? 'i-mdi-eye-off' : 'i-mdi-eye'" />
       </VBtn>
     </template>
   </VTextField>

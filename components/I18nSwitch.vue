@@ -7,7 +7,7 @@
         variant="text"
         tooltip-location="top"
         :use-tooltip="$t('common.language')"
-        use-icon="mdi-translate"
+        use-icon="i-mdi-translate"
       />
     </template>
     <VList nav width="150">

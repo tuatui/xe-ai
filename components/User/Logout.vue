@@ -14,14 +14,14 @@
           dot
           location="bottom right"
         >
-          <VIcon icon="mdi-account-circle" />
+          <VIcon icon="i-mdi-account-circle" />
         </VBadge>
       </XCommonBtn>
     </template>
     <VList nav width="150">
       <VListItem @click="handleLogout()">
         <template v-slot:prepend>
-          <VAvatar icon="mdi-logout" />
+          <VAvatar icon="i-mdi-logout" />
         </template>
         {{ $t("common.logout") }}
       </VListItem>

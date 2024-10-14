@@ -35,7 +35,7 @@
             <div class="w0 overflow-hidden">
               {{ $t("chat.scrollToBottom") }}
             </div>
-            <VIcon icon="mdi-chevron-down" />
+            <VIcon icon="i-mdi-chevron-down" />
           </VFab>
         </div>
       </div>
@@ -71,7 +71,7 @@
         <VToolbar density="compact">
           <VBtn
             class="relative z-6 mr1"
-            prepend-icon="mdi-send"
+            prepend-icon="i-mdi-send"
             color="primary"
             variant="elevated"
             @click="updateHandle"
@@ -87,7 +87,7 @@
             :disabled="!data.isProducing"
             density="comfortable"
             icon
-            use-icon="mdi-stop"
+            use-icon="i-mdi-stop"
             color="error"
             variant="elevated"
             rounded
@@ -101,7 +101,7 @@
             density="comfortable"
             rounded
             @click="handleConf"
-            use-icon="mdi-message-settings-outline"
+            use-icon="i-mdi-message-settings-outline"
             :use-tooltip="$t('chat.setting')"
             tooltip-location="top"
           />
@@ -111,7 +111,7 @@
             density="comfortable"
             rounded
             @click="takeSnapshot"
-            use-icon="mdi-download-box-outline"
+            use-icon="i-mdi-download-box-outline"
             :use-tooltip="$t('chat.download')"
             tooltip-location="top"
           />
@@ -121,7 +121,7 @@
             density="comfortable"
             rounded
             @click="isCollapse = true"
-            use-icon="mdi-arrow-collapse"
+            use-icon="i-mdi-arrow-collapse"
             :use-tooltip="$t('chat.collapse')"
             tooltip-location="top"
           />
@@ -132,15 +132,15 @@
           density="comfortable"
           rounded
           @click="data.isProducing = !data.isProducing"
-          use-icon="mdi-download-box-outline"
+          use-icon="i-mdi-download-box-outline"
           :use-tooltip="$t('chat.download')"
           tooltip-location="top"
         /> -->
           <VSpacer />
           <div class="text-body-2 text-medium-emphasis ellipsis-text">
-            <VIcon icon="mdi-robot" size="small" />
+            <VIcon icon="i-mdi-robot" size="small" />
             <p>{{ selectedBots?.nickName || $t("common.notSelected") }}</p>
-            <VIcon icon="mdi-brain" size="small" />
+            <VIcon icon="i-mdi-brain" size="small" />
             <p>{{ selectedModel || $t("common.notSelected") }}</p>
           </div>
         </VToolbar>

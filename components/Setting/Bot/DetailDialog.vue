@@ -8,7 +8,7 @@
               {{ isUpdate ? $t("common.edit") : $t("common.create") }}
               {{ $t("common.model") }}
             </h3>
-            <VBtn icon="mdi-close" variant="text" @click="model = false" />
+            <VBtn icon="i-mdi-close" variant="text" @click="model = false" />
           </VCardTitle>
         </template>
         <VCardText>
@@ -73,7 +73,7 @@
             </VCombobox>
             <VBtn
               color="primary"
-              prepend-icon="mdi-magnify"
+              prepend-icon="i-mdi-magnify"
               variant="text"
               size="x-large"
               @click="handleGetModelList"

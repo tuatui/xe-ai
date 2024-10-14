@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@mdi/font':
-    specifier: ^7.4.47
-    version: 7.4.47
   '@pinia/nuxt':
     specifier: ^0.5.3
     version: 0.5.5(rollup@4.24.0)(typescript@5.6.2)(vue@3.5.11)
@@ -43,6 +40,12 @@ devDependencies:
   '@iconify-json/logos':
     specifier: ^1.2.0
     version: 1.2.2
+  '@iconify-json/mdi':
+    specifier: ^1.2.1
+    version: 1.2.1
+  '@mdi/font':
+    specifier: ^7.4.47
+    version: 7.4.47
   '@nuxtjs/i18n':
     specifier: ^8.5.3
     version: 8.5.5(rollup@4.24.0)(vue@3.5.11)
@@ -1022,6 +1025,12 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/mdi@1.2.1:
+    resolution: {integrity: sha512-dSkQU78gsZV6Yxnq78+LuX7jzeFC/5NAmz7O3rh558GimGFcwMVY/OtqRowIzjqJBmMmWZft7wkFV4TrwRXjlg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
   /@iconify/types@2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
     dev: true
@@ -1220,7 +1229,7 @@ packages:
 
   /@mdi/font@7.4.47:
     resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
-    dev: false
+    dev: true
 
   /@miyaneee/rollup-plugin-json5@1.2.0(rollup@4.24.0):
     resolution: {integrity: sha512-JjTIaXZp9WzhUHpElrqPnl1AzBi/rvRs065F71+aTmlqvTMVkdbjZ8vfFl4nRlgJy+TPBw69ZK4pwFdmOAt4aA==}

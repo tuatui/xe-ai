@@ -6,7 +6,7 @@
     <VListItem lines="two" :class="{ '!px1 !py2': rail }">
       <XCommonBtn
         :icon="rail"
-        use-icon="mdi-plus"
+        use-icon="i-mdi-plus"
         role="option"
         variant="tonal"
         @click="$emit('newTopicWithChat')"

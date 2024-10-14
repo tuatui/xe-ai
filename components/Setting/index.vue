@@ -7,7 +7,7 @@
         v-bind="activatorProps"
         tooltip-location="top"
         :use-tooltip="$t('common.setting')"
-        use-icon="mdi-cog"
+        use-icon="i-mdi-cog"
       />
     </template>
 
@@ -15,7 +15,7 @@
       <VToolbar>
         <VToolbarTitle>{{ $t("common.setting") }}</VToolbarTitle>
         <VSpacer></VSpacer>
-        <VBtn icon="mdi-close" @click="dialog = false"></VBtn>
+        <VBtn icon="i-mdi-close" @click="dialog = false"></VBtn>
       </VToolbar>
 
       <VList lines="two" subheader>
@@ -27,7 +27,7 @@
             @click="isModelDialogOpen = true"
           >
             <template v-slot:append>
-              <VAvatar icon="mdi-chevron-right" />
+              <VAvatar icon="i-mdi-chevron-right" />
             </template>
           </VListItem>
           <SettingBotConfDialog v-model="isModelDialogOpen" />

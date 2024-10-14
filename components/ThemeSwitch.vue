@@ -4,7 +4,7 @@
     icon
     @click="theme.global.name.value = isDarkTheme ? 'light' : 'dark'"
     :use-tooltip="$t('setting.switchTheme')"
-    use-icon="mdi-theme-light-dark"
+    use-icon="i-mdi-theme-light-dark"
   />
 </template>
 <script setup lang="ts">

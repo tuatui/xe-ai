@@ -14,7 +14,7 @@
             v-bind="activatorProps"
             :class="{ dialog: activatorProps['aria-expanded'] === 'false' }"
             size="small"
-            icon="mdi-dots-vertical"
+            icon="i-mdi-dots-vertical"
             variant="text"
             :title="$t('common.moreOptions')"
           />
@@ -23,7 +23,7 @@
           key="1"
           icon
           @click="isEdit = true"
-          use-icon="mdi-pencil"
+          use-icon="i-mdi-pencil"
           :use-tooltip="$t('common.edit')"
           tooltip-location="top"
         />
@@ -32,7 +32,7 @@
           icon
           color="error"
           @click="$emit('remove')"
-          use-icon="mdi-delete"
+          use-icon="i-mdi-delete"
           :use-tooltip="$t('common.delete')"
           tooltip-location="top"
         />

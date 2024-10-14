@@ -11,7 +11,7 @@
       <VToolbar density="compact">
         <XCommonBtn
           icon
-          use-icon="mdi-menu"
+          use-icon="i-mdi-menu"
           variant="text"
           @click="isRail = !isRail"
           tooltip-location="right center"
