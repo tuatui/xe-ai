@@ -30,7 +30,7 @@ export interface ChatService {
     icon: VNode;
     defaultBaseUrl: string;
   };
-  createChatSession: (conf: Partial<ChatSessionConf>) => ChatSession;
+  createChatSession: (conf: Partial<ChatSessionConf>) => Promise<ChatSession>;
 }
 export interface ModelList {
   name: string;

@@ -161,7 +161,7 @@ const handleGetModelList = async () => {
     if (botsInfoClone.value.provider === undefined) return;
     const services = Services[botsInfoClone.value.provider];
     if (!services) return;
-    const session = services.createChatSession({
+    const session = await services.createChatSession({
       apiKey: botsInfoClone.value.secretKey,
       baseURL: botsInfoClone.value.apiUrl,
     });

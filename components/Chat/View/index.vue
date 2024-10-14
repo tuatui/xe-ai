@@ -195,11 +195,13 @@ const { Services } = chatServices();
 
 watch(
   () => data.value.tempStore.chatSetting,
-  (newSetting) => {
+  async (newSetting) => {
     selectedBots.value = newSetting?.useBotData;
     selectedModel.value = newSetting?.useModelName;
     if (selectedBots.value) {
-      chatSession = Services[selectedBots.value.provider]?.createChatSession({
+      chatSession = await Services[
+        selectedBots.value.provider
+      ]?.createChatSession({
         apiKey: selectedBots.value.secretKey,
         baseURL: selectedBots.value.apiUrl,
       });

@@ -3,7 +3,7 @@ import { defaultChatSessionConf, Provider } from "../base";
 
 import { icon } from "./icon";
 
-import OpenAI from "openai";
+import type OpenAI from "openai";
 import type { ClientOptions } from "openai";
 import type { Stream } from "openai/streaming.mjs";
 
@@ -34,6 +34,7 @@ export interface GPTChatChunk extends ChatChunk {
   chunk: OpenAI.Chat.Completions.ChatCompletionChunk;
 }
 
+let OpenAIClass: typeof OpenAI | undefined = undefined;
 export const GPTChatService: ChatService = {
   info: {
     provider: "Open AI",
@@ -41,7 +42,7 @@ export const GPTChatService: ChatService = {
     icon,
     defaultBaseUrl: "https://api.openai.com/v1/",
   },
-  createChatSession: (conf) => {
+  createChatSession: async (conf) => {
     const finalConf: Partial<ClientOptions> = {
       // 目前服务端将不会直接保存用户的secret key，并且不代理用户的请求。
       // 因为用户可能不愿意将secret key暴露给服务端。
@@ -52,7 +53,11 @@ export const GPTChatService: ChatService = {
       ...conf,
       maxRetries: 1,
     };
-    const openAI = new OpenAI(finalConf);
+    if (OpenAIClass === undefined) {
+      const { default: d } = await import("openai");
+      OpenAIClass = d;
+    }
+    const openAI = new OpenAIClass(finalConf);
 
     return {
       async createChat(chats: ChatData[], model: GPTModel) {
