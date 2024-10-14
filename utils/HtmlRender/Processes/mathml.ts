@@ -1,5 +1,4 @@
-import temml from "temml";
-
+import type { renderToString } from "temml";
 const BlockLeft = "\\[";
 const BlockRight = "\\]";
 const InlineLeft = "\\(";
@@ -14,8 +13,9 @@ class FindResult {
     public right: number,
   ) {}
 }
+let latex2Mathml: typeof renderToString | undefined = undefined;
 
-export default (input: string) => {
+export default async (input: string) => {
   const resInline: FindResult[] = [];
   const resBlock: FindResult[] = [];
 
@@ -47,24 +47,34 @@ export default (input: string) => {
 
   let output: string = "";
   let cursor = 0;
-  for (let iI = 0, iB = 0; iI < resInline.length || iB < resBlock.length; ) {
-    const inlineL = resInline[iI]?.left ?? Infinity;
-    const blockL = resBlock[iB]?.left ?? Infinity;
-    if (inlineL < blockL) {
-      const { left, right } = resInline[iI];
-      output += input.slice(cursor, left - 2);
-      output += temml.renderToString(input.slice(left, right));
-      cursor = right + 2;
-      iI++;
-    } else {
-      const { left, right } = resBlock[iB];
-      output += input.slice(cursor, left - 2);
-      output += temml.renderToString(input.slice(left, right), {
-        displayMode: true,
-      });
-      cursor = right + 2;
-      iB++;
+  if (resInline.length > 0 || resBlock.length > 0) {
+    if (latex2Mathml === undefined) {
+      const {
+        default: { renderToString },
+      } = await import("temml");
+      latex2Mathml = renderToString;
+    }
+
+    for (let iI = 0, iB = 0; iI < resInline.length || iB < resBlock.length; ) {
+      const inlineL = resInline[iI]?.left ?? Infinity;
+      const blockL = resBlock[iB]?.left ?? Infinity;
+      if (inlineL < blockL) {
+        const { left, right } = resInline[iI];
+        output += input.slice(cursor, left - 2);
+        output += latex2Mathml(input.slice(left, right));
+        cursor = right + 2;
+        iI++;
+      } else {
+        const { left, right } = resBlock[iB];
+        output += input.slice(cursor, left - 2);
+        output += latex2Mathml(input.slice(left, right), {
+          displayMode: true,
+        });
+        cursor = right + 2;
+        iB++;
+      }
     }
   }
+
   return output + input.slice(cursor);
 };

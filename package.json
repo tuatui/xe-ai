@@ -11,7 +11,8 @@
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
     "lint": "oxlint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "analyze": "nuxi analyze"
   },
   "lint-staged": {
     "*.{ts,tsx,vue}": [

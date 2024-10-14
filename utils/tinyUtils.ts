@@ -72,7 +72,6 @@ export const mergeDeep = (
   target: AnyRecord,
   ...sources: AnyRecord[]
 ): AnyRecord => {
-  console.log("call");
   if (!sources.length) return target;
   const source = sources.shift();
 
