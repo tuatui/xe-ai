@@ -68,9 +68,11 @@
           no-resize
         />
         <VDivider />
-        <VToolbar density="compact">
+        <div
+          class="bg-surface-light min-h-48px flex items-center px2 gap1 flex-wrap"
+        >
           <VBtn
-            class="relative z-6 mr1"
+            class="relative z-6 my1"
             prepend-icon="i-mdi-send"
             color="primary"
             variant="elevated"
@@ -82,7 +84,7 @@
 
           <XCommonBtn
             @click="data.stopChatting()"
-            class="relative z-5 mr1 btn-t"
+            class="relative z-5 btn-t"
             :class="{ active: data.isProducing }"
             :disabled="!data.isProducing"
             density="comfortable"
@@ -96,30 +98,30 @@
           />
 
           <XCommonBtn
-            class="mr1"
             icon
             density="comfortable"
             rounded
+            variant="text"
             @click="handleConf"
             use-icon="i-mdi-message-settings-outline"
             :use-tooltip="$t('chat.setting')"
             tooltip-location="top"
           />
           <XCommonBtn
-            class="mr1"
             icon
             density="comfortable"
             rounded
+            variant="text"
             @click="takeSnapshot"
             use-icon="i-mdi-download-box-outline"
             :use-tooltip="$t('chat.download')"
             tooltip-location="top"
           />
           <XCommonBtn
-            class="mr1"
             icon
             density="comfortable"
             rounded
+            variant="text"
             @click="isCollapse = true"
             use-icon="i-mdi-arrow-collapse"
             :use-tooltip="$t('chat.collapse')"
@@ -127,7 +129,7 @@
           />
 
           <!-- <XCommonBtn
-          class="mr1"
+  
           icon
           density="comfortable"
           rounded
@@ -143,7 +145,7 @@
             <VIcon icon="i-mdi-brain" size="small" />
             <p>{{ selectedModel || $t("common.notSelected") }}</p>
           </div>
-        </VToolbar>
+        </div>
       </div>
     </VExpandTransition>
   </div>
@@ -407,7 +409,6 @@ const isCollapse = ref(false);
 }
 .ellipsis-text {
   min-width: 0px;
-  margin-right: 0.25rem;
   display: grid;
   grid-template-columns: auto auto;
   align-items: center;

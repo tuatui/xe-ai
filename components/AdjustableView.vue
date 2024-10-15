@@ -216,7 +216,7 @@ const resizeNegotiate = (
   startResize: ResizeFn;
   consumePX: number;
 } | void => {
-  const minPX = 52;
+  const minPX = 200;
   if (vt.isLeaf) {
     if (spacePX <= minPX) return;
     const leftPX = spacePX - minPX;
