@@ -2,13 +2,7 @@
   <div>
     <div v-if="!isEdit" class="flex justify-between items-center nav-h-root">
       <h2 class="grow v-list-item-title">{{ value }}</h2>
-      <VSpeedDial
-        open-delay="400"
-        submenu
-        location="right center"
-        transition="scale-transition"
-        open-on-hover
-      >
+      <VSpeedDial submenu location="right center" transition="scale-transition">
         <template v-slot:activator="{ props: activatorProps }">
           <VBtn
             v-bind="activatorProps"
