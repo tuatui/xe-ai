@@ -20,6 +20,10 @@ Make sure to install the dependencies:
 pnpm install
 ```
 
+## 配置环境
+
+在项目根目录下创建`.env`文件，你可以在`.env.example`中找到模板
+
 ## 生成数据库和类型（必须）
 
 ```bash
