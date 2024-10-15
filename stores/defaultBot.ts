@@ -25,7 +25,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
   const updateDefaultBotInfo = async (info: Partial<DefaultBotSetting>) => {
     const db = await iDB.onDBReady();
     try {
-      const clonedData = cloneDeep(info);
+      const clonedData = toRawDeep(info);
       const res = await db.put(
         IDB_VAR.DEFAULT_BOT_SETTING,
         clonedData,

@@ -62,43 +62,11 @@ type AnyRecord = Record<string, any>;
 export const isObject = (item: unknown): item is AnyRecord =>
   Boolean(item && typeof item === "object" && !Array.isArray(item));
 
-// TODO TEST
-
+import { deepMerge } from "@antfu/utils";
+export const mergeDeep = deepMerge;
 /**
- * 深合并多个对象
- * @description 数组会按索引合并。不会保留源的proxy。
+ * 用于将对象从代理中提取出来，不同于深拷贝，不会创建新对象。
  */
-export const mergeDeep = (
-  target: AnyRecord,
-  ...sources: AnyRecord[]
-): AnyRecord => {
-  if (!sources.length) return target;
-  const source = sources.shift();
-
-  for (const key in source) {
-    if (isObject(source[key])) {
-      if (!target[key]) Object.assign(target, { [key]: {} });
-      mergeDeep(target[key] as AnyRecord, source[key]);
-    } else {
-      Object.assign(target, { [key]: source[key] });
-    }
-  }
-
-  return mergeDeep(target, ...sources);
-};
-/**
- * 深拷贝一个变量。
- * @description 仅支持JSON内的数据类型，不支持symbol、function。不会保留proxy。
- */
-export const cloneDeep = <T extends any>(source: T): T => {
-  if (source === null) return source;
-  if (Array.isArray(source)) return source.map((each) => cloneDeep(each)) as T;
-  if (typeof source !== "object") return source;
-
-  const newObj: AnyRecord = {};
-  for (const key in source) {
-    const element = source[key];
-    newObj[key] = cloneDeep(element);
-  }
-  return newObj as T;
+export const toRawDeep = <T extends object>(source: T): T => {
+  return deepMerge({}, source) as T;
 };

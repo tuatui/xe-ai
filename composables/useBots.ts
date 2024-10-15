@@ -52,7 +52,7 @@ export const useBots = () => {
 
     try {
       // vue的代理对象会导致序列化失败
-      const clonedData = cloneDeep(data);
+      const clonedData = toRawDeep(data);
       clonedData.availableModel ??= [];
       let res: IDBValidKey;
       if (data.id === undefined) {

@@ -40,7 +40,7 @@ export class Topic implements TopicInterface {
 
   public update = async (topicData: TopicCreationData) => {
     let res: number = -1;
-    const clonedData = cloneDeep(topicData);
+    const clonedData = toRawDeep(topicData);
     try {
       const db = await this.iDB.onDBReady();
       if (topicData?.id === undefined) {
