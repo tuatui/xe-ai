@@ -55,7 +55,7 @@
           :disabled="isSubmitting"
           size="large"
           color="primary"
-          :text="$t('common.back')"
+          :text="$t('common.login')"
           @click="$emit('change')"
         />
         <VBtn

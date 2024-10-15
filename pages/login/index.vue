@@ -21,8 +21,9 @@
 <script setup lang="ts">
 if (loginStore().isLogin) useRouter().push("/");
 
+const router = useRoute();
 const dialog = ref(false);
-const isRegister = ref(false);
+const isRegister = ref(Boolean(router.query.reg));
 
 const handleLoginSuccess = (syncAll: boolean) => {
   const userInfo = loginStore().userInfo;
