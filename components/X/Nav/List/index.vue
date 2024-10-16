@@ -17,16 +17,15 @@
     </VListItem>
     <VDivider role="none" />
     <VSpacer v-show="rail" />
-    <div v-show="!rail" class="grow min-h-0 overflow-auto relative pb2">
-      <template
+    <div v-show="!rail" class="grow min-h-0 overflow-auto pb2 contain-strict">
+      <div
         v-for="([timeStr, topicList], i) in relativeTimeTopic"
         :key="timeStr"
       >
-        <VDivider v-if="i > 0" role="none" class="relative z-11" />
+        <VDivider v-if="i > 0" role="none" />
         <div class="sticky top-0 z-10 bg-surface-light">
           <VListSubheader>{{ timeStr }}</VListSubheader>
         </div>
-
         <VListItem
           role="option"
           v-for="(topic, i) in topicList"
@@ -40,7 +39,7 @@
             @update="(v) => handleUpdateTopic(v, topic)"
           />
         </VListItem>
-      </template>
+      </div>
     </div>
   </VList>
 </template>
