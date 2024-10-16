@@ -6,7 +6,7 @@
         class="ml3"
         icon
         variant="text"
-        :title="$t('tips.hidePwd')"
+        :title="$L.tips.hidePwd"
       >
         <VIcon :icon="isShow ? 'i-mdi-eye-off' : 'i-mdi-eye'" />
       </VBtn>

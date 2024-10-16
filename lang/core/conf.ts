@@ -1,6 +1,20 @@
-import type { LocaleObject } from "@nuxtjs/i18n";
+import "dayjs/locale/zh";
+import "dayjs/locale/en";
+import "dayjs/locale/fr";
+import "dayjs/locale/ru";
+import "dayjs/locale/es";
+import "dayjs/locale/ar";
 
-export const locales: LocaleObject[] = [
+export interface Locales {
+  code: string;
+  file: string;
+  name: string;
+  /**
+   * ISO-639 语言代码
+   */
+  language: string;
+}
+export const locales: Locales[] = [
   {
     code: "zh",
     file: "zh.ts",
@@ -36,6 +50,5 @@ export const locales: LocaleObject[] = [
     file: "ar.ts",
     name: "اَلْعَرَبِيَّةُ",
     language: "ar",
-    dir: "auto",
   },
 ];

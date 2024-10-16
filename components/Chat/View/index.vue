@@ -24,7 +24,7 @@
       <div class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa pr1 h0">
         <div class="absolute bottom-0 right-0 h48px">
           <VFab
-            :title="$t('chat.scrollToBottom')"
+            :title="$L.chat.scrollToBottom"
             class="w-full justify-end"
             :active="!isScrollToEnd"
             @click="scrollToEnd(contentBody!)"
@@ -33,7 +33,7 @@
             icon
           >
             <div class="w0 overflow-hidden">
-              {{ $t("chat.scrollToBottom") }}
+              {{ $L.chat.scrollToBottom }}
             </div>
             <VIcon icon="i-mdi-chevron-down" />
           </VFab>
@@ -62,7 +62,7 @@
           row-height="0"
           class="custom-flex-v-textarea"
           rounded="0"
-          :label="$t('chat.inputTips')"
+          :label="$L.chat.inputTips"
           v-model="userInput"
           hide-details
           no-resize
@@ -79,7 +79,7 @@
             @click="updateHandle"
             :disabled="!selectedBots || data.isProducing"
             :loading="data.isProducing"
-            >{{ $t("chat.send") }}</VBtn
+            >{{ $L.chat.send }}</VBtn
           >
 
           <XCommonBtn
@@ -93,7 +93,7 @@
             color="error"
             variant="elevated"
             rounded
-            :use-tooltip="$t('chat.stop')"
+            :use-tooltip="$L.chat.stop"
             tooltip-location="top"
           />
 
@@ -104,7 +104,7 @@
             variant="text"
             @click="handleConf"
             use-icon="i-mdi-message-settings-outline"
-            :use-tooltip="$t('chat.setting')"
+            :use-tooltip="$L.chat.setting"
             tooltip-location="top"
           />
           <XCommonBtn
@@ -114,7 +114,7 @@
             variant="text"
             @click="takeSnapshot"
             use-icon="i-mdi-download-box-outline"
-            :use-tooltip="$t('chat.download')"
+            :use-tooltip="$L.chat.download"
             tooltip-location="top"
           />
           <XCommonBtn
@@ -124,7 +124,7 @@
             variant="text"
             @click="isCollapse = true"
             use-icon="i-mdi-arrow-collapse"
-            :use-tooltip="$t('chat.collapse')"
+            :use-tooltip="$L.chat.collapse"
             tooltip-location="top"
           />
 
@@ -135,15 +135,15 @@
           rounded
           @click="data.isProducing = !data.isProducing"
           use-icon="i-mdi-download-box-outline"
-          :use-tooltip="$t('chat.download')"
+          :use-tooltip="$L.chat.download"
           tooltip-location="top"
         /> -->
           <VSpacer />
           <div class="text-body-2 text-medium-emphasis ellipsis-text">
             <VIcon icon="i-mdi-robot" size="small" />
-            <p>{{ selectedBots?.nickName || $t("common.notSelected") }}</p>
+            <p>{{ selectedBots?.nickName || $L.common.notSelected }}</p>
             <VIcon icon="i-mdi-brain" size="small" />
-            <p>{{ selectedModel || $t("common.notSelected") }}</p>
+            <p>{{ selectedModel || $L.common.notSelected }}</p>
           </div>
         </div>
       </div>
@@ -345,7 +345,7 @@ onMounted(() => {
     });
   }
 });
-const { t } = useI18n();
+const { $L } = useNuxtApp();
 const theme = useTheme();
 const takeSnapshot = async () => {
   if (!contentBody.value) return;
@@ -361,7 +361,7 @@ const takeSnapshot = async () => {
     isDark,
     mainClassName: contentBody.value.classList[0], // "markdown-body"
     html: contentBody.value.children[0].outerHTML,
-    title: props.topics.title || t("chat.untitled"),
+    title: props.topics.title || $L.chat.untitled,
   });
 };
 

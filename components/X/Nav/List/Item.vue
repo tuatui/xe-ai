@@ -10,7 +10,7 @@
             size="small"
             icon="i-mdi-dots-vertical"
             variant="text"
-            :title="$t('common.moreOptions')"
+            :title="$L.common.moreOptions"
           />
         </template>
         <XCommonBtn
@@ -18,7 +18,7 @@
           icon
           @click="isEdit = true"
           use-icon="i-mdi-pencil"
-          :use-tooltip="$t('common.edit')"
+          :use-tooltip="$L.common.edit"
           tooltip-location="top"
         />
         <XCommonBtn
@@ -27,7 +27,7 @@
           color="error"
           @click="$emit('remove')"
           use-icon="i-mdi-delete"
-          :use-tooltip="$t('common.delete')"
+          :use-tooltip="$L.common.delete"
           tooltip-location="top"
         />
       </VSpeedDial>

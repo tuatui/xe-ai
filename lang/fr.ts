@@ -1,4 +1,4 @@
-import type { I18nLang } from "./helper";
+import type { BaseLang } from "./primary";
 
 export default {
   common: {
@@ -35,7 +35,7 @@ export default {
     save: "Sauvegarder",
   },
   action: {
-    deleteSome: "Supprimé “{item}”",
+    deleteSome: (item: string) => `Supprimé "${item}"`,
   },
   aria: {
     sideNav: "Navigation latérale",
@@ -99,4 +99,4 @@ export default {
     pwdTooLooong: "Mot de passe trop long",
     pwdIsDiff: "Les mots de passe ne correspondent pas",
   },
-} as I18nLang;
+} satisfies BaseLang;

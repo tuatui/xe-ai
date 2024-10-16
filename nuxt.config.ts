@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { presetUno, presetIcons } from "unocss";
-import { locales } from "./lang/config/locales.config";
 
 export default defineNuxtConfig({
   app: {
@@ -28,7 +27,6 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "vuetify-nuxt-module",
     "unplugin-icons/nuxt",
-    "@nuxtjs/i18n",
     "nuxt-auth-utils",
   ],
   vuetify: {
@@ -41,14 +39,6 @@ export default defineNuxtConfig({
     },
   },
   imports: { dirs: ["./constants"] },
-  i18n: {
-    locales,
-    lazy: true,
-    langDir: "lang",
-    strategy: "no_prefix",
-    defaultLocale: "zh",
-    vueI18n: "./lang/config/i18n.config.ts",
-  },
   unocss: {
     presets: [
       presetUno(),

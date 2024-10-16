@@ -6,7 +6,7 @@
         v-bind="props"
         variant="text"
         tooltip-location="top"
-        :use-tooltip="$t('common.language')"
+        :use-tooltip="$L.common.language"
         use-icon="i-mdi-translate"
       />
     </template>
@@ -14,21 +14,15 @@
       <VListItem
         density="compact"
         v-for="(item, i) in locales"
-        :variant="locale === item.code ? `tonal` : undefined"
+        :variant="$i18n.locale.value.code === item.code ? `tonal` : undefined"
         :key="i"
         :title="item.name"
-        @click="setLocale(item.code)"
+        @click="$i18n.setLang(item.code)"
       >
       </VListItem>
     </VList>
   </VMenu>
 </template>
 <script setup lang="ts">
-const { setLocale, locales, locale, localeProperties } = useI18n();
-useHead({
-  htmlAttrs: {
-    lang: () => localeProperties.value?.language,
-    dir: () => localeProperties.value?.dir ?? "ltr",
-  },
-});
+import { locales } from "~/lang/core/conf";
 </script>

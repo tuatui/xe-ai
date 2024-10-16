@@ -1,6 +1,4 @@
-import type { I18nLang } from "./helper";
-
-export default {
+const lang = {
   common: {
     chat: "聊天",
     setting: "设置",
@@ -35,7 +33,7 @@ export default {
     save: "保存",
   },
   action: {
-    deleteSome: "已删除“{item}”",
+    deleteSome: (item: string) => `已删除“${item}”`,
   },
   aria: {
     sideNav: "侧边导航栏",
@@ -98,4 +96,14 @@ export default {
     pwdTooLooong: "密码过长",
     pwdIsDiff: "前后输入的密码不一致",
   },
-} as I18nLang;
+};
+/* 
+  通过 as const 不仅可以收缩类型，还能在代码提示中显示文字信息。
+  然而这种方式不利于对其他翻译做类型检查，并且只能显示一种语言。
+  是否有办法实现不同语言的开发者能在类型提示中看到自己的语言？
+  或许我们可以通过插件和代码生成做到。
+  我对目前的情况已经比较满意，我实现了（相对的）类型安全以及较大的性能提升
+  或许某一天可以将这个i18n方案抽离成一个库。
+*/
+
+export default lang;

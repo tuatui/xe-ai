@@ -3,7 +3,7 @@
     variant="text"
     icon
     @click="theme.global.name.value = isDarkTheme ? 'light' : 'dark'"
-    :use-tooltip="$t('setting.switchTheme')"
+    :use-tooltip="$L.setting.switchTheme"
     use-icon="i-mdi-theme-light-dark"
   />
 </template>

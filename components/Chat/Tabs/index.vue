@@ -20,7 +20,7 @@
           :key="i.id"
           @click.middle.stop="remove(i)"
         >
-          {{ i.title || untitledStr }}
+          {{ i.title || $L.chat.untitled }}
           <template #append>
             <XCommonBtn
               variant="text"
@@ -29,7 +29,7 @@
               size="small"
               @click.stop="remove(i)"
               use-icon="i-mdi-window-close"
-              :use-tooltip="$t('common.close')"
+              :use-tooltip="$L.common.close"
             />
           </template>
         </VTab>
@@ -50,19 +50,19 @@
                 icon="i-mdi-dots-vertical"
                 variant="text"
                 v-bind="props"
-                :aria-label="$t('common.moreOptions')"
+                :aria-label="$L.common.moreOptions"
               />
             </template>
             <VList>
-              <VListItem @click="handleNewChat">{{ $t("chat.new") }}</VListItem>
+              <VListItem @click="handleNewChat">{{ $L.chat.new }}</VListItem>
               <VListItem @click="splitVertHandle">{{
-                $t("chat.splitRight")
+                $L.chat.splitRight
               }}</VListItem>
               <VListItem @click="splitHorizHandle">{{
-                $t("chat.splitDown")
+                $L.chat.splitDown
               }}</VListItem>
               <VListItem @click="$emit('close')">{{
-                $t("common.close")
+                $L.common.close
               }}</VListItem>
             </VList>
           </VMenu>
@@ -85,7 +85,7 @@
         prepend-icon="i-mdi-forum-plus"
         @click="handleNewChat"
       >
-        {{ $t("chat.new") }}
+        {{ $L.chat.new }}
       </VBtn>
     </VTabsWindow>
   </div>
@@ -95,7 +95,7 @@
 const { uniqueKey } = defineProps<{ uniqueKey: symbol }>();
 const store = chatTabsStore();
 const divElem = ref<HTMLDivElement>();
-const untitledStr = useT("chat.untitled");
+
 const data =
   store.globalSharedTabs.get(uniqueKey) ||
   ref<{
@@ -149,11 +149,11 @@ onUnmounted(() => {
 defineExpose(expose);
 
 const { pushNotification } = notificationStore();
-const { t } = useI18n();
+const { $L } = useNuxtApp();
 
 const showWarn = () => {
   pushNotification({
-    content: t("common.notEnoughSpace"),
+    content: $L.common.notEnoughSpace,
     allowClose: false,
     timeout: 3000,
   });

@@ -14,7 +14,7 @@
         color="warning"
         class="font-extrabold"
       >
-        {{ $t("common.revocation") }}
+        {{ $L.common.revocation }}
       </VBtn>
       <VBtn
         v-else-if="curr.notification.allowClose"
@@ -23,7 +23,7 @@
         color="#2196F3"
         class="font-extrabold"
       >
-        {{ $t("common.close") }}
+        {{ $L.common.close }}
       </VBtn>
     </template>
   </VSnackbar>

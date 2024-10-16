@@ -6,26 +6,23 @@
         variant="text"
         v-bind="activatorProps"
         tooltip-location="top"
-        :use-tooltip="$t('common.setting')"
+        :use-tooltip="$L.common.setting"
         use-icon="i-mdi-cog"
       />
     </template>
 
     <VCard>
       <VToolbar>
-        <VToolbarTitle>{{ $t("common.setting") }}</VToolbarTitle>
+        <VToolbarTitle>{{ $L.common.setting }}</VToolbarTitle>
         <VSpacer></VSpacer>
         <VBtn icon="i-mdi-close" @click="dialog = false"></VBtn>
       </VToolbar>
 
       <VList lines="two" subheader>
         <div class="max-w-[min(100%,60rem)] mxa">
-          <VListSubheader>{{ $t("common.model") }}</VListSubheader>
+          <VListSubheader>{{ $L.common.model }}</VListSubheader>
 
-          <VListItem
-            :title="$t('model.config')"
-            @click="isModelDialogOpen = true"
-          >
+          <VListItem :title="$L.model.config" @click="isModelDialogOpen = true">
             <template v-slot:append>
               <VAvatar icon="i-mdi-chevron-right" />
             </template>

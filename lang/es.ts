@@ -1,5 +1,4 @@
-import type { I18nLang } from "./helper";
-
+import type { BaseLang } from "./primary";
 export default {
   common: {
     chat: "Chat",
@@ -35,7 +34,7 @@ export default {
     save: "Guardar",
   },
   action: {
-    deleteSome: "Eliminado “{item}”",
+    deleteSome: (item: string) => `Eliminado "${item}"`,
   },
   aria: {
     sideNav: "Barra lateral de navegación",
@@ -99,4 +98,4 @@ export default {
     pwdTooLooong: "Contraseña demasiado larga",
     pwdIsDiff: "Las contraseñas no coinciden",
   },
-} as I18nLang;
+} satisfies BaseLang;

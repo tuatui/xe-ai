@@ -6,7 +6,7 @@
         variant="text"
         v-bind="props"
         tooltip-location="top"
-        :use-tooltip="$t('setting.user')"
+        :use-tooltip="$L.setting.user"
       >
         <VBadge
           :model-value="ls.isLogin"
@@ -23,19 +23,19 @@
         <template v-slot:prepend>
           <VAvatar icon="i-mdi-logout" />
         </template>
-        {{ $t("common.logout") }}
+        {{ $L.common.logout }}
       </VListItem>
       <template v-else>
         <VListItem @click="$router.push('/login')">
           <template v-slot:prepend>
             <VAvatar icon="i-mdi-login" />
           </template>
-          {{ $t("common.login") }} </VListItem
+          {{ $L.common.login }} </VListItem
         ><VListItem @click="$router.push('/login?reg=1')">
           <template v-slot:prepend>
             <VAvatar icon="i-mdi-register" />
           </template>
-          {{ $t("common.register") }}
+          {{ $L.common.register }}
         </VListItem>
       </template>
     </VList>

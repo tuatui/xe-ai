@@ -1,6 +1,6 @@
 <template>
   <VCheckbox
-    :label="$t('tips.syncTmpChatLabel')"
+    :label="$L.tips.syncTmpChatLabel"
     color="primary"
     v-model="isChecked"
     :disabled="disabled"
@@ -8,7 +8,7 @@
   />
   <VExpandTransition>
     <p class="text-body-2 text-medium-emphasis" v-show="!isChecked">
-      {{ $t("tips.syncTmpChat") }}
+      {{ $L.tips.syncTmpChat }}
     </p>
   </VExpandTransition>
 </template>

@@ -1,4 +1,4 @@
-import type { I18nLang } from "./helper";
+import type { BaseLang } from "./primary";
 export default {
   common: {
     chat: "دردشة",
@@ -34,7 +34,7 @@ export default {
     save: "حفظ",
   },
   action: {
-    deleteSome: 'تم حذف "{item}"',
+    deleteSome: (item: string) => `تم حذف "${item}"`,
   },
   aria: {
     sideNav: "شريط التنقل الجانبي",
@@ -96,4 +96,4 @@ export default {
     pwdTooLooong: "كلمة المرور طويلة جدًا",
     pwdIsDiff: "كلمات المرور غير متطابقة",
   },
-} as I18nLang;
+} satisfies BaseLang;

@@ -3,15 +3,15 @@
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
-          <h3>{{ $t("common.allModels") }}</h3>
+          <h3>{{ $L.common.allModels }}</h3>
           <VBtn icon="i-mdi-close" variant="text" @click="model = false" />
         </VCardTitle>
       </template>
       <VList lines="two">
         <VEmptyState
           v-if="bots.length === 0"
-          :text="$t('setting.botShowArea')"
-          :title="$t('setting.noBotTitle')"
+          :text="$L.setting.botShowArea"
+          :title="$L.setting.noBotTitle"
         />
         <VListItem
           v-for="bot in bots"
@@ -34,8 +34,8 @@
               @click.stop="dBot.updateDefaultBotInfo({ preferBotID: bot.id })"
               >{{
                 preferBotID === bot.id
-                  ? $t("setting.defaultModule")
-                  : $t("setting.setDefault")
+                  ? $L.setting.defaultModule
+                  : $L.setting.setDefault
               }}</VBtn
             >
           </template>
@@ -55,7 +55,7 @@
             <template v-slot:prepend>
               <VAvatar icon="i-mdi-plus" color="surface-variant" />
             </template>
-            {{ $t("setting.addModel") }}
+            {{ $L.setting.addModel }}
           </VListItem>
         </div>
       </template>

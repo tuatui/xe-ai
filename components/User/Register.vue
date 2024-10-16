@@ -3,7 +3,7 @@
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
-          <h3>{{ $t("common.register") }}</h3>
+          <h3>{{ $L.common.register }}</h3>
         </VCardTitle>
       </template>
       <VCardText>
@@ -11,7 +11,7 @@
           class="mb3"
           variant="outlined"
           autocomplete="username"
-          :label="$t('common.account')"
+          :label="$L.common.account"
           v-model="form.name"
           :rules="[handleCheckName]"
           validate-on="submit lazy"
@@ -26,7 +26,7 @@
           autocomplete="new-password"
           :rules="[handlePasswordRule]"
           validate-on="invalid-input lazy"
-          :label="$t('common.password')"
+          :label="$L.common.password"
           v-model="form.password"
           :hint="passwordHint"
           :disabled="isSubmitting"
@@ -38,12 +38,12 @@
           autocomplete="new-password"
           :rules="[handlePasswordRepeatRule]"
           validate-on="invalid-input lazy"
-          :label="$t('common.repeatPwd')"
+          :label="$L.common.repeatPwd"
           v-model="form.passwordRepeat"
           :disabled="isSubmitting"
         />
         <p class="text-body-2 text-medium-emphasis">
-          {{ $t("tips.regAndSync") }}
+          {{ $L.tips.regAndSync }}
         </p>
         <UserSyncCheckBox v-model="form.syncAll" :disabled="isSubmitting" />
       </VCardText>
@@ -55,7 +55,7 @@
           :disabled="isSubmitting"
           size="large"
           color="primary"
-          :text="$t('common.login')"
+          :text="$L.common.login"
           @click="$emit('change')"
         />
         <VBtn
@@ -63,7 +63,7 @@
           size="large"
           type="submit"
           color="primary"
-          :text="$t('common.register')"
+          :text="$L.common.register"
           variant="elevated"
         />
       </VCardActions>
@@ -80,8 +80,9 @@ const emit = defineEmits<{
 }>();
 
 const nameTextField = ref<InstanceType<typeof VTextField>>();
-const { t } = useI18n();
-const $client = useNuxtApp().$client;
+
+const { $client, $L } = useNuxtApp();
+
 const createRegForm = () => ({
   name: "",
   password: "",
@@ -92,7 +93,7 @@ const form = ref(createRegForm());
 
 const isCheckingName = ref(false);
 const handleCheckName = async () => {
-  if (form.value.name === "") return t("tips.mustExist");
+  if (form.value.name === "") return $L.tips.mustExist;
 
   isCheckingName.value = true;
   const { isAvailable } = await $client.user.checkName.query({
@@ -101,7 +102,7 @@ const handleCheckName = async () => {
   isCheckingName.value = false;
 
   if (isAvailable) return true;
-  else return t("tips.nameAlreadyUse");
+  else return $L.tips.nameAlreadyUse;
 };
 const handleTrigger = useDebounceFn(async () => {
   nameTextField.value?.validate();
@@ -109,22 +110,22 @@ const handleTrigger = useDebounceFn(async () => {
 watch(() => form.value.name, handleTrigger);
 
 const handlePasswordRule = (pwd: string) => {
-  if (pwd.length < 5) return t("tips.pwdTooShort");
-  else if (pwd.length > 64) return t("tips.pwdTooLooong");
+  if (pwd.length < 5) return $L.tips.pwdTooShort;
+  else if (pwd.length > 64) return $L.tips.pwdTooLooong;
   return true;
 };
 const handlePasswordRepeatRule = () => {
   if (form.value.password === form.value.passwordRepeat) return true;
-  return t("tips.pwdIsDiff");
+  return $L.tips.pwdIsDiff;
 };
 
 const passwordStrong = ref(0);
 const passwordHint = computed(() => {
   let a: string | undefined;
-  if (passwordStrong.value <= 2) a = t("common.low");
-  else if (passwordStrong.value <= 4) a = t("common.middle");
-  else a = t("common.high");
-  return t("common.strength") + a;
+  if (passwordStrong.value <= 2) a = $L.common.low;
+  else if (passwordStrong.value <= 4) a = $L.common.middle;
+  else a = $L.common.hight;
+  return $L.common.strength + a;
 });
 watch(
   () => form.value.password,

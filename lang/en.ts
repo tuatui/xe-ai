@@ -1,3 +1,4 @@
+import type { BaseLang } from "./primary";
 export default {
   common: {
     chat: "Chat",
@@ -33,7 +34,7 @@ export default {
     save: "Save",
   },
   action: {
-    deleteSome: "Deleted “{item}”",
+    deleteSome: (item: string) => `Deleted "${item}"`,
   },
   aria: {
     sideNav: "Side Navigation",
@@ -97,4 +98,4 @@ export default {
     pwdTooLooong: "Password too long",
     pwdIsDiff: "Passwords do not match",
   },
-};
+} satisfies BaseLang;

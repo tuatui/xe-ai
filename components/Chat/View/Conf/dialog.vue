@@ -8,12 +8,12 @@
       <VCard>
         <template v-slot:title>
           <VCardTitle class="!flex items-center justify-between">
-            <h3>{{ $t("setting.topic.title") }}</h3>
+            <h3>{{ $L.setting.topic.title }}</h3>
           </VCardTitle>
         </template>
         <VCardText>
           <p class="text-body-2 text-medium-emphasis mb4">
-            {{ $t("setting.topic.tip") }}
+            {{ $L.setting.topic.tip }}
           </p>
           <VSelect
             variant="outlined"
@@ -22,7 +22,7 @@
             @update:model-value="selectedModel = undefined"
             :item-props="(item) => ({ title: item.nickName })"
             return-object
-            :label="$t('common.notSelected')"
+            :label="$L.common.notSelected"
           >
             <template v-slot:item="{ props, item }">
               <VListItem
@@ -46,7 +46,7 @@
                 value: item.name,
               })
             "
-            :label="$t('common.model')"
+            :label="$L.common.model"
           />
         </VCardText>
 
@@ -57,7 +57,7 @@
             variant="elevated"
             type="submit"
             color="primary"
-            :text="$t('common.save')"
+            :text="$L.common.save"
             @click="
               confirmSetting({
                 newBot: selectedBot,

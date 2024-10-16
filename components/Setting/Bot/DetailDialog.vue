@@ -5,8 +5,8 @@
         <template v-slot:title>
           <VCardTitle class="!flex items-center justify-between">
             <h3>
-              {{ isUpdate ? $t("common.edit") : $t("common.create") }}
-              {{ $t("common.model") }}
+              {{ isUpdate ? $L.common.edit : $L.common.create }}
+              {{ $L.common.model }}
             </h3>
             <VBtn icon="i-mdi-close" variant="text" @click="model = false" />
           </VCardTitle>
@@ -24,17 +24,17 @@
           />
           <VTextField
             v-model="botsInfoClone.apiUrl"
-            :label="$t('setting.apiUrl')"
+            :label="$L.setting.apiUrl"
             placeholder="https://"
           />
           <VTextField
             v-model="botsInfoClone.nickName"
-            :label="$t('common.name')"
+            :label="$L.common.name"
           />
           <VTextField
             v-model="botsInfoClone.secretKey"
             type="password"
-            :label="$t('model.secretKey')"
+            :label="$L.model.secretKey"
           />
 
           <div class="flex gap4">
@@ -61,12 +61,12 @@
                 <VListItem>
                   <VListItemTitle v-if="modelSearch">
                     " <strong> {{ modelSearch }} </strong> "
-                    {{ $t("setting.editModule.press") }}
+                    {{ $L.setting.editModule.press }}
                     <VKbd>ENTER</VKbd>
-                    {{ $t("setting.editModule.toAdd") }}
+                    {{ $L.setting.editModule.toAdd }}
                   </VListItemTitle>
                   <VListItemTitle v-else-if="modelList.length === 0">
-                    {{ $t("setting.editModule.noData") }}
+                    {{ $L.setting.editModule.noData }}
                   </VListItemTitle>
                 </VListItem>
               </template>
@@ -79,7 +79,7 @@
               @click="handleGetModelList"
               :disabled="isFetchingModelList"
             >
-              {{ $t("setting.editModule.fetch") }}
+              {{ $L.setting.editModule.fetch }}
             </VBtn>
           </div>
         </VCardText>
@@ -90,7 +90,7 @@
             v-if="isUpdate"
             size="large"
             color="error"
-            :text="$t('common.delete')"
+            :text="$L.common.delete"
             variant="text"
             @click="handleDelete(botsInfoClone.id!)"
           />
@@ -99,7 +99,7 @@
             variant="elevated"
             type="submit"
             color="primary"
-            :text="$t('common.submit')"
+            :text="$L.common.submit"
             @click="handleUpdate"
           />
         </VCardActions>

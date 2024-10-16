@@ -3,7 +3,7 @@
     <VCard>
       <template v-slot:title>
         <VCardTitle class="!flex items-center justify-between">
-          <h3>{{ $t("common.login") }}</h3>
+          <h3>{{ $L.common.login }}</h3>
         </VCardTitle>
       </template>
       <VCardText>
@@ -11,18 +11,18 @@
           class="mb3"
           variant="outlined"
           autocomplete="username"
-          :label="$t('common.account')"
+          :label="$L.common.account"
           v-model="form.name"
           :disabled="isSubmitting"
         />
         <XInputPwd
           variant="outlined"
-          :label="$t('common.password')"
+          :label="$L.common.password"
           v-model="form.password"
           :disabled="isSubmitting"
         />
         <p class="text-body-2 text-medium-emphasis">
-          {{ $t("tips.loginAndSync") }}
+          {{ $L.tips.loginAndSync }}
         </p>
         <UserSyncCheckBox v-model="form.syncAll" :disabled="isSubmitting" />
       </VCardText>
@@ -34,7 +34,7 @@
           size="large"
           type="submit"
           color="primary"
-          :text="$t('common.register')"
+          :text="$L.common.register"
           @click="$emit('change')"
           :disabled="isSubmitting"
         />
@@ -42,7 +42,7 @@
           size="large"
           type="submit"
           color="primary"
-          :text="$t('common.login')"
+          :text="$L.common.login"
           variant="elevated"
           :disabled="isSubmitting"
         />
@@ -63,7 +63,7 @@ const createLoginForm = () => ({
   password: "",
   syncAll: true,
 });
-const { t } = useI18n();
+const { $L } = useNuxtApp();
 const form = ref(createLoginForm());
 
 const isSubmitting = ref(false);
@@ -85,7 +85,7 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
 
   if (!loginRes) {
     pushNotification({
-      content: t("tips.loginFail"),
+      content: $L.tips.loginFail,
       timeout: 3000,
       allowClose: false,
     });

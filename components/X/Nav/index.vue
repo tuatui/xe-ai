@@ -5,7 +5,7 @@
     permanent
     :width="width"
     class="box-content"
-    :aria-label="$t('aria.sideNav')"
+    :aria-label="$L.aria.sideNav"
   >
     <div class="h-full w-full flex flex-col">
       <VToolbar density="compact">
@@ -15,9 +15,7 @@
           variant="text"
           @click="isRail = !isRail"
           tooltip-location="right center"
-          :use-tooltip="
-            isRail ? $t('tips.expandMenu') : $t('tips.collapseMenu')
-          "
+          :use-tooltip="isRail ? $L.tips.expandMenu : $L.tips.collapseMenu"
         />
       </VToolbar>
 

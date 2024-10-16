@@ -1,7 +1,7 @@
 <template>
   <VList
     class="flex flex-col grow min-h-0 bg-surface-light !py0"
-    :aria-label="$t('aria.chatHistory')"
+    :aria-label="$L.aria.chatHistory"
   >
     <VListItem lines="two" :class="{ '!px1 !py2': rail }">
       <XCommonBtn
@@ -10,7 +10,7 @@
         role="option"
         variant="tonal"
         @click="$emit('newTopicWithChat')"
-        :use-tooltip="$t('tips.newChatLong')"
+        :use-tooltip="$L.tips.newChatLong"
         tooltip-location="right center"
         :embed-tooltip="!rail"
       />
@@ -35,7 +35,7 @@
           color="primary"
         >
           <XNavListItem
-            :value="topic.title || untitledStr"
+            :value="topic.title || $L.chat.untitled"
             @remove="handleRemoveTopic(topicList, i)"
             @update="(v) => handleUpdateTopic(v, topic)"
           />
@@ -49,8 +49,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 defineProps<{ rail: boolean }>();
-const untitledStr = useT("chat.untitled");
-const { locale } = useI18n();
+const locale = ref("zh");
 
 const tabsStore = chatTabsStore();
 defineEmits<{
@@ -61,7 +60,7 @@ defineEmits<{
 const ts = topicStore();
 const { pushNotification } = notificationStore();
 const { updateTopic, removeTopic, updateCache } = ts;
-const { t } = useI18n();
+const { $L } = useNuxtApp();
 let jobCount = 0;
 const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
   const [topic] = topicsInMap.splice(index, 1);
@@ -70,9 +69,7 @@ const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
     jobCount++;
     await new Promise<void>((resolve) => {
       pushNotification({
-        content: t("action.deleteSome", {
-          item: topic.title || t("chat.untitled"),
-        }),
+        content: $L.action.deleteSome(topic.title || $L.chat.untitled),
         cancelable: true,
         onFinish: () => {
           removeTopic(topic.id, false);

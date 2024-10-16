@@ -1,4 +1,4 @@
-import type { I18nLang } from "./helper";
+import type { BaseLang } from "./primary";
 export default {
   common: {
     chat: "Чат",
@@ -34,7 +34,7 @@ export default {
     save: "Сохранить",
   },
   action: {
-    deleteSome: 'Удалено "{item}"',
+    deleteSome: (item: string) => `Удалено "${item}"`,
   },
   aria: {
     sideNav: "Боковая панель навигации",
@@ -98,4 +98,4 @@ export default {
     pwdTooLooong: "Пароль слишком длинный",
     pwdIsDiff: "Пароли не совпадают",
   },
-} as I18nLang;
+} satisfies BaseLang;
