@@ -78,12 +78,12 @@
             variant="elevated"
             @click="updateHandle"
             :disabled="!selectedBots || data.isProducing"
-            :loading="data.isProducing"
+            :loading="data.isProducing || data.isChatting"
             >{{ $L.chat.send }}</VBtn
           >
 
           <XCommonBtn
-            @click="data.stopChatting()"
+            @click="handleStopChat"
             class="relative z-5 btn-t"
             :class="{ active: data.isProducing }"
             :disabled="!data.isProducing"
@@ -153,7 +153,7 @@
 <script setup lang="ts">
 const props = defineProps<{ topics: TopicData }>();
 const userInput = ref("");
-const { globalSharedChats } = chatsStore();
+const { globalSharedChats, postWinMessage } = chatsStore();
 const { updateTopic } = topicStore();
 
 const data =
@@ -231,8 +231,17 @@ const handleConf = async () => {
       },
       false,
     );
-  } catch (_) {
-    /* ignore */
+    postWinMessage({
+      updateSetting: {
+        topicId: props.topics.id,
+        setting: {
+          useBotData: toRaw(res.newBot),
+          useModelName: res.newModelName,
+        },
+      },
+    });
+  } catch (error) {
+    console.warn(error);
   }
 };
 
@@ -276,6 +285,18 @@ watch(
   },
   { once: true },
 );
+const postChatMsg = (isCreate?: boolean) =>
+  postWinMessage({
+    updateChat: {
+      chats: data.value.chats.slice(-2).map((each) => toRaw(each)),
+      isProducing: data.value.isProducing,
+      topicId: props.topics.id,
+      isChatting: data.value.isChatting,
+      isCreate,
+    },
+  });
+const postChatStopMsg = () =>
+  postWinMessage({ stopChat: { topicId: props.topics.id } });
 
 const updateHandle = async () => {
   if (!chatSession) return;
@@ -301,6 +322,8 @@ const updateHandle = async () => {
 
   try {
     data.value.isProducing = true;
+    data.value.isChatting = true;
+    postChatMsg(true);
     const chatSteam = await chatSession.createChat(
       data.value.chats,
       selectedModel.value,
@@ -309,10 +332,13 @@ const updateHandle = async () => {
     for await (const { context } of chatSteam) {
       chat.context += context;
       updateDebounced(data, chat);
+      postChatMsg();
     }
   } catch (error) {
   } finally {
     data.value.isProducing = false;
+    data.value.isChatting = false;
+    postChatMsg();
   }
 };
 const updateDebounced = useDebounceFn(
@@ -324,6 +350,12 @@ const updateDebounced = useDebounceFn(
     }),
   100,
 );
+
+const handleStopChat = () => {
+  data.value.stopChatting();
+  data.value.isProducing = false;
+  postChatStopMsg();
+};
 
 const contentBody = ref<HTMLDivElement>();
 const isScrollToEnd = ref(true);

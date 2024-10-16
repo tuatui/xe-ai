@@ -66,6 +66,7 @@ import { deepMerge } from "@antfu/utils";
 export const mergeDeep = deepMerge;
 /**
  * 用于将对象从代理中提取出来，不同于深拷贝，不会创建新对象。
+ * @deprecated 不再使用，使用toRaw手动解除代理
  */
 export const toRawDeep = <T extends object>(source: T): T => {
   return deepMerge({}, source) as T;

@@ -10,6 +10,7 @@ export type useChatReturn = Ref<{
   chats: ChatData[];
   tempStore: UseChatTempStore;
   isPending: boolean;
+  isChatting: boolean;
   isProducing: boolean;
   updateChat: (
     data: { context: string; from: number; id?: number },
@@ -28,7 +29,10 @@ export const useChats = (topicId: number): useChatReturn => {
   const tempStore = ref<UseChatTempStore>({});
   const taskCount = ref(0);
   const isPending = computed(() => taskCount.value > 0);
+  /** 控制暂停按钮是否显示 */
   const isProducing = ref(false);
+  /** 表示聊天是否真正停止 */
+  const isChatting = ref(false);
   const stopChatting = ref(() => {});
 
   const getChatsData = async (): Promise<ChatData[]> => {
@@ -86,6 +90,7 @@ export const useChats = (topicId: number): useChatReturn => {
     chatRefCount,
     tempStore,
     isProducing,
+    isChatting,
     stopChatting,
   });
 };
