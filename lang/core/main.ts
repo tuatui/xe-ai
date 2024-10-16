@@ -2,6 +2,9 @@ import { PrimaryLang } from "../primary";
 import { locales, type Locales } from "./conf";
 import { deepMerge } from "@antfu/utils";
 
+const LocalStoreKey = "XeAi-i18nUserSelectLanguages";
+const LocalStoreDivider = ",";
+
 export class I18nManager {
   public L = shallowRef(deepMerge({}, PrimaryLang) as typeof PrimaryLang);
   public locale;
@@ -11,7 +14,11 @@ export class I18nManager {
   constructor() {
     this.locale = ref(this.primaryLocales);
 
-    const userLangs = navigator.languages ?? [navigator.language];
+    const userLangs = navigator.languages?.slice(0) ?? [navigator.language];
+
+    const storeLang = localStorage.getItem(LocalStoreKey);
+    if (storeLang) userLangs.unshift(...storeLang.split(LocalStoreDivider));
+
     // 精确匹配
     const exactMatch = this.findFitLocal(
       userLangs,
@@ -20,7 +27,7 @@ export class I18nManager {
     );
     if (exactMatch) {
       if (exactMatch === this.primaryLocales) this.setPrimaryLocal();
-      else this.setLang(exactMatch.languages[0]);
+      else this.setLang(exactMatch.code, false);
       return;
     }
     // 模糊匹配
@@ -35,7 +42,7 @@ export class I18nManager {
     );
     if (fuzMatch) {
       if (fuzMatch === this.primaryLocales) this.setPrimaryLocal();
-      else this.setLang(fuzMatch.languages[0]);
+      else this.setLang(fuzMatch.code, false);
       return;
     }
     this.setPrimaryLocal();
@@ -72,7 +79,7 @@ export class I18nManager {
     document.documentElement.lang = lang.slice(0, 1).pop() ?? "";
   };
 
-  public setLang = async (lang: string) => {
+  public setLang = async (lang: string, memo = true) => {
     if (lang === this.primaryLocales.code) {
       deepMerge(this.L.value, PrimaryLang);
       triggerRef(this.L);
@@ -93,5 +100,10 @@ export class I18nManager {
 
     this.locale.value = locale;
     this.setHtmlLangTag(locale.languages);
+    if (memo)
+      localStorage.setItem(
+        LocalStoreKey,
+        locale.languages.join(LocalStoreDivider),
+      );
   };
 }
