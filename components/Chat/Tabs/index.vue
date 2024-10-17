@@ -2,6 +2,8 @@
   <div
     class="flex flex-col h-full"
     @focusin="handleClickChatTabs"
+    @dragover.prevent
+    @drop="handleDropEnd"
     tabindex="0"
     ref="divElem"
   >
@@ -19,6 +21,14 @@
           v-for="i in data.topics"
           :key="i.id"
           @click.middle.stop="remove(i)"
+          draggable="true"
+          @dragstart="
+            (ev: DragEvent) =>
+              dragAndDropChat.setData(ev, {
+                topic: i,
+                isMove: { fromTab: uniqueKey },
+              })
+          "
         >
           {{ i.title || $L.chat.untitled }}
           <template #append>
@@ -132,6 +142,7 @@ const add = (topic: TopicData): void => {
 };
 const expose: ChatTabsExpose = {
   add,
+  remove,
   getAll: () => data.value.topics,
   getCurr: () => data.value.topics.find((v) => v.id === data.value.currTab),
 };
@@ -191,6 +202,16 @@ const handleNewChat = async () => {
   if (!res) return;
   const newTopic = ts.topics.find((topic) => topic.id === res.id);
   if (newTopic) add(newTopic);
+};
+const handleDropEnd = (ev: DragEvent) => {
+  const res = dragAndDropChat.getData(ev);
+  if (!res) return;
+  add(res.topic);
+
+  if (res.isMove && res.isMove.fromTab !== uniqueKey)
+    store.globalSharedTabs
+      .get(res.isMove.fromTab)
+      ?.value.expose?.remove(res.topic);
 };
 </script>
 <style lang="css" scoped>

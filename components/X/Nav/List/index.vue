@@ -14,6 +14,8 @@
         @click="$emit('addChat', topic)"
         :key="topic.id"
         color="primary"
+        draggable="true"
+        @dragstart="(ev: DragEvent) => dragAndDropChat.setData(ev, { topic })"
       >
         <XNavListItem
           :value="topic.title || $L.chat.untitled"

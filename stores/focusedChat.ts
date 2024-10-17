@@ -1,5 +1,6 @@
 export interface ChatTabsExpose {
   add: (topic: TopicData) => void;
+  remove: (topic: TopicData) => void;
   getAll: () => TopicData[];
   getCurr: () => TopicData | undefined;
 }
