@@ -4,7 +4,7 @@
     disable-resize-watcher
     permanent
     :width="width"
-    class="box-content"
+    class="box-content bg-surface-light"
     :aria-label="$L.aria.sideNav"
   >
     <div class="h-full w-full flex flex-col">
@@ -18,12 +18,24 @@
           :use-tooltip="isRail ? $L.tips.expandMenu : $L.tips.collapseMenu"
         />
       </VToolbar>
-
+      <div class="px4 py14px box-border" :class="{ px1: isRail, py2: isRail }">
+        <XCommonBtn
+          class="overflow-hidden"
+          :icon="isRail"
+          use-icon="i-mdi-plus"
+          role="option"
+          variant="tonal"
+          @click="handleAddTopic"
+          :use-tooltip="$L.tips.newChatLong"
+          tooltip-location="right center"
+          :embed-tooltip="!isRail"
+        />
+      </div>
+      <VDivider />
+      <VSpacer v-show="isRail" />
       <XNavList
-        class="relative z-2 box-border"
-        :rail="isRail"
+        v-show="!isRail"
         @add-chat="(topic) => $emit('addChatTab', topic)"
-        @new-topic-with-chat="handleAddTopic"
       />
 
       <VDivider />

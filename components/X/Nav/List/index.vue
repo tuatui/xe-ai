@@ -1,45 +1,26 @@
 <template>
   <VList
-    class="flex flex-col grow min-h-0 bg-surface-light !py0"
+    class="grow box-border overflow-auto bg-surface-light !pt0 contain-strict"
     :aria-label="$L.aria.chatHistory"
   >
-    <VListItem lines="two" :class="{ '!px1 !py2': rail }">
-      <XCommonBtn
-        :icon="rail"
-        use-icon="i-mdi-plus"
-        role="option"
-        variant="tonal"
-        @click="$emit('newTopicWithChat')"
-        :use-tooltip="$L.tips.newChatLong"
-        tooltip-location="right center"
-        :embed-tooltip="!rail"
-      />
-    </VListItem>
-    <VDivider role="none" />
-    <VSpacer v-show="rail" />
-    <div v-show="!rail" class="grow min-h-0 overflow-auto pb2 contain-strict">
-      <div
-        v-for="([timeStr, topicList], i) in relativeTimeTopic"
-        :key="timeStr"
-      >
-        <VDivider v-if="i > 0" role="none" />
-        <div class="sticky top-0 z-10 bg-surface-light">
-          <VListSubheader>{{ timeStr }}</VListSubheader>
-        </div>
-        <VListItem
-          role="option"
-          v-for="(topic, i) in topicList"
-          @click="$emit('addChat', topic)"
-          :key="topic.id"
-          color="primary"
-        >
-          <XNavListItem
-            :value="topic.title || $L.chat.untitled"
-            @remove="handleRemoveTopic(topicList, i)"
-            @update="(v) => handleUpdateTopic(v, topic)"
-          />
-        </VListItem>
+    <div v-for="([timeStr, topicList], i) in relativeTimeTopic" :key="timeStr">
+      <VDivider v-if="i > 0" role="none" />
+      <div class="sticky top-0 z-1 bg-surface-light">
+        <VListSubheader>{{ timeStr }}</VListSubheader>
       </div>
+      <VListItem
+        role="option"
+        v-for="(topic, i) in topicList"
+        @click="$emit('addChat', topic)"
+        :key="topic.id"
+        color="primary"
+      >
+        <XNavListItem
+          :value="topic.title || $L.chat.untitled"
+          @remove="handleRemoveTopic(topicList, i)"
+          @update="(v) => handleUpdateTopic(v, topic)"
+        />
+      </VListItem>
     </div>
   </VList>
 </template>
@@ -47,7 +28,7 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-defineProps<{ rail: boolean }>();
+
 const locale = ref("zh");
 
 const tabsStore = chatTabsStore();
