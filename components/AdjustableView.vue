@@ -1,11 +1,6 @@
 <template>
   <template v-if="viewTree.isLeaf">
-    <component
-      :is="viewTree.view"
-      @splitHorizontal="$emit('splitHorizontal')"
-      @splitVertical="$emit('splitVertical')"
-      @close="$emit('close')"
-    ></component>
+    <component :is="viewTree.view" :split-leaf :cut-leaf></component>
   </template>
   <template v-else>
     <div
@@ -29,9 +24,8 @@
             width: viewTree.isVertical ? '100%' : `${vt.space * 100}%`,
             height: !viewTree.isVertical ? '100%' : `${vt.space * 100}%`,
           }"
-          @splitHorizontal="handleSplit(true, i)"
-          @splitVertical="handleSplit(false, i)"
-          @close="handleViewClose(i)"
+          :split-leaf="(b, lc) => handleSplit(b, i, lc)"
+          :cut-leaf="() => handleViewClose(i)"
         />
         <div
           class="view-dragger-parent"
@@ -52,21 +46,41 @@
 </template>
 <script setup lang="tsx">
 import { ViewTree } from "#imports";
-import { ChatTabs } from "#components";
+import type {
+  LeafComponent,
+  SplitLeafFn,
+  LeafComponentUniqueKey,
+  CutLeafFn,
+} from "~/types/adjustableView";
 
-const emit = defineEmits<{
-  splitHorizontal: [];
-  splitVertical: [];
-  close: [];
-}>();
+const props = defineProps<{ splitLeaf?: SplitLeafFn; cutLeaf?: CutLeafFn }>();
+
 const viewTree = defineModel<ViewTree>({ required: true });
-const handleSplit = (isVertical: boolean, index: number) => {
+/**
+ * 切分窗口
+ * @todo 允许向左切分
+ */
+const handleSplit = (
+  isVertical: boolean,
+  index: number,
+  NewTab: LeafComponent,
+): LeafComponentUniqueKey => {
   const target = viewTree.value.children[index];
+  let uniqueKey: symbol = Symbol("void");
   if (viewTree.value.children.length === 1) {
     viewTree.value.isVertical = isVertical;
     target.space = 0.5;
     viewTree.value.children.push(
-      new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 0.5),
+      new ViewTree(
+        true,
+        (key) => {
+          uniqueKey = key;
+          return <NewTab uniqueKey={key} />;
+        },
+        false,
+        [],
+        0.5,
+      ),
     );
   } else {
     if (isVertical === viewTree.value.isVertical) {
@@ -76,7 +90,10 @@ const handleSplit = (isVertical: boolean, index: number) => {
         0,
         new ViewTree(
           true,
-          (key) => <ChatTabs uniqueKey={key} />,
+          (key) => {
+            uniqueKey = key;
+            return <NewTab uniqueKey={key} />;
+          },
           false,
           [],
           newSpace,
@@ -91,7 +108,10 @@ const handleSplit = (isVertical: boolean, index: number) => {
           target,
           new ViewTree(
             true,
-            (key) => <ChatTabs uniqueKey={key} />,
+            (key) => {
+              uniqueKey = key;
+              return <NewTab uniqueKey={key} />;
+            },
             false,
             [],
             0.5,
@@ -103,13 +123,14 @@ const handleSplit = (isVertical: boolean, index: number) => {
       target.isLeaf = true;
     }
   }
+  return uniqueKey;
 };
-const store = chatTabsStore();
+
 const handleViewClose = (index: number) => {
   const target = viewTree.value.children[index];
   if (viewTree.value.children.length === 1) {
     viewTree.value.children.pop();
-    emit("close");
+    if (props.cutLeaf) props.cutLeaf();
   } else if (viewTree.value.children.length === 2) {
     viewTree.value.children.splice(index, 1);
     viewTree.value.children[0].space = 1;
@@ -120,7 +141,7 @@ const handleViewClose = (index: number) => {
     if (index === 0) viewTree.value.children[0].space += oldView.space;
     else viewTree.value.children[index - 1].space += oldView.space;
   }
-  store.globalSharedTabs.delete(target.uniqueKey);
+  return target.uniqueKey;
 };
 
 const viewParent = ref<HTMLDivElement>();

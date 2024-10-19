@@ -11,15 +11,15 @@
       :class="{
         'tab-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
       }"
-      @click="handleClickChatTabs"
     >
       <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
         <VTab
-          class="bg-primary"
+          class="tab-bg"
           :value="i.id"
           v-for="i in data.topics"
           :key="i.id"
-          @click.middle.stop="remove(i)"
+          @mousedown.middle.prevent
+          @click.middle.prevent="remove(i)"
           draggable="true"
           @dragstart="
             (ev: DragEvent) =>
@@ -40,7 +40,8 @@
               icon
               density="comfortable"
               size="small"
-              @click.stop="remove(i)"
+              @mousedown.prevent
+              @click="remove(i)"
               use-icon="i-mdi-window-close"
               :use-tooltip="$L.common.close"
             />
@@ -51,9 +52,9 @@
         <template v-if="viewSize.inlineSize > 300">
           <ChatTabsBtnGroup
             @handle-new-chat="handleNewChat"
-            @split-vert-handle="splitVertHandle"
-            @split-horiz-handle="splitHorizHandle"
-            @close="$emit('close')"
+            @split-vert-handle="handleSplit(false, true)"
+            @split-horiz-handle="handleSplit(true, true)"
+            @close="handleClose"
           />
         </template>
         <template v-else>
@@ -68,15 +69,13 @@
             </template>
             <VList>
               <VListItem @click="handleNewChat">{{ $L.chat.new }}</VListItem>
-              <VListItem @click="splitVertHandle">{{
+              <VListItem @click="handleSplit(false, true)">{{
                 $L.chat.splitRight
               }}</VListItem>
-              <VListItem @click="splitHorizHandle">{{
+              <VListItem @click="handleSplit(true, true)">{{
                 $L.chat.splitDown
               }}</VListItem>
-              <VListItem @click="$emit('close')">{{
-                $L.common.close
-              }}</VListItem>
+              <VListItem @click="handleClose">{{ $L.common.close }}</VListItem>
             </VList>
           </VMenu>
         </template>
@@ -84,7 +83,7 @@
     </VSheet>
     <div
       ref="dropZone"
-      class="grow relative box-border"
+      class="grow relative box-border overflow-hidden"
       @dragover.prevent="handleDragOver"
       @dragenter="dragCount++"
       @dragleave="dragCount--"
@@ -119,22 +118,87 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-// 不能动态改动uniqueKey，有需要可以再创建新的组件实例
-const { uniqueKey } = defineProps<{ uniqueKey: symbol }>();
-const store = chatTabsStore();
+<script setup lang="tsx">
+import { ChatTabs } from "#components";
+import type { LeafComponentProps } from "~/types/adjustableView";
+
+// 未来的设计中，父组件最好不要动态改动uniqueKey，可以再创建新的组件实例
+const { uniqueKey, cutLeaf, splitLeaf } = defineProps<LeafComponentProps>();
+const { globalSharedTabs: globalTabs } = chatTabsStore();
 const tabRootEl = ref<HTMLDivElement>();
 
 const data =
-  store.globalSharedTabs.get(uniqueKey) ||
+  globalTabs.get(uniqueKey) ||
   ref<{
     topics: TopicData[];
     currTab: number | undefined;
     expose?: ChatTabsExpose;
   }>({ topics: [], currTab: undefined });
 
-if (!store.globalSharedTabs.has(uniqueKey))
-  store.globalSharedTabs.set(uniqueKey, data);
+if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
+
+const handleSplit = (isVertical: boolean, clone = false) => {
+  if (!splitLeaf) return;
+  if (!tabRootEl.value) return;
+  if (isVertical && tabRootEl.value.offsetHeight < 256) {
+    showWarn();
+    return;
+  }
+  if (!isVertical && tabRootEl.value.offsetWidth < 256) {
+    showWarn();
+    return;
+  }
+  const newTab = splitLeaf(isVertical, ChatTabs);
+  const curr = expose.getCurr();
+  if (newTab && curr && clone)
+    nextTick().then(() => globalTabs.get(newTab)?.value.expose?.add(curr));
+  return newTab;
+};
+const handleClose = () => {
+  if (!cutLeaf) return;
+  const res = cutLeaf();
+  globalTabs.delete(res);
+};
+const dragCount = ref(0);
+
+const handleDropEnd = (ev: DragEvent) => {
+  dragCount.value--;
+  const res = dragAndDropChat.getData(ev);
+  if (!res) return;
+  const el = dropZone.value;
+  if (!el) return;
+
+  const oType = calcMousePos(el.getBoundingClientRect(), ev);
+  let splitRes: symbol | undefined;
+  if (oType === "right") {
+    const newTab = handleSplit(false);
+    splitRes = newTab;
+    newTab &&
+      nextTick().then(() =>
+        globalTabs.get(newTab)?.value.expose?.add(res.topic),
+      );
+  } else if (oType === "left") {
+    add(res.topic);
+    splitRes = handleSplit(false);
+  } else if (oType === "bottom") {
+    const newTab = handleSplit(true);
+    splitRes = newTab;
+    newTab &&
+      nextTick().then(() =>
+        globalTabs.get(newTab)?.value.expose?.add(res.topic),
+      );
+  } else if (oType === "top") {
+    add(res.topic);
+    splitRes = handleSplit(true);
+  } else add(res.topic);
+  if (
+    res.isMove &&
+    splitRes &&
+    (res.isMove.fromTab !== uniqueKey || oType !== "full")
+  ) {
+    globalTabs.get(res.isMove.fromTab)?.value.expose?.remove(res.topic);
+  }
+};
 
 watch(
   () => data.value.topics.length,
@@ -153,6 +217,7 @@ const remove = (topic: TopicData) => {
 
 const focusedChat = focusedChatStore();
 const handleClickChatTabs = () => (focusedChat.chatTabsExpose = expose);
+onMounted(handleClickChatTabs);
 
 const add = (topic: TopicData): void => {
   const i = data.value.topics.findIndex((v) => v.id === topic.id);
@@ -165,13 +230,8 @@ const expose: ChatTabsExpose = {
   getAll: () => data.value.topics,
   getCurr: () => data.value.topics.find((v) => v.id === data.value.currTab),
 };
+data.value.expose = expose;
 
-onMounted(() => {
-  const lastFocusTopic = focusedChat.chatTabsExpose?.getCurr();
-  if (lastFocusTopic) expose.add(lastFocusTopic);
-  handleClickChatTabs();
-  data.value.expose = expose;
-});
 onUnmounted(() => {
   if (toRaw(focusedChat.chatTabsExpose) === expose)
     focusedChat.chatTabsExpose = undefined;
@@ -187,23 +247,6 @@ const showWarn = () => {
     allowClose: false,
     timeout: 3000,
   });
-};
-
-const emit = defineEmits<{
-  splitHorizontal: [];
-  splitVertical: [];
-  close: [];
-}>();
-const splitVertHandle = () => {
-  if (!tabRootEl.value) return;
-  if (tabRootEl.value.offsetWidth > 256) emit("splitVertical");
-  else showWarn();
-};
-
-const splitHorizHandle = () => {
-  if (!tabRootEl.value) return;
-  if (tabRootEl.value.offsetHeight > 256) emit("splitHorizontal");
-  else showWarn();
 };
 
 const viewSize = ref<ResizeObserverSize>({ blockSize: 500, inlineSize: 500 });
@@ -223,24 +266,6 @@ const handleNewChat = async () => {
   if (newTopic) add(newTopic);
 };
 
-const dragCount = ref(0);
-
-const handleDropEnd = (ev: DragEvent) => {
-  dragCount.value--;
-  const res = dragAndDropChat.getData(ev);
-  if (!res) return;
-  const el = dropZone.value;
-  if (!el) return;
-  const oType = calcMousePos(el.getBoundingClientRect(), ev);
-  add(res.topic);
-  if (oType === "left" || oType === "right") splitVertHandle();
-  else if (oType === "bottom" || oType === "top") splitHorizHandle();
-
-  if (res.isMove && res.isMove.fromTab !== uniqueKey)
-    store.globalSharedTabs
-      .get(res.isMove.fromTab)
-      ?.value.expose?.remove(res.topic);
-};
 type OverlayType = "full" | "left" | "right" | "top" | "bottom";
 const dragOverlayType = ref<OverlayType>("full");
 
@@ -248,8 +273,8 @@ const dropZone = ref<HTMLDivElement>();
 const calcMousePos = (rect: DOMRect, ev: DragEvent): OverlayType => {
   const { left, right, top, bottom } = rect;
   const { pageX, pageY } = ev;
-  const offsetX = (right - left) * 0.2;
-  const offsetY = (right - left) * 0.2;
+  const offsetX = (right - left) * 0.12;
+  const offsetY = (bottom - top) * 0.12;
   if (pageX < left + offsetX) return "left";
   else if (pageX > right - offsetX) return "right";
   else if (pageY < top + offsetY) return "top";
@@ -263,6 +288,9 @@ const handleDragOver = (ev: DragEvent) => {
 };
 </script>
 <style lang="scss" scoped>
+.tab-bg {
+  background: rgb(var(--v-theme-primary));
+}
 .tab-medium-emphasis {
   color: rgb(
     var(--v-theme-on-primary),
@@ -273,30 +301,25 @@ const handleDragOver = (ev: DragEvent) => {
   position: absolute;
   opacity: 0.3;
   pointer-events: none;
-  transition: 200ms;
+  transition: 140ms ease;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   &.full {
-    width: 100%;
-    height: 100%;
+    transform: scale(1);
   }
   &.left {
-    width: 50%;
-    height: 100%;
+    transform: scaleX(0.5) translateX(-50%);
   }
   &.right {
-    left: 50%;
-    width: 50%;
-    height: 100%;
+    transform: scaleX(0.5) translateX(50%);
   }
   &.top {
-    width: 100%;
-    height: 50%;
+    transform: scaleY(0.5) translateY(-50%);
   }
   &.bottom {
-    top: 50%;
-    width: 100%;
-    height: 50%;
+    transform: scaleY(0.5) translateY(50%);
   }
 }
 .v-enter-active,
