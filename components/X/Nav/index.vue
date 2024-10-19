@@ -4,7 +4,7 @@
     disable-resize-watcher
     permanent
     :width="width"
-    class="box-content bg-surface-light"
+    class="bg-surface-light"
     :aria-label="$L.aria.sideNav"
   >
     <div class="h-full w-full flex flex-col">
@@ -60,7 +60,7 @@
 const emit = defineEmits<{ addChatTab: [topic: TopicData] }>();
 
 const isRail = ref(false);
-const width = ref(200);
+const width = ref(201);
 const { updateTopic } = topicStore();
 
 const handleAddTopic = async () => {

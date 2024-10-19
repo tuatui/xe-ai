@@ -4,10 +4,18 @@ interface DragAndDropChatData {
 }
 
 export const dragAndDropChat = {
-  setData: (ev: DragEvent, data: DragAndDropChatData) => {
+  setData: (
+    ev: DragEvent,
+    data: DragAndDropChatData,
+    opt?: { el?: Element; effect?: DataTransfer["effectAllowed"] },
+  ) => {
     const dataId = crypto.randomUUID();
     globalStore().map.set(dataId, data);
     ev.dataTransfer!.setData("text/plain", dataId);
+    if (!opt) return;
+    const { el, effect } = opt;
+    if (el) ev.dataTransfer!.setDragImage(el, 0, 0);
+    if (effect) ev.dataTransfer!.effectAllowed = effect;
   },
 
   getData: (ev: DragEvent): DragAndDropChatData | undefined => {

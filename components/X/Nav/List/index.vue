@@ -15,7 +15,12 @@
         :key="topic.id"
         color="primary"
         draggable="true"
-        @dragstart="(ev: DragEvent) => dragAndDropChat.setData(ev, { topic })"
+        @dragstart="
+          (ev: DragEvent) => {
+            dragTooltipText = topic.title || $L.chat.untitled;
+            dragAndDropChat.setData(ev, { topic }, { el: dragTooltip });
+          }
+        "
       >
         <XNavListItem
           :value="topic.title || $L.chat.untitled"
@@ -24,13 +29,21 @@
         />
       </VListItem>
     </div>
+    <Teleport to="body">
+      <div class="fixed right-0">
+        <div ref="dragTooltip" class="bg-surface-light rounded px4 py1">
+          {{ dragTooltipText }}
+        </div>
+      </div>
+    </Teleport>
   </VList>
 </template>
 <script setup lang="ts">
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-
+const dragTooltip = ref<HTMLDivElement>();
+const dragTooltipText = ref("");
 const locale = ref("zh");
 
 const tabsStore = chatTabsStore();
