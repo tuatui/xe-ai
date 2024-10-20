@@ -172,18 +172,25 @@ const { chatSetting } = data.value.tempStore;
 if (chatSetting) {
   selectedBots.value = chatSetting.useBotData;
   selectedModel.value = chatSetting.useModelName;
-} else {
-  (async (): Promise<void> => {
-    const conf: Partial<globalThis.DefaultBotSetting> = {
-      ...deleteUndefined(defaultBot.defaultBotInfo),
-      ...deleteUndefined(props.topics.preferSetting),
-    };
-    data.value.tempStore.chatSetting = {
-      useBotData: (await getBotsData(conf.preferBotID)).pop(),
-      useModelName: conf.preferModelName,
-    };
-  })();
-}
+} else
+  watch(
+    () => defaultBot.defaultBotInfo,
+    async (): Promise<void> => {
+      if (data.value.tempStore.chatSetting) return;
+
+      const conf: Partial<globalThis.DefaultBotSetting> = {
+        ...defaultBot.defaultBotInfo,
+        ...props.topics.preferSetting,
+      };
+      if (conf.preferBotID === undefined) return;
+      data.value.tempStore.chatSetting = {
+        useBotData: (await getBotsData(conf.preferBotID)).pop(),
+        useModelName: conf.preferModelName,
+      };
+    },
+    { immediate: true },
+  );
+
 let chatSession: ChatSession | undefined | null;
 const { Services } = chatServices();
 
@@ -233,7 +240,7 @@ const handleConf = async () => {
       },
     });
   } catch (error) {
-    console.warn(error);
+    if (error) console.warn(error);
   }
 };
 

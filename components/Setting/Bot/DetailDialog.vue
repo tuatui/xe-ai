@@ -39,6 +39,7 @@
 
           <div class="flex gap4">
             <VCombobox
+              label="模型"
               :hide-no-data="false"
               v-model:search="modelSearch"
               v-model="botsInfoClone.availableModel"
@@ -82,6 +83,19 @@
               {{ $L.setting.editModule.fetch }}
             </VBtn>
           </div>
+          <VSelect
+            v-model="botsInfoClone.primaryModel"
+            label="首选模型"
+            clearable
+            :items="botsInfoClone.availableModel"
+            :item-props="
+              (item) => ({
+                title: item.name,
+                subtitle: item.owner,
+                value: item.name,
+              })
+            "
+          />
         </VCardText>
 
         <VCardActions>
@@ -123,6 +137,7 @@ const createBotsInfo = (): BotCreationData => ({
   createTime: new Date(),
   name: "chat-gpt-3.5",
   availableModel: [],
+  primaryModel: undefined,
   provider: Provider.OpenAI,
   apiUrl: props.botInfo?.provider
     ? Services[props.botInfo.provider].info.defaultBaseUrl

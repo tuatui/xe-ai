@@ -31,7 +31,12 @@
               :color="preferBotID === bot.id ? undefined : 'primary'"
               class="font-weight-bold"
               :disabled="preferBotID === bot.id"
-              @click.stop="dBot.updateDefaultBotInfo({ preferBotID: bot.id })"
+              @click.stop="
+                dBot.updateDefaultBotInfo({
+                  preferBotID: bot.id,
+                  preferModelName: bot.primaryModel ?? undefined,
+                })
+              "
               >{{
                 preferBotID === bot.id
                   ? $L.setting.defaultModule

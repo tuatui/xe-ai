@@ -4,6 +4,7 @@ export interface BotsData {
   nickName: string;
   provider: Provider;
   availableModel: ModelList[];
+  primaryModel: string | undefined | null;
   name: string;
   apiUrl: string;
   createTime: Date;
@@ -49,17 +50,19 @@ export const useBots = () => {
   };
   const updateBotNotSync = async (data: Partial<BotsData>) => {
     const db = await iDB.onDBReady();
-
     try {
-      // vue的代理对象会导致序列化失败
-      const clonedData = toRawDeep(data);
-      clonedData.availableModel ??= [];
+      const rawData = toRaw(data);
+      if (rawData.availableModel)
+        rawData.availableModel = rawData.availableModel.map((each) =>
+          toRaw(each),
+        );
+      else rawData.availableModel = [];
       let res: IDBValidKey;
       if (data.id === undefined) {
-        clonedData.createTime ??= new Date();
-        res = await db.add(IDB_VAR.BOTS, clonedData);
+        rawData.createTime ??= new Date();
+        res = await db.add(IDB_VAR.BOTS, rawData);
       } else {
-        res = await db.put(IDB_VAR.BOTS, clonedData);
+        res = await db.put(IDB_VAR.BOTS, rawData);
       }
       bots.value = await getBotsData();
       return res;

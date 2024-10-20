@@ -57,6 +57,7 @@ model BotProvider {
   name           String
   apiUrl         String
   createTime     DateTime
+  primaryModel   String?
   availableModel ModelList[]
 }
 

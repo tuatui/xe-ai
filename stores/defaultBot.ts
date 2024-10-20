@@ -2,6 +2,7 @@ export interface DefaultBotSetting {
   preferBotID: number;
   preferModelName: string;
 }
+
 export const defaultBotStore = defineStore("default-bot", () => {
   const iDB = useIndexedDBStore();
   const getDefaultBotInfo =
@@ -38,7 +39,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
     }
   };
   return {
-    defaultBotInfo: defaultBotInfo,
-    updateDefaultBotInfo: updateDefaultBotInfo,
+    defaultBotInfo,
+    updateDefaultBotInfo,
   };
 });

@@ -79,7 +79,10 @@ const getTopic = async () => {
   ts.topics.push(...res);
   updateCache();
 };
-onMounted(getTopic);
+onMounted(() => {
+  ts.topics = [];
+  getTopic();
+});
 
 const handleScroll = (ev: Event) => {
   const target = ev.target as HTMLDivElement;
