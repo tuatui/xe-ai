@@ -191,10 +191,10 @@ const handleDropEnd = (ev: DragEvent) => {
     add(res.topic);
     splitRes = handleSplit(true);
   } else add(res.topic);
+
   if (
     res.isMove &&
-    splitRes &&
-    (res.isMove.fromTab !== uniqueKey || oType !== "full")
+    (res.isMove.fromTab !== uniqueKey || (splitRes && oType !== "full"))
   ) {
     globalTabs.get(res.isMove.fromTab)?.value.expose?.remove(res.topic);
   }
