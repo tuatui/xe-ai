@@ -14,16 +14,17 @@
         color="warning"
         class="font-extrabold"
       >
-        {{ $L.common.revocation }}
+        <span class="text-size-3.7">
+          {{ $L.common.revocation }}
+        </span>
       </VBtn>
       <VBtn
-        v-else-if="curr.notification.allowClose"
-        variant="text"
+        class="ml2"
+        v-if="curr.notification.allowClose"
+        density="compact"
+        icon="i-mdi-close"
         @click="curr.finishJob()"
-        color="#2196F3"
-        class="font-extrabold"
       >
-        {{ $L.common.close }}
       </VBtn>
     </template>
   </VSnackbar>
