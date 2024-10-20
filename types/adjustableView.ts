@@ -4,6 +4,7 @@ export type LeafComponentUniqueKey = symbol;
 export type SplitLeafFn = (
   isVertical: boolean,
   lc: LeafComponent,
+  onLeftSide: boolean,
 ) => LeafComponentUniqueKey;
 export type CutLeafFn = () => LeafComponentUniqueKey;
 export type LeafComponentProps = {

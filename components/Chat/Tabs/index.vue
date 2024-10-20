@@ -137,7 +137,11 @@ const data =
 
 if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
 
-const handleSplit = (isVertical: boolean, clone = false) => {
+const handleSplit = (
+  isVertical: boolean,
+  clone = false,
+  onLeftSide = false,
+) => {
   if (!splitLeaf) return;
   if (!tabRootEl.value) return;
   if (isVertical && tabRootEl.value.offsetHeight < 256) {
@@ -148,7 +152,7 @@ const handleSplit = (isVertical: boolean, clone = false) => {
     showWarn();
     return;
   }
-  const newTab = splitLeaf(isVertical, ChatTabs);
+  const newTab = splitLeaf(isVertical, ChatTabs, onLeftSide);
   const curr = expose.getCurr();
   if (newTab && curr && clone)
     nextTick().then(() => globalTabs.get(newTab)?.value.expose?.add(curr));
@@ -170,27 +174,17 @@ const handleDropEnd = (ev: DragEvent) => {
 
   const oType = calcMousePos(el.getBoundingClientRect(), ev);
   let splitRes: symbol | undefined;
-  if (oType === "right") {
-    const newTab = handleSplit(false);
-    splitRes = newTab;
-    newTab &&
-      nextTick().then(() =>
-        globalTabs.get(newTab)?.value.expose?.add(res.topic),
-      );
-  } else if (oType === "left") {
-    add(res.topic);
-    splitRes = handleSplit(false);
-  } else if (oType === "bottom") {
-    const newTab = handleSplit(true);
-    splitRes = newTab;
-    newTab &&
-      nextTick().then(() =>
-        globalTabs.get(newTab)?.value.expose?.add(res.topic),
-      );
-  } else if (oType === "top") {
-    add(res.topic);
-    splitRes = handleSplit(true);
-  } else add(res.topic);
+
+  if (oType === "right") splitRes = handleSplit(false);
+  else if (oType === "left") splitRes = handleSplit(false, false, true);
+  else if (oType === "bottom") splitRes = handleSplit(true);
+  else if (oType === "top") splitRes = handleSplit(true, false, true);
+  else add(res.topic);
+
+  if (splitRes)
+    nextTick().then(() =>
+      globalTabs.get(splitRes)?.value.expose?.add(res.topic),
+    );
 
   if (
     res.isMove &&

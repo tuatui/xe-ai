@@ -24,7 +24,7 @@
             width: viewTree.isVertical ? '100%' : `${vt.space * 100}%`,
             height: !viewTree.isVertical ? '100%' : `${vt.space * 100}%`,
           }"
-          :split-leaf="(b, lc) => handleSplit(b, i, lc)"
+          :split-leaf="(b, lc, s) => handleSplit(b, i, lc, s)"
           :cut-leaf="() => handleViewClose(i)"
         />
         <div
@@ -64,29 +64,31 @@ const handleSplit = (
   isVertical: boolean,
   index: number,
   NewTab: LeafComponent,
+  onLeftSide = false,
 ): LeafComponentUniqueKey => {
   const target = viewTree.value.children[index];
   let uniqueKey: symbol = Symbol("void");
   if (viewTree.value.children.length === 1) {
     viewTree.value.isVertical = isVertical;
     target.space = 0.5;
-    viewTree.value.children.push(
-      new ViewTree(
-        true,
-        (key) => {
-          uniqueKey = key;
-          return <NewTab uniqueKey={key} />;
-        },
-        false,
-        [],
-        0.5,
-      ),
+    const child = new ViewTree(
+      true,
+      (key) => {
+        uniqueKey = key;
+        return <NewTab uniqueKey={key} />;
+      },
+      false,
+      [],
+      0.5,
     );
+    if (onLeftSide) viewTree.value.children.unshift(child);
+    else viewTree.value.children.push(child);
   } else {
     if (isVertical === viewTree.value.isVertical) {
       const newSpace = (target.space /= 2);
+      const at = onLeftSide ? index : index + 1;
       viewTree.value.children.splice(
-        index + 1,
+        at,
         0,
         new ViewTree(
           true,
@@ -100,23 +102,25 @@ const handleSplit = (
         ),
       );
     } else {
+      const children = [
+        target,
+        new ViewTree(
+          true,
+          (key) => {
+            uniqueKey = key;
+            return <NewTab uniqueKey={key} />;
+          },
+          false,
+          [],
+          0.5,
+        ),
+      ];
+      if (onLeftSide) children.reverse();
       viewTree.value.children[index] = new ViewTree(
         false,
         undefined,
         isVertical,
-        [
-          target,
-          new ViewTree(
-            true,
-            (key) => {
-              uniqueKey = key;
-              return <NewTab uniqueKey={key} />;
-            },
-            false,
-            [],
-            0.5,
-          ),
-        ],
+        children,
         target.space,
       );
       target.space = 0.5;
