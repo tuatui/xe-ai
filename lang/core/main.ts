@@ -85,25 +85,26 @@ export class I18nManager {
       triggerRef(this.L);
       this.locale.value = this.primaryLocales;
       this.setHtmlLangTag(this.locale.value.languages);
-      return;
+    } else {
+      const locale = locales.find(({ code }) => code === lang);
+      if (!locale)
+        throw new Error(
+          `Language code "${lang}" not found, did you register it in "./conf/ts" ? `,
+        );
+
+      const { default: d } = await import(`../${lang}.ts`);
+
+      deepMerge(this.L.value, PrimaryLang, d);
+      triggerRef(this.L);
+
+      this.locale.value = locale;
+      this.setHtmlLangTag(locale.languages);
     }
-    const locale = locales.find(({ code }) => code === lang);
-    if (!locale)
-      throw new Error(
-        `Language code "${lang}" not found, did you register it in "./conf/ts" ? `,
-      );
 
-    const { default: d } = await import(`../${lang}.ts`);
-
-    deepMerge(this.L.value, PrimaryLang, d);
-    triggerRef(this.L);
-
-    this.locale.value = locale;
-    this.setHtmlLangTag(locale.languages);
     if (memo)
       localStorage.setItem(
         LocalStoreKey,
-        locale.languages.join(LocalStoreDivider),
+        this.locale.value.languages.join(LocalStoreDivider),
       );
   };
 }
