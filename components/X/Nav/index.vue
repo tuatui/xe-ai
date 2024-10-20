@@ -34,7 +34,7 @@
       <VDivider />
       <VSpacer v-show="isRail" />
       <XNavList
-        v-show="!isRail"
+        :is-hidden="isRail"
         @add-chat="(topic) => $emit('addChatTab', topic)"
       />
 

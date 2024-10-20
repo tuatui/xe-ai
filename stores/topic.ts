@@ -41,30 +41,33 @@ export const topicStore = defineStore("topic-store", () => {
     return data as TopicData;
   };
 
-  const getTopic = async (id?: number) => {
-    let res: TopicData[];
-
+  const getTopic = async (
+    input: {
+      id?: number;
+      page?: CommonPaginationQuery;
+    } = {},
+  ) => {
+    let res;
     taskCount.value++;
-    if (ls.isLogin) res = await topicServer.get(id);
-    else res = await topicLocal.get(id);
+
+    if (ls.isLogin) res = await topicServer.get(input);
+    else res = await topicLocal.get(input);
     taskCount.value--;
 
     return res;
   };
 
-  const removeTopic = async (id: number, autoUpdateCache = true) => {
+  const removeTopic = async (id: number) => {
     if (ls.isLogin) await topicServer.remove(id);
     else await topicLocal.remove(id);
 
-    if (autoUpdateCache) {
-      const res = topics.value.findIndex((topic) => topic.id === id);
-      if (res < 0) return;
-      topics.value.splice(res, 1);
-      triggerRef(topics);
-    }
+    const res = topics.value.findIndex((topic) => topic.id === id);
+    if (res < 0) return;
+    topics.value.splice(res, 1);
   };
 
-  const updateCache = async () => (topics.value = await getTopic());
+  const updateCache = async () => triggerRef(topics);
+
   const chatLocal = new ChatLocal();
   const getAllWithChat = async (limit?: number) => {
     const t = await topicLocal.getSome(undefined, limit);

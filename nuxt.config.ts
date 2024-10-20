@@ -38,7 +38,7 @@ export default defineNuxtConfig({
       },
     },
   },
-  imports: { dirs: ["./constants"] },
+  imports: { dirs: ["./constants", "./types"] },
   unocss: {
     presets: [
       presetUno(),

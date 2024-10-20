@@ -1,7 +1,9 @@
 <template>
   <VList
+    v-show="!isHidden"
     class="grow box-border overflow-auto bg-surface-light !pt0 contain-strict"
     :aria-label="$L.aria.chatHistory"
+    @scroll="handleScroll"
   >
     <div v-for="([timeStr, topicList], i) in relativeTimeTopic" :key="timeStr">
       <VDivider v-if="i > 0" role="none" />
@@ -29,19 +31,23 @@
         />
       </VListItem>
     </div>
-    <Teleport to="body">
-      <div class="fixed right-0">
-        <div ref="dragTooltip" class="bg-surface-light rounded px4 py1">
-          {{ dragTooltipText }}
-        </div>
-      </div>
-    </Teleport>
   </VList>
+  <Teleport to="body">
+    <div class="fixed right-0">
+      <div ref="dragTooltip" class="bg-surface-light rounded px4 py1">
+        {{ dragTooltipText }}
+      </div>
+    </div>
+  </Teleport>
+  <VExpandTransition>
+    <VProgressLinear v-if="ts.isPending" :indeterminate="ts.isPending" />
+  </VExpandTransition>
 </template>
 <script setup lang="ts">
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
+defineProps<{ isHidden: boolean }>();
 const dragTooltip = ref<HTMLDivElement>();
 const dragTooltipText = ref("");
 const locale = ref("zh");
@@ -56,6 +62,34 @@ const ts = topicStore();
 const { pushNotification } = notificationStore();
 const { updateTopic, removeTopic, updateCache } = ts;
 const { $L } = useNuxtApp();
+
+const pagination: CommonPagination = { step: 0, total: 1, size: 16 };
+
+const getTopic = async () => {
+  if (ts.isPending) return;
+  if (pagination.size * pagination.step >= pagination.total) return;
+
+  const {
+    res,
+    page: { total },
+  } = await ts.getTopicData({ page: pagination });
+  pagination.total = total;
+  pagination.step++;
+
+  ts.topics.push(...res);
+  updateCache();
+};
+onMounted(getTopic);
+
+const handleScroll = (ev: Event) => {
+  const target = ev.target as HTMLDivElement;
+  if (!target) return;
+  const isEnd =
+    Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <
+    100;
+  if (isEnd) getTopic();
+};
+
 let jobCount = 0;
 const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
   const [topic] = topicsInMap.splice(index, 1);
@@ -66,8 +100,8 @@ const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
       pushNotification({
         content: $L.action.deleteSome(topic.title || $L.chat.untitled),
         cancelable: true,
-        onFinish: () => {
-          removeTopic(topic.id, false);
+        onFinish: async () => {
+          await removeTopic(topic.id);
           tabsStore.globalSharedTabs.forEach((each) => {
             const res = each.value.topics.findIndex(
               (_topic) => _topic.id == topic.id,

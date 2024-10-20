@@ -4,6 +4,7 @@ export interface TopicData {
   preferSetting?: Partial<DefaultBotSetting>;
   updateTime: Date;
 }
+
 export type TopicCreationData = Omit<TopicData, "id"> &
   Pick<Partial<TopicData>, "id">;
 
@@ -13,7 +14,10 @@ export interface TopicInterface {
    * @param {number} id - 若不给出id会获取全部
    * @todo 需要增加一些查询方式
    */
-  get: (id?: number) => Promise<TopicData[]>;
+  get: (arg: {
+    id?: number;
+    page?: CommonPaginationQuery;
+  }) => Promise<{ res: TopicData[]; page: CommonPagination }>;
   /**
    * 删除话题
    */

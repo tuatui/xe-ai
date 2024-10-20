@@ -3,6 +3,7 @@ import { router } from "~/server/trpc/trpc";
 import { z } from "zod";
 import { ChatRole } from "~/utils";
 import type { Prisma } from "@prisma/client";
+import type { CommonPagination } from "~/types/page";
 
 export const topic = router({
   sync: authorizedProcedure
@@ -114,36 +115,87 @@ export const topic = router({
     .input(
       z.object({
         id: z.number().nullish(),
+        page: z
+          .object({
+            size: z.number(),
+            step: z.number(),
+          })
+          .nullish(),
       }),
     )
     .mutation(async ({ ctx: { db, user }, input }) => {
       if (typeof input.id !== "number") {
-        return (
-          await db.topic.findMany({
+        const [res, total] = await db.$transaction([
+          db.topic.findMany({
             where: { authorId: user.id },
             orderBy: { updateTime: "desc" },
-          })
-        ).map(({ preferBotID, preferModelName, ...left }) => ({
+          }),
+          db.topic.count({ where: { authorId: user.id } }),
+        ]);
+        const page: CommonPagination = {
+          total,
+          size: total,
+          step: 0,
+        };
+        return {
+          res: res.map(({ preferBotID, preferModelName, ...left }) => ({
+            ...left,
+            preferSetting: {
+              preferBotID,
+              preferModelName,
+            },
+          })),
+          page,
+        };
+      }
+      if (!input.page) {
+        const { preferBotID, preferModelName, ...topic } =
+          await db.topic.findUniqueOrThrow({
+            where: { id: input.id, authorId: user.id },
+          });
+        const page: CommonPagination = {
+          total: 1,
+          size: 1,
+          step: 0,
+        };
+        return {
+          res: [
+            {
+              ...topic,
+              preferSetting: {
+                preferBotID,
+                preferModelName,
+              },
+            },
+          ],
+          page,
+        };
+      }
+      const { size, step } = input.page;
+      const offset = size * step;
+      const [res, total] = await db.$transaction([
+        db.topic.findMany({
+          where: { authorId: user.id },
+          orderBy: { updateTime: "desc" },
+          skip: offset,
+          take: size,
+        }),
+        db.topic.count({ where: { authorId: user.id } }),
+      ]);
+      const page: CommonPagination = {
+        ...input.page,
+        total,
+      };
+
+      return {
+        res: res.map(({ preferBotID, preferModelName, ...left }) => ({
           ...left,
           preferSetting: {
             preferBotID,
             preferModelName,
           },
-        }));
-      } else {
-        const { preferBotID, preferModelName, ...topic } =
-          await db.topic.findUniqueOrThrow({
-            where: { id: input.id, authorId: user.id },
-          });
-        return [
-          {
-            ...topic,
-            preferSetting: {
-              preferBotID,
-              preferModelName,
-            },
-          },
-        ];
-      }
+        })),
+        page,
+      };
     }),
 });

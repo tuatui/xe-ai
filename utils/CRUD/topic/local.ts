@@ -35,9 +35,51 @@ export class Topic implements TopicInterface {
     }
     return res;
   };
-  public get = async (id?: IDBValidKey): Promise<TopicData[]> =>
-    this.getSome(id);
 
+  public get = async ({
+    id,
+    page,
+  }: {
+    id?: IDBValidKey;
+    page?: CommonPaginationQuery;
+  }): Promise<{ res: TopicData[]; page: CommonPagination }> => {
+    const db = await this.iDB.onDBReady();
+    if (page === undefined) {
+      const [res, total] = await Promise.all([
+        this.getSome(id),
+        db.count(IDB_VAR.TOPICS),
+      ]);
+      const size = id === undefined ? total : 1;
+      return { res, page: { total, step: 0, size } };
+    }
+
+    try {
+      const res: TopicData[] = [];
+      let offset = page.size * page.step;
+      let count = page.size;
+
+      const i = db
+        .transaction(IDB_VAR.TOPICS)
+        .store.index(IDB_VAR.TOPICS_KEY.UPDATE_TIME);
+
+      for await (const cursor of i.iterate(undefined, "prev")) {
+        if (offset > 0) {
+          offset--;
+          continue;
+        }
+
+        if (count <= 0) break;
+
+        res.push(cursor.value);
+        count--;
+      }
+      const total = await db.count(IDB_VAR.TOPICS);
+      return { res, page: { total, step: 0, size: page.size } };
+    } catch (error) {
+      console.error(error);
+    }
+    return { res: [], page: { total: 0, step: 0, size: 0 } };
+  };
   public update = async (topicData: TopicCreationData) => {
     let res: number = -1;
     const clonedData = toRawDeep(topicData);
@@ -61,3 +103,4 @@ export class Topic implements TopicInterface {
     await idb.delete(IDB_VAR.TOPICS, topicID);
   };
 }
+/* window.ttttt = Topic; */

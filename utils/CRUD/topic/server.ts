@@ -6,22 +6,29 @@ interface SyncTopicInput extends TopicCreationData {
 
 export class Topic implements TopicInterface {
   constructor(private $client = useNuxtApp().$client) {}
-  public get = async (id?: number): Promise<TopicData[]> => {
+  public get = async (input: {
+    id?: number;
+    page?: CommonPaginationQuery;
+  }): Promise<{ res: TopicData[]; page: CommonPagination }> => {
     try {
-      return (await this.$client.topic.get.mutate({ id })).map(
-        ({ preferSetting: { preferBotID, preferModelName }, ...topic }) => ({
-          ...topic,
-          updateTime: new Date(topic.updateTime),
-          title: topic.title ?? "",
-          preferSetting: {
-            preferBotID: preferBotID ?? undefined,
-            preferModelName: preferModelName ?? undefined,
-          },
-        }),
-      );
+      const { res, page } = await this.$client.topic.get.mutate(input);
+      return {
+        res: res.map(
+          ({ preferSetting: { preferBotID, preferModelName }, ...topic }) => ({
+            ...topic,
+            updateTime: new Date(topic.updateTime),
+            title: topic.title ?? "",
+            preferSetting: {
+              preferBotID: preferBotID ?? undefined,
+              preferModelName: preferModelName ?? undefined,
+            },
+          }),
+        ),
+        page,
+      };
     } catch (error) {
       console.error(error);
-      return [];
+      return { res: [], page: { size: 0, step: 0, total: 0 } };
     }
   };
   public remove = async (id: number) => {
