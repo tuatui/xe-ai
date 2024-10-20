@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col overflow-hidden">
+  <div class="flex flex-col overflow-hidden">
     <div
       class="markdown-body h0 flex-grow-1 relative overflow-y-auto py4"
       @dblclick="isCollapse = false"
@@ -77,7 +77,7 @@
             color="primary"
             variant="elevated"
             @click="updateHandle"
-            :disabled="!selectedBots || data.isProducing"
+            :disabled="!isBotReady || data.isProducing"
             :loading="data.isProducing || data.isChatting"
             >{{ $L.chat.send }}</VBtn
           >
@@ -127,17 +127,6 @@
             :use-tooltip="$L.chat.collapse"
             tooltip-location="top"
           />
-
-          <!-- <XCommonBtn
-  
-          icon
-          density="comfortable"
-          rounded
-          @click="data.isProducing = !data.isProducing"
-          use-icon="i-mdi-download-box-outline"
-          :use-tooltip="$L.chat.download"
-          tooltip-location="top"
-        /> -->
           <VSpacer />
           <div class="text-body-2 text-medium-emphasis ellipsis-text">
             <VIcon icon="i-mdi-robot" size="small" />
@@ -174,6 +163,9 @@ onUnmounted(() => {
 const defaultBot = defaultBotStore();
 const selectedBots = ref<BotsData>();
 const selectedModel = ref<string>();
+const isBotReady = computed(
+  () => selectedBots.value !== undefined && selectedModel.value !== undefined,
+);
 const { getBotsData } = useBots();
 
 const { chatSetting } = data.value.tempStore;
@@ -299,7 +291,7 @@ const postChatStopMsg = () =>
   postWinMessage({ stopChat: { topicId: props.topics.id } });
 
 const updateHandle = async () => {
-  if (!chatSession) return;
+  if (!chatSession || selectedModel.value === undefined) return;
   if (data.value.isProducing) return;
 
   await data.value.updateChat({
