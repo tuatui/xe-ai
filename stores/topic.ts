@@ -99,18 +99,6 @@ export const topicStore = defineStore("topic-store", () => {
     { immediate: true },
   );
 
-  /* const ct = async (i: any) => {
-    const { chats, id: _, ...res }: { chats: any[]; [key: string]: any } = i;
-    const { id } = await updateTopic(res);
-    await Promise.all(
-      chats.map(async ({ id: _, ...s }) => {
-        chatLocal.update({ ...s, topicId: id });
-      })
-    );
-  };
-  window.ct = async (arg: any, count: number) => {
-    await Promise.all(Array.from({ length: count }, () => ct(arg)));
-  }; */
   return {
     topics,
     isPending,

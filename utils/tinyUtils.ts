@@ -57,10 +57,6 @@ export const deleteUndefined = <
   });
   return obj;
 };
-type AnyRecord = Record<string, any>;
-
-export const isObject = (item: unknown): item is AnyRecord =>
-  Boolean(item && typeof item === "object" && !Array.isArray(item));
 
 import { deepMerge } from "@antfu/utils";
 export const mergeDeep = deepMerge;

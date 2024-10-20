@@ -7,7 +7,6 @@ export enum Provider {
 
 export interface ChatChunk {
   context: string;
-  source?: any;
   [key: string]: unknown;
 }
 
@@ -40,7 +39,7 @@ export interface ChatStream extends AsyncIterable<ChatChunk> {
   stop: () => void;
 }
 export interface ChatSession {
-  createChat: (...args: any[]) => Promise<ChatStream>;
+  createChat: (chatData: ChatData[], model: string) => Promise<ChatStream>;
   formatMessage?: (chats: ChatData[]) => unknown;
   getModelList?: () => Promise<ModelList[]>;
 }
