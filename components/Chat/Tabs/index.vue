@@ -41,7 +41,7 @@
               density="comfortable"
               size="small"
               @mousedown.prevent
-              @click="remove(i)"
+              @click.stop="remove(i)"
               use-icon="i-mdi-window-close"
               :use-tooltip="$L.common.close"
             />
@@ -83,13 +83,13 @@
     </VSheet>
     <div
       ref="dropZone"
-      class="grow relative box-border overflow-hidden"
+      class="grow relative box-border overflow-hidden flex"
       @dragover.prevent="handleDragOver"
       @dragenter="dragCount++"
       @dragleave="dragCount--"
       @drop="handleDropEnd"
     >
-      <VTabsWindow v-model="data.currTab" class="h-full w-full">
+      <VTabsWindow v-model="data.currTab" class="grow flex [&>*]:grow">
         <VTabsWindowItem
           :value="i.id"
           v-for="i in data.topics"
