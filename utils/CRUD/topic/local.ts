@@ -99,8 +99,15 @@ export class Topic implements TopicInterface {
     return res;
   };
   public remove = async (topicID: number) => {
+    if (typeof topicID !== "number") {
+      console.warn("注意，如果传入空值会导致数据库被清空");
+      return;
+    }
     const idb = await this.iDB.onDBReady();
     await idb.delete(IDB_VAR.TOPICS, topicID);
+    const i = idb
+      .transaction(IDB_VAR.CHATS, "readwrite")
+      .store.index(IDB_VAR.CHATS_KEY.TOPIC_ID);
+    for await (const cursor of i.iterate(topicID)) cursor.delete();
   };
 }
-/* window.ttttt = Topic; */
