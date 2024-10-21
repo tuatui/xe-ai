@@ -22,7 +22,10 @@ export const user = router({
         },
       });
       if (!loginRes) return null;
-      const isCorrect = checkDerivePwdFast(input.password, loginRes.password);
+      const isCorrect = await checkDerivePwdFast(
+        input.password,
+        loginRes.password,
+      );
       if (!isCorrect) return null;
       const authData: AuthData = { user: { id: loginRes.id } };
       const token = jwt.sign(authData, secretKey);

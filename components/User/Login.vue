@@ -14,12 +14,17 @@
           :label="$L.common.account"
           v-model="form.name"
           :disabled="isSubmitting"
+          :error-messages="loginErrMsg"
+          :rules="[(str) => (str ? true : $L.tips.mustExist)]"
         />
         <XInputPwd
+          autocomplete="current-password"
           variant="outlined"
           :label="$L.common.password"
           v-model="form.password"
           :disabled="isSubmitting"
+          :error-messages="loginErrMsg ? ' ' : undefined"
+          :rules="[(str) => (str ? true : $L.tips.mustExist)]"
         />
         <p class="text-body-2 text-medium-emphasis">
           {{ $L.tips.loginAndSync }}
@@ -67,12 +72,12 @@ const { $L } = useNuxtApp();
 const form = ref(createLoginForm());
 
 const isSubmitting = ref(false);
-const { pushNotification } = notificationStore();
 
+const loginErrMsg = ref<string>();
 const handleSubmit = async (ev: SubmitEventPromise) => {
   const res = await ev;
   if (!res.valid) return;
-
+  loginErrMsg.value = undefined;
   isSubmitting.value = true;
 
   const password = form.value.password;
@@ -84,16 +89,13 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   });
 
   if (!loginRes) {
-    pushNotification({
-      content: $L.tips.loginFail,
-      timeout: 3000,
-      allowClose: false,
-    });
+    isSubmitting.value = false;
+    loginErrMsg.value = $L.tips.loginFail;
     return;
   }
+
   loginStore().userInfo = { ...loginRes.res, derivedPassword: pwdEncoded };
   isSubmitting.value = false;
   emit("success", form.value.syncAll);
-  form.value = createLoginForm();
 };
 </script>
