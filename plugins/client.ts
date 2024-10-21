@@ -13,6 +13,9 @@ export default defineNuxtPlugin(() => {
       customErrorHandleLink,
       httpBatchLink({
         url: "/api/trpc",
+        headers: () => ({
+          Authorization: loginStore()?.userInfo?.token,
+        }),
       }),
     ],
   });

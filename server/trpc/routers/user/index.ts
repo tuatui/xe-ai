@@ -3,6 +3,8 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { authorizedProcedure } from "../../procedures";
 import { checkDerivePwdFast, derivePwdFast } from "~/utils/jsCrypto";
+import { type AuthData, secretKey } from "~/server/trpc/procedures/auth";
+import jwt from "jsonwebtoken";
 
 export const user = router({
   login: publicProcedure
@@ -12,19 +14,19 @@ export const user = router({
         password: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx: { db, ev } }) => {
-      const res = await db.user.findFirst({
+    .mutation(async ({ input, ctx: { db } }) => {
+      const loginRes = await db.user.findFirst({
         select: { name: true, id: true, password: true },
         where: {
           AND: [{ name: input.name }],
         },
       });
-      if (!res) return null;
-      const isCorrect = checkDerivePwdFast(input.password, res.password);
+      if (!loginRes) return null;
+      const isCorrect = checkDerivePwdFast(input.password, loginRes.password);
       if (!isCorrect) return null;
-
-      await setUserSession(ev, { user: { id: res.id } });
-      return { res };
+      const authData: AuthData = { user: { id: loginRes.id } };
+      const token = jwt.sign(authData, secretKey);
+      return { res: { ...loginRes, token } };
     }),
   register: publicProcedure
     .input(
@@ -33,7 +35,7 @@ export const user = router({
         password: z.string(),
       }),
     )
-    .mutation(async ({ input: { password, name }, ctx: { db, ev } }) => {
+    .mutation(async ({ input: { password, name }, ctx: { db } }) => {
       const res = await db.user.findFirst({
         select: { id: true },
         where: { name },
@@ -51,8 +53,10 @@ export const user = router({
           name,
         },
       });
-      await setUserSession(ev, { user: { id: newUser.id } });
-      return newUser;
+      const authData: AuthData = { user: { id: newUser.id } };
+      const token = jwt.sign(authData, secretKey);
+
+      return { res: { ...newUser, token } };
     }),
   checkName: publicProcedure
     .input(

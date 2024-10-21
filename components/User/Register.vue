@@ -141,13 +141,13 @@ const handleSubmit = async (ev: SubmitEventPromise) => {
   const pwd = form.value.password;
   const pwdEncoded = await derivePwd(form.value.name, pwd);
 
-  const reg = await $client.user.register.mutate({
+  const { res: regRes } = await $client.user.register.mutate({
     name: form.value.name,
     password: pwdEncoded,
   });
-  if (!reg) return;
+  if (!regRes) return;
 
-  loginStore().userInfo = { ...reg, derivedPassword: pwdEncoded };
+  loginStore().userInfo = { ...regRes, derivedPassword: pwdEncoded };
   isSubmitting.value = false;
   emit("success", form.value.syncAll);
   form.value = createRegForm();

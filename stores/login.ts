@@ -1,28 +1,24 @@
-const USER_NAME = "USER_NAME";
-const PASSWORD = "PASSWORD";
+const LoginLocalStoreKey = "Xe-AI-LoginLocalStoreKey";
 
 export const loginStore = defineStore("login-store", () => {
   const userInfo = ref<{
     name: string;
     derivedPassword: string;
-    id?: number;
+    token: string;
+    id: number;
   }>();
+  const res = localStorage.getItem(LoginLocalStoreKey);
 
-  const name = localStorage.getItem(USER_NAME);
-  const derivedPassword = localStorage.getItem(PASSWORD);
-  if (name && derivedPassword) userInfo.value = { name, derivedPassword };
-  const startOnLogin = Boolean(userInfo.value);
+  if (res) userInfo.value = JSON.parse(res);
 
   watch(userInfo, () => {
     if (!userInfo.value) {
-      localStorage.removeItem(USER_NAME);
-      localStorage.removeItem(PASSWORD);
+      localStorage.removeItem(LoginLocalStoreKey);
       return;
     }
-    localStorage.setItem(USER_NAME, userInfo.value.name);
-    localStorage.setItem(PASSWORD, userInfo.value.derivedPassword);
+    localStorage.setItem(LoginLocalStoreKey, JSON.stringify(userInfo.value));
   });
 
   const isLogin = computed(() => Boolean(userInfo.value));
-  return { userInfo, isLogin, startOnLogin };
+  return { userInfo, isLogin };
 });
