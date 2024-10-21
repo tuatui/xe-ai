@@ -67,6 +67,7 @@ export default {
       toAdd: "para crear uno nuevo",
       noData: "No hay datos, intenta obtenerlos o créalos manualmente",
       fetch: "Obtener modelos",
+      preferredModel: "Modelo preferido",
     },
     topic: {
       title: "Configuración de temas",

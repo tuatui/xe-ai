@@ -23,7 +23,6 @@
           class="overflow-hidden"
           :icon="isRail"
           use-icon="i-mdi-plus"
-          role="option"
           variant="tonal"
           @click="handleAddTopic"
           :use-tooltip="$L.tips.newChatLong"

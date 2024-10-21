@@ -39,7 +39,7 @@
 
           <div class="flex gap4">
             <VCombobox
-              label="模型"
+              :label="$L.common.model"
               :hide-no-data="false"
               v-model:search="modelSearch"
               v-model="botsInfoClone.availableModel"
@@ -85,7 +85,7 @@
           </div>
           <VSelect
             v-model="botsInfoClone.primaryModel"
-            label="首选模型"
+            :label="$L.setting.editModule.preferredModel"
             clearable
             :items="botsInfoClone.availableModel"
             :item-props="

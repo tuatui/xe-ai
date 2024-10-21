@@ -67,6 +67,7 @@ export default {
       toAdd: "to create a new one",
       noData: "No Data, try fetching or manually creating",
       fetch: "Fetch Model",
+      preferredModel: "Preferred Model",
     },
     topic: {
       title: "Topic Settings",

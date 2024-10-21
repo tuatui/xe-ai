@@ -68,6 +68,7 @@ export default {
       toAdd: "pour créer un nouveau",
       noData: "Pas de données, essayez de récupérer ou de créer manuellement",
       fetch: "Récupérer modèle",
+      preferredModel: "Modèle préféré",
     },
     topic: {
       title: "Paramètres du sujet",

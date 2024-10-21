@@ -66,6 +66,7 @@ const lang = {
       toAdd: "创建一个新的",
       noData: "没有数据，尝试获取一下或者手动创建",
       fetch: "获取模型",
+      preferredModel: "首选模型",
     },
     topic: {
       title: "话题设置",
