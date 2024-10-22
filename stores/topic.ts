@@ -86,9 +86,9 @@ export const topicStore = defineStore("topic-store", () => {
       const thisChunkSize = Math.min(count, chunkSize);
       count -= thisChunkSize;
       const res = await getAllWithChat(thisChunkSize);
-      await topicServer.sync(res);
+      const newTopics = await topicServer.sync(res);
       await Promise.all(res.map(({ id }) => topicLocal.remove(id)));
-      topics.value.unshift(...res.map(({ chats: _, ...topic }) => topic));
+      topics.value.unshift(...newTopics);
       triggerRef(topics);
     }
   };

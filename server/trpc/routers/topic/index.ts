@@ -28,18 +28,19 @@ export const topic = router({
       ),
     )
     .mutation(async ({ ctx: { db, user }, input }) => {
-      const topics: Prisma.TopicCreateManyInput[] = input.map(
-        ({ chats: _, preferSetting, ...topic }) => ({
-          ...topic,
-          ...preferSetting,
-          authorId: user.id,
-          updateTime: new Date(topic.updateTime),
+      // TODO 若Prisma在MYSQL中支持createManyAndReturn，我们可以转换回原来的写法。
+      const topics = input.map(({ chats: _, preferSetting, ...topic }) =>
+        db.topic.create({
+          data: {
+            ...topic,
+            ...preferSetting,
+            authorId: user.id,
+            updateTime: new Date(topic.updateTime),
+          },
         }),
       );
-      const res = await db.topic.createManyAndReturn({
-        select: { id: true },
-        data: topics,
-      });
+      const res = await db.$transaction(topics);
+
       const chatData: Prisma.ChatCreateManyInput[] = res.flatMap(
         ({ id }, index) =>
           input[index].chats.map((chat) => ({
@@ -48,6 +49,13 @@ export const topic = router({
           })),
       );
       await db.chat.createMany({ data: chatData });
+      return res.map(({ preferBotID, preferModelName, ...left }) => ({
+        ...left,
+        preferSetting: {
+          preferBotID,
+          preferModelName,
+        },
+      }));
     }),
   create: authorizedProcedure
     .input(

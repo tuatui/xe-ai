@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push",
     "lint": "oxlint",
     "prepare": "husky",
     "analyze": "nuxi analyze"
@@ -32,7 +33,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.3",
-    "@prisma/client": "5.20.0",
+    "@prisma/client": "5.21.1",
     "@trpc/client": "^10.45.2",
     "@trpc/server": "^10.45.2",
     "idb": "^8.0.0",
@@ -63,7 +64,7 @@
     "openai": "^4.58.2",
     "oxlint": "^0.9.9",
     "prettier": "3.3.3",
-    "prisma": "^5.20.0",
+    "prisma": "^5.21.1",
     "ress": "^5.0.2",
     "sass-embedded": "1.78.0",
     "temml": "^0.10.29",

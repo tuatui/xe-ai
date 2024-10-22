@@ -20,16 +20,21 @@ export const bot = router({
   sync: authorizedProcedure
     .input(z.array(botInputParser))
     .mutation(async ({ ctx: { db, user }, input }) => {
-      const idList = await db.botProvider.createManyAndReturn({
-        select: { id: true },
-        data: input.map((i) => ({
-          ...i,
-          id: undefined,
-          availableModel: undefined,
-          localId: i.id,
-          ownerId: user.id,
-        })),
-      });
+      const idList = await db.$transaction(
+        input.map((i) =>
+          db.botProvider.create({
+            select: { id: true },
+            data: {
+              ...i,
+              id: undefined,
+              availableModel: undefined,
+              localId: i.id,
+              ownerId: user.id,
+            },
+          }),
+        ),
+      );
+
       await db.modelList.createMany({
         data: idList.flatMap(({ id }, index) =>
           input[index].availableModel.map((model) => ({

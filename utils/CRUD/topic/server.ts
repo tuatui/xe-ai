@@ -1,4 +1,4 @@
-import type { TopicInterface, TopicCreationData } from "./type";
+import type { TopicInterface, TopicCreationData, TopicData } from "./type";
 import type { ChatCreationData } from "~/utils";
 interface SyncTopicInput extends TopicCreationData {
   chats: ChatCreationData[];
@@ -54,6 +54,19 @@ export class Topic implements TopicInterface {
       return -1;
     }
   };
-  public sync = (data: SyncTopicInput[]) =>
-    this.$client.topic.sync.mutate(data);
+  public sync = (data: SyncTopicInput[]): Promise<TopicData[]> =>
+    this.$client.topic.sync.mutate(data).then((res) =>
+      // TODO 需要有一个统一的格式化函数
+      res.map(
+        ({ preferSetting: { preferBotID, preferModelName }, ...topic }) => ({
+          ...topic,
+          updateTime: new Date(topic.updateTime),
+          title: topic.title ?? "",
+          preferSetting: {
+            preferBotID: preferBotID ?? undefined,
+            preferModelName: preferModelName ?? undefined,
+          },
+        }),
+      ),
+    );
 }
