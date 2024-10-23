@@ -1,8 +1,12 @@
 import { ChatTabs } from "#components";
 import { ViewTree, type ViewTreeWithMeta } from "#imports";
 
-export type ChatTreeOrdinaryData = { topicIds?: number[] };
-export type ChatTreeOrdinary = ViewTreeWithMeta<ChatTreeOrdinaryData>;
+export interface ChatTreeOrdinaryData {
+  topicIds?: number[];
+  currTopicId?: number;
+}
+export interface ChatTreeOrdinary
+  extends ViewTreeWithMeta<ChatTreeOrdinaryData> {}
 
 export const chatTreeStore = defineStore("chat-tree-store", () => {
   const tabsStore = chatTabsStore();
@@ -63,23 +67,35 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
 
   const toOrdinary = (): ChatTreeOrdinary => {
     const { globalSharedTabs: tabs } = chatTabsStore();
-    const coverMeta = (vt: ViewTree): ChatTreeOrdinaryData => ({
-      topicIds: tabs.get(vt.uniqueKey)?.value.topics.map((each) => each.id),
-    });
+    const coverMeta = (vt: ViewTree): ChatTreeOrdinaryData => {
+      const tab = tabs.get(vt.uniqueKey)?.value;
+      if (!tab) return {};
+      return {
+        topicIds: tab.topics.map((each) => each.id),
+        currTopicId: tab.currTab,
+      };
+    };
 
     const rawTree = toRaw(tree.value);
     return rawTree.parse(coverMeta);
   };
 
-  const addTopicOneByOne = async (ids: number[], tabsKey: symbol) => {
-    const add =
-      chatTabsStore().globalSharedTabs.get(tabsKey)?.value.expose?.add;
-    if (!add) {
+  const addTopicOneByOne = async (
+    data: ChatTreeOrdinaryData,
+    tabsKey: symbol,
+  ) => {
+    const { topicIds, currTopicId } = data;
+    if (!topicIds) return;
+
+    const tab = chatTabsStore().globalSharedTabs.get(tabsKey)?.value.expose;
+    if (!tab) {
       console.warn("找不到tab页");
       return;
     }
+    const topics = tab.getAll();
+
     const { getTopicData } = topicStore();
-    for (const id of ids) {
+    for (const id of topicIds) {
       const {
         res: [topicData],
       } = await getTopicData({ id });
@@ -87,7 +103,8 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         console.warn("查找不到话题数据：", id);
         continue;
       }
-      add(topicData);
+      if (id !== currTopicId) topics.push(topicData);
+      else tab.add(topicData);
     }
   };
 
@@ -95,8 +112,8 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
     new ViewTree(
       data.isLeaf,
       (key) => {
-        const topicIds = data.meta?.topicIds;
-        if (topicIds) setTimeout(() => addTopicOneByOne(topicIds, key));
+        const meta = data.meta;
+        if (meta) setTimeout(() => addTopicOneByOne(meta, key));
         return <ChatTabs uniqueKey={key} />;
       },
       data.isVertical,

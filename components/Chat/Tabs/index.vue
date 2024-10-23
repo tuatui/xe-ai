@@ -194,13 +194,6 @@ const handleDropEnd = (ev: DragEvent) => {
   }
 };
 
-watch(
-  () => data.value.topics.length,
-  (newVal, oldVal) => {
-    if (newVal > oldVal) data.value.currTab = data.value.topics.at(-1)?.id;
-  },
-);
-
 const remove = (topic: TopicData) => {
   const i = data.value.topics.indexOf(topic);
   if (i < 0) return;
