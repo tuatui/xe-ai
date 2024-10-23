@@ -2,11 +2,10 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljsCore from "highlight.js/lib/core";
 
-langAliasAddition
-  .entries()
-  .forEach(([alias, languageName]) =>
-    hljsCore.registerAliases([alias], { languageName }),
-  );
+for (const [alias, languageName] of langAliasAddition.entries()) {
+  hljsCore.registerAliases([alias], { languageName });
+}
+
 const analyzeAndImport = async (lang: string) => {
   const target = langAliasMap.get(lang);
   if (target !== undefined) {

@@ -52,9 +52,9 @@ export const deleteUndefined = <
   obj: T,
 ): T => {
   if (obj === undefined) return obj;
-  Object.entries(obj).forEach(([k, v]) => {
+  for (const [k, v] of Object.entries(obj)) {
     if (v === undefined) delete obj[k];
-  });
+  }
   return obj;
 };
 
