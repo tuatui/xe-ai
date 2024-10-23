@@ -31,6 +31,8 @@ const lang = {
     revocation: "撤销",
     notSelected: "未选择",
     save: "保存",
+    layouts: "布局",
+    use: "使用",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,
@@ -71,6 +73,15 @@ const lang = {
     topic: {
       title: "话题设置",
       tip: "在这里做出的改动只会影响当前话题",
+    },
+    layouts: {
+      name: "布局选择",
+      all: "所有布局",
+      new: "新增布局",
+      empTitle: "还没有布局",
+      dataShowArea: "添加布局后，会显示在这里",
+      setAsDefault: "设为默认",
+      memo: "记住上次关闭时的布局",
     },
     user: "用户",
   },

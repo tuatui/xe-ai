@@ -11,4 +11,18 @@ export class ViewTree {
   ) {
     if (createVNode) this.view = createVNode(this.uniqueKey);
   }
+
+  public parse = <T>(leafParse: (vt: ViewTree) => T): ViewTreeWithMeta<T> => ({
+    isLeaf: this.isLeaf,
+    isVertical: this.isVertical,
+    space: this.space,
+    meta: leafParse(this),
+    children: this.children.map((each) => each.parse(leafParse)),
+  });
+}
+
+type ViewTreeOrd = Pick<ViewTree, "isLeaf" | "isVertical" | "space">;
+export interface ViewTreeWithMeta<T> extends ViewTreeOrd {
+  meta?: T;
+  children: ViewTreeWithMeta<T>[];
 }

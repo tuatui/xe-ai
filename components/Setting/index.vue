@@ -23,17 +23,34 @@
           <VListSubheader>{{ $L.common.model }}</VListSubheader>
 
           <VListItem :title="$L.model.config" @click="isModelDialogOpen = true">
+            <template v-slot:prepend>
+              <VAvatar icon="i-mdi-robot" />
+            </template>
             <template v-slot:append>
               <VAvatar icon="i-mdi-chevron-right" />
             </template>
           </VListItem>
           <SettingBotConfDialog v-model="isModelDialogOpen" />
+          <VListItem
+            :title="$L.setting.layouts.name"
+            @click="isLayDialogOpen = true"
+          >
+            <template v-slot:prepend>
+              <VAvatar icon="i-mdi-view-grid-plus-outline" />
+            </template>
+            <template v-slot:append>
+              <VAvatar icon="i-mdi-chevron-right" />
+            </template>
+          </VListItem>
+          <SettingLay v-model="isLayDialogOpen" />
         </div>
       </VList>
     </VCard>
   </VDialog>
 </template>
 <script setup lang="ts">
+// TODO 超过三个对话框时，考虑改为路由实现
 const dialog = ref(false);
 const isModelDialogOpen = ref(false);
+const isLayDialogOpen = ref(false);
 </script>

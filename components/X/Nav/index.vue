@@ -32,10 +32,7 @@
       </div>
       <VDivider />
       <VSpacer v-show="isRail" />
-      <XNavList
-        :is-hidden="isRail"
-        @add-chat="(topic) => $emit('addChatTab', topic)"
-      />
+      <XNavList :is-hidden="isRail" @add-chat="(topic) => openNewChat(topic)" />
 
       <VDivider />
       <div
@@ -56,15 +53,15 @@
   </VNavigationDrawer>
 </template>
 <script setup lang="ts">
-const emit = defineEmits<{ addChatTab: [topic: TopicData] }>();
+import { chatTreeStore } from "~/stores/chatTree";
 
 const isRail = ref(false);
 const width = ref(201);
 const { updateTopic } = topicStore();
-
+const { add: openNewChat } = chatTreeStore();
 const handleAddTopic = async () => {
   const newTopic = { title: "" };
   const res = await updateTopic(newTopic);
-  emit("addChatTab", res);
+  openNewChat(res);
 };
 </script>

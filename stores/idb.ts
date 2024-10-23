@@ -1,6 +1,6 @@
 export const IDB_VAR = Object.freeze({
   DB_NAME: "xe_chat",
-  DB_VERSION: 5,
+  DB_VERSION: 6,
   TOPICS: "topics",
   TOPICS_KEY: {
     UPDATE_TIME: "updateTime",
@@ -12,6 +12,7 @@ export const IDB_VAR = Object.freeze({
   BOTS: "bots",
   DEFAULT_BOT_SETTING: "default_bot_setting",
   DEFAULT_BOT_KEY: 0,
+  LAYOUTS: "layouts",
 });
 import { openDB, type IDBPDatabase } from "idb";
 export const useIndexedDBStore = defineStore("idb-store", () => {
@@ -68,6 +69,11 @@ export const useIndexedDBStore = defineStore("idb-store", () => {
           });
         if (!upgradeDB.objectStoreNames.contains(IDB_VAR.DEFAULT_BOT_SETTING))
           upgradeDB.createObjectStore(IDB_VAR.DEFAULT_BOT_SETTING);
+        if (!upgradeDB.objectStoreNames.contains(IDB_VAR.LAYOUTS))
+          upgradeDB.createObjectStore(IDB_VAR.LAYOUTS, {
+            keyPath: "id",
+            autoIncrement: true,
+          });
       },
       blocking: () => console.warn("版本有更新"),
     });
