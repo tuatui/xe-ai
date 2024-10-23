@@ -89,7 +89,10 @@
       @dragleave="dragCount--"
       @drop="handleDropEnd"
     >
-      <VTabsWindow v-model="data.currTab" class="grow flex [&>*]:grow">
+      <VTabsWindow
+        v-model="data.currTab"
+        class="grow flex [&>*]:grow [&>*]:min-w0"
+      >
         <VTabsWindowItem
           :value="i.id"
           v-for="i in data.topics"

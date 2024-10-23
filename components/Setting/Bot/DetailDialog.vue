@@ -37,7 +37,7 @@
             :label="$L.model.secretKey"
           />
 
-          <div class="flex gap4">
+          <div class="flex gap-col-4 flex-wrap mb6">
             <VCombobox
               :label="$L.common.model"
               :hide-no-data="false"
