@@ -3,13 +3,18 @@ interface DragAndDropChatData {
   isMove?: { fromTab: symbol };
 }
 
+// eslint-disable-next-line no-extra-boolean-cast
+const randomDataId = Boolean(globalThis?.crypto?.randomUUID)
+  ? globalThis.crypto.randomUUID
+  : () => (Date.now() + Math.random()).toString(36);
+
 export const dragAndDropChat = {
   setData: (
     ev: DragEvent,
     data: DragAndDropChatData,
     opt?: { el?: Element; effect?: DataTransfer["effectAllowed"] },
   ) => {
-    const dataId = crypto.randomUUID();
+    const dataId = randomDataId();
     globalStore().map.set(dataId, data);
     ev.dataTransfer!.setData("text/plain", dataId);
     if (!opt) return;
