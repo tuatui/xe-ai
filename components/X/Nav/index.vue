@@ -13,7 +13,7 @@
           icon
           use-icon="i-mdi-menu"
           variant="text"
-          @click="isRail = !isRail"
+          @click="setting.isNavRail = !setting.isNavRail"
           tooltip-location="right center"
           :use-tooltip="isRail ? $L.tips.expandMenu : $L.tips.collapseMenu"
         />
@@ -54,8 +54,9 @@
 </template>
 <script setup lang="ts">
 import { chatTreeStore } from "~/stores/chatTree";
+const { setting } = storeToRefs(defaultSettingSync());
 
-const isRail = ref(false);
+const isRail = computed(() => Boolean(setting.value.isNavRail));
 const width = ref(201);
 const { updateTopic } = topicStore();
 const { add: openNewChat } = chatTreeStore();
