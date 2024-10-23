@@ -5,7 +5,7 @@ interface DragAndDropChatData {
 
 // eslint-disable-next-line no-extra-boolean-cast
 const randomDataId = Boolean(globalThis?.crypto?.randomUUID)
-  ? globalThis.crypto.randomUUID
+  ? () => globalThis.crypto.randomUUID()
   : () => (Date.now() + Math.random()).toString(36);
 
 export const dragAndDropChat = {
