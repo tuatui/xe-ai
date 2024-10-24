@@ -77,5 +77,5 @@ const { isShow, selectedBot, selectedModel, confirmSetting, cancelSetting } =
 
 const modelList = computed(() => selectedBot.value?.availableModel ?? []);
 const { Services } = chatServices();
-const { bots } = useBots();
+const { bots } = storeToRefs(botsStore());
 </script>

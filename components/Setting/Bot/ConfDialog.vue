@@ -69,7 +69,7 @@
 </template>
 <script setup lang="ts">
 const model = defineModel({ default: false });
-const { bots, updateBot, deleteBot } = useBots();
+const { bots, updateBot, deleteBot } = botsStore();
 const dBot = defaultBotStore();
 const preferBotID = computed(() => dBot.defaultBotInfo.preferBotID);
 const isBotsInfoDialogOpen = ref(false);

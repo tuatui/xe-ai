@@ -11,7 +11,8 @@ export interface BotsData {
 }
 export type BotCreationData = Omit<BotsData, "id"> &
   Pick<Partial<BotsData>, "id">;
-export const useBots = () => {
+
+export const botsStore = defineStore("bots-store", () => {
   const $client = useNuxtApp().$client;
   const iDB = useIndexedDBStore();
   const bots = ref<BotsData[]>([]);
@@ -49,8 +50,8 @@ export const useBots = () => {
     };
   };
   const updateBotNotSync = async (data: Partial<BotsData>) => {
-    const db = await iDB.onDBReady();
     try {
+      const db = await iDB.onDBReady();
       const rawData = toRaw(data);
       if (rawData.availableModel)
         rawData.availableModel = rawData.availableModel.map((each) =>
@@ -61,10 +62,13 @@ export const useBots = () => {
       if (data.id === undefined) {
         rawData.createTime ??= new Date();
         res = await db.add(IDB_VAR.BOTS, rawData);
+        rawData.id = res as number;
+        bots.value.push(rawData as BotsData);
       } else {
         res = await db.put(IDB_VAR.BOTS, rawData);
+        const bot = bots.value.find((i) => i.id === res);
+        if (bot) Object.assign(bot, rawData);
       }
-      bots.value = await getBotsData();
       return res;
     } catch (error) {
       console.error(error);
@@ -224,4 +228,4 @@ export const useBots = () => {
     lastBot,
     deleteBot,
   };
-};
+});

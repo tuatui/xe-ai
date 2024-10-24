@@ -29,7 +29,7 @@ const handleLoginSuccess = (syncAll: boolean) => {
   const userInfo = loginStore().userInfo;
   if (!userInfo) return;
   useRouter().push("/");
-  useBots().diffServerAndLocalBot(userInfo.derivedPassword);
+  botsStore().diffServerAndLocalBot(userInfo.derivedPassword);
   if (!syncAll) return;
   setTimeout(() => topicStore().syncTopic(), 1000);
 };

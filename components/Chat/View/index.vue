@@ -166,7 +166,6 @@ const selectedModel = ref<string>();
 const isBotReady = computed(
   () => selectedBots.value !== undefined && selectedModel.value !== undefined,
 );
-const { getBotsData } = useBots();
 
 const { chatSetting } = data.value.tempStore;
 if (chatSetting) {
@@ -175,16 +174,19 @@ if (chatSetting) {
 } else
   watch(
     () => defaultBot.defaultBotInfo,
-    async (): Promise<void> => {
+    async () => {
       if (data.value.tempStore.chatSetting) return;
 
       const conf: Partial<globalThis.DefaultBotSetting> = {
         ...defaultBot.defaultBotInfo,
         ...props.topics.preferSetting,
       };
+
       if (conf.preferBotID === undefined) return;
+      await until(() => botsStore().bots.length).toBeTruthy();
+
       data.value.tempStore.chatSetting = {
-        useBotData: (await getBotsData(conf.preferBotID)).pop(),
+        useBotData: botsStore().bots.find((bot) => bot.id === conf.preferBotID),
         useModelName: conf.preferModelName,
       };
     },
