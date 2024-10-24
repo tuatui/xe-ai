@@ -107,6 +107,7 @@ const lang = {
     pwdTooShort: "密码不应小于六位数",
     pwdTooLooong: "密码过长",
     pwdIsDiff: "前后输入的密码不一致",
+    doubleToRestore: "双击以恢复",
   },
 };
 /* 

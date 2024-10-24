@@ -272,6 +272,15 @@ const handleDragOver = (ev: DragEvent) => {
   if (!el) return;
   dragOverlayType.value = calcMousePos(el.getBoundingClientRect(), ev);
 };
+
+watch(
+  () => data.value.isCollapse,
+  async (isCollapse) => {
+    if (!isCollapse || !tabRootEl.value) return;
+    tabRootEl.value.title = $L.tips.doubleToRestore;
+    setTimeout(() => tabRootEl.value && (tabRootEl.value.title = ""), 3000);
+  },
+);
 </script>
 <style lang="scss" scoped>
 .tab-bg {
