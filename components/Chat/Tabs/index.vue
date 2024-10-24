@@ -58,7 +58,7 @@
           />
         </template>
         <template v-else>
-          <VMenu open-on-hover location="bottom end">
+          <VMenu open-on-hover open-on-click location="bottom end">
             <template v-slot:activator="{ props }">
               <VBtn
                 icon="i-mdi-dots-vertical"
@@ -99,7 +99,7 @@
           :key="i.id"
           class="h-full"
         >
-          <ChatView :topics="i" class="h-full" />
+          <ChatView :topics="i" class="h-full" v-model="data.isCollapse" />
         </VTabsWindowItem>
         <VBtn
           v-if="data.topics.length === 0"
@@ -132,11 +132,7 @@ const tabRootEl = ref<HTMLDivElement>();
 
 const data =
   globalTabs.get(uniqueKey) ||
-  ref<{
-    topics: TopicData[];
-    currTab: number | undefined;
-    expose?: ChatTabsExpose;
-  }>({ topics: [], currTab: undefined });
+  ref<ChatTabsData>({ topics: [], currTab: undefined });
 
 if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
 

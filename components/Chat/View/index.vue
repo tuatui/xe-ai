@@ -396,7 +396,7 @@ const takeSnapshot = async () => {
   });
 };
 
-const isCollapse = ref(false);
+const isCollapse = defineModel<boolean>({ default: false });
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *

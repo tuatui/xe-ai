@@ -4,6 +4,7 @@ import { ViewTree, type ViewTreeWithMeta } from "#imports";
 export interface ChatTreeOrdinaryData {
   topicIds?: number[];
   currTopicId?: number;
+  isCollapse?: boolean;
 }
 export interface ChatTreeOrdinary
   extends ViewTreeWithMeta<ChatTreeOrdinaryData> {}
@@ -73,6 +74,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       return {
         topicIds: tab.topics.map((each) => each.id),
         currTopicId: tab.currTab,
+        isCollapse: tab.isCollapse,
       };
     };
 
@@ -84,15 +86,16 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
     data: ChatTreeOrdinaryData,
     tabsKey: symbol,
   ) => {
-    const { topicIds, currTopicId } = data;
+    const { topicIds, currTopicId, isCollapse } = data;
     if (!topicIds) return;
 
-    const tab = chatTabsStore().globalSharedTabs.get(tabsKey)?.value.expose;
+    const tab = chatTabsStore().globalSharedTabs.get(tabsKey)?.value;
     if (!tab) {
       console.warn("找不到tab页");
       return;
     }
-    const topics = tab.getAll();
+    tab.isCollapse = isCollapse;
+    const topics = tab.topics;
 
     const { getTopicData } = topicStore();
     for (const id of topicIds) {
@@ -104,7 +107,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         continue;
       }
       if (id !== currTopicId) topics.push(topicData);
-      else tab.add(topicData);
+      else tab.expose?.add(topicData);
     }
   };
 
