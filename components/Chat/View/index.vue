@@ -321,6 +321,12 @@ const updateHandle = async () => {
     contentBody.value &&
       scrollToEnd(contentBody.value, { behavior: "instant" });
   });
+  const { out, push, stop } = bufferedOut();
+
+  (async () => {
+    for await (const str of out) chat.context += str;
+    updateDebounced(data, chat);
+  })();
 
   try {
     data.value.isProducing = true;
@@ -332,7 +338,7 @@ const updateHandle = async () => {
     );
     data.value.stopChatting = chatSteam.stop;
     for await (const { context } of chatSteam) {
-      chat.context += context;
+      push(context);
       updateDebounced(data, chat);
       postChatMsg();
     }
@@ -341,15 +347,19 @@ const updateHandle = async () => {
     data.value.isProducing = false;
     data.value.isChatting = false;
     postChatMsg();
+    stop();
   }
 };
 const updateDebounced = useDebounceFn(
   (data: useChatReturn, chat: ChatData) =>
-    data.value.updateChat({
-      context: chat.context,
-      from: ChatRole.assistant,
-      id: chat.id,
-    }),
+    data.value.updateChat(
+      {
+        context: chat.context,
+        from: ChatRole.assistant,
+        id: chat.id,
+      },
+      false,
+    ),
   100,
 );
 

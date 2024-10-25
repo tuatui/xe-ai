@@ -67,3 +67,24 @@ export const mergeDeep = deepMerge;
 export const toRawDeep = <T extends object>(source: T): T => {
   return deepMerge({}, source) as T;
 };
+
+export const bufferedOut = (
+  strBuff = "",
+  tick = 16,
+  duration = 5000,
+  stopFlag = false,
+  len = strBuff.length,
+) => ({
+  out: (async function* () {
+    while (true) {
+      await new Promise<void>((resolve) => setTimeout(resolve, tick));
+      if (stopFlag && !strBuff) return;
+      if (!strBuff) continue;
+      const i = Math.ceil((tick / duration) * len);
+      yield strBuff.slice(0, i);
+      strBuff = strBuff.slice(i);
+    }
+  })(),
+  stop: (time: number = 1000) => ((stopFlag = true), (duration = time)),
+  push: (str: string) => ((strBuff += str), (len = strBuff.length)),
+});
