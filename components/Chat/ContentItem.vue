@@ -16,7 +16,8 @@ let isBusy = false;
 let shouldRerender = false;
 
 const haveContext = ref(false);
-const render = async () => {
+const { render } = chatRender();
+const handleToHtml = async () => {
   if (isBusy) {
     shouldRerender = true;
     return;
@@ -28,7 +29,9 @@ const render = async () => {
 
     const shouldScroll = props.isScrollToEnd;
 
-    const res = props.chat.context ? await htmlRender(props.chat.context) : "";
+    const res = props.chat.context
+      ? await render(props.chat.id, props.chat.context)
+      : "";
 
     if (!haveContext.value) {
       haveContext.value = true;
@@ -41,6 +44,6 @@ const render = async () => {
     isBusy = false;
   } while (shouldRerender);
 };
-watch(() => props.chat.context, render);
-onMounted(render);
+watch(() => props.chat.context, handleToHtml);
+onMounted(handleToHtml);
 </script>

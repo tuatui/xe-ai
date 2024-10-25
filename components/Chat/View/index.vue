@@ -210,6 +210,7 @@ watch(
       });
     } else chatSession = null;
   },
+  { immediate: true },
 );
 
 const handleConf = async () => {
