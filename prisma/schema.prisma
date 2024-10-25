@@ -58,6 +58,7 @@ model BotProvider {
   apiUrl         String
   createTime     DateTime
   primaryModel   String?
+  memoCount      Int?
   availableModel ModelList[]
 }
 

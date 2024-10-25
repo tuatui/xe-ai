@@ -5,6 +5,7 @@ export interface BotsData {
   provider: Provider;
   availableModel: ModelList[];
   primaryModel: string | undefined | null;
+  memoCount: number | undefined;
   name: string;
   apiUrl: string;
   createTime: Date;
@@ -204,6 +205,7 @@ export const botsStore = defineStore("bots-store", () => {
 
           await updateBotNotSync({
             ...bot,
+            memoCount: bot.memoCount ?? undefined,
             id: bot.localId,
             createTime: new Date(bot.createTime),
           });

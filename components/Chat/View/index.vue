@@ -7,19 +7,29 @@
       @scroll="handleScroll"
     >
       <article class="w-[min(100%,45rem)] mxa px2">
-        <ChatContentItem
-          v-for="i in data.chats"
-          :key="i.id"
-          :is-scroll-to-end="isScrollToEnd"
-          :chat="i"
-          @should-scroll="
-            () => {
-              scrollToEnd(contentBody!, { behavior: 'instant' });
-              isScrollToEnd = true;
-            }
-          "
-          class="max-w-full text-wrap break-words mt16"
-        />
+        <template v-for="(i, index) in data.chats" :key="i.id">
+          <ChatContentItem
+            :is-scroll-to-end="isScrollToEnd"
+            :chat="i"
+            @should-scroll="
+              () => {
+                scrollToEnd(contentBody!, { behavior: 'instant' });
+                isScrollToEnd = true;
+              }
+            "
+            class="max-w-full text-wrap break-words mt16"
+          />
+          <div
+            v-if="
+              selectedBots?.memoCount !== undefined &&
+              index === data.chats.length - selectedBots.memoCount - 1
+            "
+            role="separator"
+            class="text-center bg-surface-light text-body-2 rounded my16"
+          >
+            模型不会记住在此之前的对话
+          </div>
+        </template>
       </article>
       <div class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa pr1 h0">
         <div class="absolute bottom-0 right-0 h48px">
@@ -304,44 +314,51 @@ const updateHandle = async () => {
   if (!chatSession || selectedModel.value === undefined) return;
   if (data.value.isProducing) return;
 
-  await data.value.updateChat({
-    context: userInput.value,
-    from: ChatRole.user,
-  });
-  userInput.value = "";
-  const res = await data.value.updateChat({
-    context: "",
-    from: ChatRole.assistant,
-  });
-  if (res === undefined) return;
-  const chat = data.value.chats.findLast((c) => c.id === res);
-  if (chat === undefined) return;
+  if (userInput.value || data.value.chats.length === 0) {
+    await data.value.updateChat({
+      context: userInput.value,
+      from: ChatRole.user,
+    });
+    userInput.value = "";
+  }
 
   nextTick().then(() => {
     contentBody.value &&
       scrollToEnd(contentBody.value, { behavior: "instant" });
   });
-  const { out, push, stop } = bufferedOut();
 
-  (async () => {
-    for await (const str of out) chat.context += str;
-    updateDebounced(data, chat);
-  })();
+  const { out, push, stop } = bufferedOut();
 
   try {
     data.value.isProducing = true;
     data.value.isChatting = true;
     postChatMsg(true);
+    const chatLimit = selectedBots.value?.memoCount ?? 0;
     const chatSteam = await chatSession.createChat(
-      data.value.chats,
+      data.value.chats.slice(-chatLimit),
       selectedModel.value,
     );
+
+    const res = await data.value.updateChat({
+      context: "",
+      from: ChatRole.assistant,
+    });
+    if (res < 0) throw new Error("Unable to update chat");
+    const chat = data.value.chats.findLast((c) => c.id === res);
+    if (chat === undefined) throw new Error("Unable to find chat");
+
+    (async () => {
+      for await (const str of out) chat.context += str;
+      updateDebounced(data, chat);
+    })();
+
     data.value.stopChatting = chatSteam.stop;
     for await (const { context } of chatSteam) {
       push(context);
       updateDebounced(data, chat);
       postChatMsg();
     }
+    stop();
   } catch (error) {
   } finally {
     data.value.isProducing = false;

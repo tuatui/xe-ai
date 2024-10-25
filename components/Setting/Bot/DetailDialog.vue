@@ -29,11 +29,13 @@
           />
           <VTextField
             v-model="botsInfoClone.nickName"
+            autocomplete="name"
             :label="$L.common.name"
           />
           <VTextField
             v-model="botsInfoClone.secretKey"
             type="password"
+            autocomplete="one-time-code"
             :label="$L.model.secretKey"
           />
 
@@ -96,6 +98,21 @@
               })
             "
           />
+          <!-- 是否引入vuetify/labs的VNumberInput? -->
+          <VTextField
+            type="number"
+            label="对话记忆"
+            clearable
+            :model-value="botsInfoClone.memoCount"
+            suffix="条"
+            @update:model-value="
+              (str: string) => {
+                const num = Number(str);
+                if (!num || num < 0) botsInfoClone.memoCount = undefined;
+                else botsInfoClone.memoCount = Math.min(num, 2 ** 31 - 1);
+              }
+            "
+          />
         </VCardText>
 
         <VCardActions>
@@ -137,6 +154,7 @@ const createBotsInfo = (): BotCreationData => ({
   createTime: new Date(),
   name: "chat-gpt-3.5",
   availableModel: [],
+  memoCount: undefined,
   primaryModel: undefined,
   provider: Provider.OpenAI,
   apiUrl: props.botInfo?.provider

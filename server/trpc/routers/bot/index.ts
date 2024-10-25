@@ -14,6 +14,7 @@ const botInputParser = z.object({
   availableModel: z.array(z.object({ name: z.string(), owner: z.string() })),
   createTime: z.string(),
   primaryModel: z.string().nullish(),
+  memoCount: z.number().nullish(),
 });
 
 export const bot = router({
@@ -70,6 +71,7 @@ export const bot = router({
         ),
         createTime: z.string(),
         primaryModel: z.string().nullish(),
+        memoCount: z.number().nullish(),
       }),
     )
     .mutation(async ({ ctx: { db, user }, input }) => {
