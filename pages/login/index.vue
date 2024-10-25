@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex bg-#f0f4f9 relative">
+  <div class="w-full h-full flex bg-#f0f4f966 relative">
     <div class="w-full max-w-[450px] ma">
       <VScrollXReverseTransition hide-on-leave>
         <UserLogin

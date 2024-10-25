@@ -21,6 +21,13 @@ export default defineNuxtConfig({
         },
         { rel: "apple-touch-icon", href: "icons/favicon-apple-180.png" },
       ],
+      style: [
+        {
+          // 避免闪瞎处于黑夜模式的用户
+          innerHTML: `@media (prefers-color-scheme: dark) {
+            html {background-color: #121212;}}`,
+        },
+      ],
     },
   },
   build: {

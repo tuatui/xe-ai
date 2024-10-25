@@ -1,7 +1,12 @@
 const KEY = "XeAiSettingStore";
-
+export const enum ThemeMod {
+  system = 0,
+  light,
+  dark,
+}
 export interface DefaultSetting {
   isNavRail: boolean;
+  themeMod: ThemeMod;
 }
 export const defaultSettingSync = defineStore("chat-setting-sync", () => {
   const val = localStorage.getItem(KEY);
