@@ -12,6 +12,15 @@ export default defineNuxtConfig({
           content: "Xe-AI is a website that provide AI chat server",
         },
       ],
+      link: [
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "icons/favicon.svg",
+          sizes: "any",
+        },
+        { rel: "apple-touch-icon", href: "icons/favicon-apple-180.png" },
+      ],
     },
   },
   build: {
