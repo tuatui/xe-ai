@@ -34,6 +34,7 @@ export interface ChatService {
 export interface ModelList {
   name: string;
   owner: string;
+  provider?: string;
 }
 export interface ChatStream extends AsyncIterable<ChatChunk> {
   stop: () => void;

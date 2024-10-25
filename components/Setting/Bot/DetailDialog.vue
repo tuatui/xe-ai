@@ -48,7 +48,7 @@
               :item-props="
                 (item) => ({
                   title: item.name,
-                  subtitle: item.owner,
+                  subtitle: `${item.owner} ${item.provider}`,
                   value: item.name,
                 })
               "
@@ -168,7 +168,7 @@ watch(
   },
 );
 const modelSearch = ref("");
-const modelList = ref<ModelList[]>([]);
+const modelList = shallowRef<ModelList[]>([]);
 const isFetchingModelList = ref(false);
 const handleGetModelList = async () => {
   if (isFetchingModelList.value) return;

@@ -74,6 +74,7 @@ export const GPTChatService: ChatService = {
         (await openAI.models.list()).data.map((each) => ({
           name: each.id,
           owner: each.owned_by,
+          provider: (each as { provider?: string }).provider,
         })),
     };
   },

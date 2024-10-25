@@ -89,8 +89,8 @@ devDependencies:
     specifier: ^2.1.4
     version: 2.1.4(marked@14.1.2)
   openai:
-    specifier: ^4.58.2
-    version: 4.67.1(zod@3.23.8)
+    specifier: ^4.68.4
+    version: 4.68.4(zod@3.23.8)
   oxlint:
     specifier: ^0.9.9
     version: 0.9.9
@@ -1909,7 +1909,7 @@ packages:
   /@types/node-fetch@2.6.11:
     resolution: {integrity: sha512-24xFj9R5+rfQJLRyM56qh+wnVSYhyXC2tkoBndtY0U+vubqNsYXGjufB2nn8Q6gt0LrARwL6UBtMCSVCwl4B1g==}
     dependencies:
-      '@types/node': 18.19.54
+      '@types/node': 22.7.4
       form-data: 4.0.0
     dev: true
 
@@ -5046,8 +5046,8 @@ packages:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  /openai@4.67.1(zod@3.23.8):
-    resolution: {integrity: sha512-2YbRFy6qaYRJabK2zLMn4txrB2xBy0KP5g/eoqeSPTT31mIJMnkT75toagvfE555IKa2RdrzJrZwdDsUipsAMw==}
+  /openai@4.68.4(zod@3.23.8):
+    resolution: {integrity: sha512-LRinV8iU9VQplkr25oZlyrsYGPGasIwYN8KFMAAFTHHLHjHhejtJ5BALuLFrkGzY4wfbKhOhuT+7lcHZ+F3iEA==}
     hasBin: true
     peerDependencies:
       zod: ^3.23.8
