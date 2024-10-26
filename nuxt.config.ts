@@ -11,6 +11,11 @@ export default defineNuxtConfig({
           name: "description",
           content: "Xe-AI is a website that provide AI chat server",
         },
+        {
+          name: "viewport",
+          content:
+            "width=device-width, initial-scale=1, interactive-widget=resizes-content",
+        },
       ],
       link: [
         {
@@ -75,4 +80,7 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
   },
+  /* devServer: {
+    host: "0.0.0.0",
+  }, */
 });

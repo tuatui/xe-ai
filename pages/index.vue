@@ -1,7 +1,7 @@
 <template>
-  <VLayout>
+  <VLayout class="max-h-100dvh">
     <XNav />
-    <VMain class="max-h-100dvh">
+    <VMain>
       <AdjustableView v-model="tree" />
     </VMain>
   </VLayout>
