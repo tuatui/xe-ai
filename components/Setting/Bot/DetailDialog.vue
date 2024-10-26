@@ -11,7 +11,7 @@
             <VBtn icon="i-mdi-close" variant="text" @click="model = false" />
           </VCardTitle>
         </template>
-        <VCardText>
+        <VCardText class="overflow-auto">
           <VSelect
             v-model="botsInfoClone.provider"
             :items="Services"
@@ -115,7 +115,7 @@
           />
           <VTextarea label="提示词" clearable v-model="botsInfoClone.prompt" />
         </VCardText>
-
+        <VDivider />
         <VCardActions>
           <VSpacer></VSpacer>
           <VBtn
@@ -173,13 +173,12 @@ const handleDelete = (id: number) => {
 };
 const botsInfoClone = ref<BotCreationData>(props.botInfo ?? createBotsInfo());
 const isUpdate = computed(() => botsInfoClone.value.id !== undefined);
-watch(
-  () => props.botInfo,
-  (newVal) => {
-    if (!newVal) botsInfoClone.value = createBotsInfo();
-    else botsInfoClone.value = structuredClone(toRaw(newVal));
-  },
-);
+watch([() => props.botInfo, model], ([newVal, isOpen]) => {
+  if (!isOpen) return;
+  if (!newVal) botsInfoClone.value = createBotsInfo();
+  else botsInfoClone.value = structuredClone(toRaw(newVal));
+});
+
 watch(
   () => botsInfoClone.value.provider,
   (newVal) => {
