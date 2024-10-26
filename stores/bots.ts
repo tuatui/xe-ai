@@ -6,6 +6,7 @@ export interface BotsData {
   availableModel: ModelList[];
   primaryModel: string | undefined | null;
   memoCount: number | undefined;
+  prompt: string;
   name: string;
   apiUrl: string;
   createTime: Date;

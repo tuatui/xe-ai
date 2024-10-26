@@ -1,5 +1,5 @@
 <template>
-  <VDialog v-model="model" class="max-w-[max(40dvw,500px)]">
+  <VDialog v-model="model" class="max-w-[max(40dvw,700px)]">
     <VForm @submit.prevent>
       <VCard>
         <template v-slot:title>
@@ -98,7 +98,7 @@
               })
             "
           />
-          <!-- 是否引入vuetify/labs的VNumberInput? -->
+          <!-- 是否需要引入vuetify/labs的VNumberInput? -->
           <VTextField
             type="number"
             label="对话记忆"
@@ -113,6 +113,7 @@
               }
             "
           />
+          <VTextarea label="提示词" clearable v-model="botsInfoClone.prompt" />
         </VCardText>
 
         <VCardActions>
@@ -156,6 +157,7 @@ const createBotsInfo = (): BotCreationData => ({
   availableModel: [],
   memoCount: undefined,
   primaryModel: undefined,
+  prompt: chatMetaExamplePrompt,
   provider: Provider.OpenAI,
   apiUrl: props.botInfo?.provider
     ? Services[props.botInfo.provider].info.defaultBaseUrl

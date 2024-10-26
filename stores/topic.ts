@@ -36,6 +36,11 @@ export const topicStore = defineStore("topic-store", () => {
           topics.value.unshift(data as TopicData);
           triggerRef(topics);
         }
+        // TODO 改为chat view通知父组件刷新
+        chatTabsStore().globalSharedTabs.forEach((each) => {
+          const topic = each.value.topics.find((_topic) => _topic.id == res);
+          if (topic) topic.title = data.title;
+        });
       }
     }
     return data as TopicData;

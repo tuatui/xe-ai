@@ -57,6 +57,7 @@ model BotProvider {
   name           String
   apiUrl         String
   createTime     DateTime
+  prompt         String      @db.Text
   primaryModel   String?
   memoCount      Int?
   availableModel ModelList[]

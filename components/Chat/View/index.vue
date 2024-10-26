@@ -314,7 +314,13 @@ const updateHandle = async () => {
   if (!chatSession || selectedModel.value === undefined) return;
   if (data.value.isProducing) return;
 
-  if (userInput.value || data.value.chats.length === 0) {
+  if (data.value.chats.length === 0) {
+    await data.value.updateChat({
+      context: selectedBots.value?.prompt ?? "",
+      from: ChatRole.system,
+    });
+  }
+  if (userInput.value) {
     await data.value.updateChat({
       context: userInput.value,
       from: ChatRole.user,
@@ -350,6 +356,10 @@ const updateHandle = async () => {
     (async () => {
       for await (const str of out) chat.context += str;
       updateDebounced(data, chat);
+
+      const meta = findChatMeta(chat.context);
+      if (!meta) return;
+      updateTopic({ id: chat.topicId, title: meta.title });
     })();
 
     data.value.stopChatting = chatSteam.stop;

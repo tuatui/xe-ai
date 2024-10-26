@@ -46,6 +46,7 @@ CREATE TABLE `BotProvider` (
     `name` VARCHAR(191) NOT NULL,
     `apiUrl` VARCHAR(191) NOT NULL,
     `createTime` DATETIME(3) NOT NULL,
+    `prompt` TEXT NOT NULL,
     `primaryModel` VARCHAR(191) NULL,
     `memoCount` INTEGER NULL,
 
