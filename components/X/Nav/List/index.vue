@@ -52,7 +52,6 @@ const dragTooltip = ref<HTMLDivElement>();
 const dragTooltipText = ref("");
 const locale = ref("zh");
 
-const tabsStore = chatTabsStore();
 defineEmits<{
   addChat: [item: TopicData];
   newTopicWithChat: [];
@@ -105,12 +104,8 @@ const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
         cancelable: true,
         onFinish: async () => {
           await removeTopic(topic.id);
-          tabsStore.globalSharedTabs.forEach((each) => {
-            const res = each.value.topics.findIndex(
-              (_topic) => _topic.id == topic.id,
-            );
-            if (res >= 0) each.value.topics.splice(res, 1);
-          });
+          const chat = chatsStore().globalSharedChats.get(topic.id);
+          if (chat) chat.value.tempStore.shareEvent = { close: true };
           resolve();
         },
         onCancel: () => {
@@ -127,11 +122,8 @@ const handleRemoveTopic = (topicsInMap: TopicData[], index: number) => {
 const handleUpdateTopic = async (title: string, topic: TopicData) => {
   topic.title = title;
   await updateTopic({ title, id: topic.id }, false);
-  tabsStore.globalSharedTabs.forEach((each) => {
-    const res = each.value.topics.find((_topic) => _topic.id == topic.id);
-    if (res) res.title = title;
-  });
-
+  const chat = chatsStore().globalSharedChats.get(topic.id);
+  if (chat) chat.value.tempStore.shareEvent = { title };
   const res = ts.topics.find((_topic) => _topic.id === topic.id);
   if (res) res.title = title;
 };

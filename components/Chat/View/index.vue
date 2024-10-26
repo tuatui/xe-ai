@@ -151,6 +151,7 @@
 </template>
 <script setup lang="ts">
 const props = defineProps<{ topics: TopicData }>();
+const emit = defineEmits<{ updateTitle: [newTitle: string]; close: [] }>();
 const userInput = ref("");
 const { globalSharedChats, postWinMessage } = chatsStore();
 const { updateTopic } = topicStore();
@@ -221,6 +222,15 @@ watch(
     } else chatSession = null;
   },
   { immediate: true },
+);
+
+watch(
+  () => data.value.tempStore.shareEvent,
+  async (ev) => {
+    if (!ev) return;
+    if (ev.title) emit("updateTitle", ev.title);
+    if (ev.close) emit("close");
+  },
 );
 
 const handleConf = async () => {
@@ -359,7 +369,8 @@ const updateHandle = async () => {
 
       const meta = findChatMeta(chat.context);
       if (!meta) return;
-      updateTopic({ id: chat.topicId, title: meta.title });
+      await updateTopic({ id: chat.topicId, title: meta.title }, false);
+      data.value.tempStore.shareEvent = { title: meta.title };
     })();
 
     data.value.stopChatting = chatSteam.stop;

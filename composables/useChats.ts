@@ -4,6 +4,10 @@ export interface UseChatTempStore {
     useBotData?: BotsData;
     useModelName?: string;
   };
+  shareEvent?: {
+    title?: string;
+    close?: boolean;
+  };
 }
 
 export type useChatReturn = Ref<{

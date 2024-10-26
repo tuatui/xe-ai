@@ -95,11 +95,17 @@
       >
         <VTabsWindowItem
           :value="i.id"
-          v-for="i in data.topics"
+          v-for="(i, index) in data.topics"
           :key="i.id"
           class="h-full"
         >
-          <ChatView :topics="i" class="h-full" v-model="data.isCollapse" />
+          <ChatView
+            :topics="i"
+            class="h-full"
+            v-model="data.isCollapse"
+            @close="data.topics.splice(index, 1)"
+            @update-title="(n) => (i.title = n)"
+          />
         </VTabsWindowItem>
         <VBtn
           v-if="data.topics.length === 0"
