@@ -31,8 +31,8 @@
           </div>
         </template>
       </article>
-      <div class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa pr1 h0">
-        <div class="absolute bottom-0 right-0 h48px">
+      <div class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa h0">
+        <div class="absolute bottom-0 right-0 h48px mr2">
           <VFab
             :title="$L.chat.scrollToBottom"
             class="w-full justify-end"

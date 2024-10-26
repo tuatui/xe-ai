@@ -1,9 +1,10 @@
 <template>
   <VSnackbar
+    content-class="mb48px"
     :model-value="Boolean(curr)"
     transition="slide-y-reverse-transition"
     :timeout="-1"
-    location="bottom left"
+    :location="isMobileScreen ? `bottom center` : `bottom left`"
   >
     {{ curr?.notification?.content }}
     <template v-slot:actions v-if="curr">
@@ -11,7 +12,7 @@
         v-if="curr.notification.cancelable"
         variant="text"
         @click="curr.cancelJob()"
-        color="warning"
+        color="surface"
         class="font-extrabold"
       >
         <span class="text-size-3.7">
@@ -30,6 +31,9 @@
   </VSnackbar>
 </template>
 <script setup lang="ts">
+const {
+  mobile: { isMobileScreen },
+} = defaultSettingSync();
 const notification = notificationStore();
 const curr = computed(() => notification.notificationStack.at(0));
 </script>

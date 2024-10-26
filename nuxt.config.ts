@@ -78,7 +78,8 @@ export default defineNuxtConfig({
   ],
   ssr: false,
   nitro: {
-    compressPublicAssets: true,
+    // 大部分云服务商都会帮你压缩，如果没有，也可以在这里设置。
+    // compressPublicAssets: true, // 启用br和gzip压缩
   },
   /* devServer: {
     host: "0.0.0.0",
