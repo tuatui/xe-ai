@@ -1,13 +1,20 @@
 <template>
   <VList
     v-show="!isHidden"
-    class="grow box-border overflow-auto bg-surface-light !pt0 contain-strict"
+    class="grow box-border overflow-auto contain-strict !pt0"
+    :class="{ 'bg-surface-light': !isMobileScreen }"
     :aria-label="$L.aria.chatHistory"
     @scroll="handleScroll"
   >
     <div v-for="([timeStr, topicList], i) in relativeTimeTopic" :key="timeStr">
       <VDivider v-if="i > 0" role="none" />
-      <div class="sticky top-0 z-1 bg-surface-light">
+      <div
+        class="sticky top-0 z-1"
+        :class="{
+          'bg-surface-light': !isMobileScreen,
+          'bg-surface': isMobileScreen,
+        }"
+      >
         <VListSubheader>{{ timeStr }}</VListSubheader>
       </div>
       <VListItem
@@ -145,4 +152,5 @@ watch(
   },
   { deep: true, immediate: true },
 );
+const isMobileScreen = defaultSettingSync().mobile.isMobileScreen;
 </script>

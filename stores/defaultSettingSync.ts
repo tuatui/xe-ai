@@ -8,6 +8,7 @@ export interface DefaultSetting {
   isNavRail: boolean;
   themeMod: ThemeMod;
 }
+
 export const defaultSettingSync = defineStore("chat-setting-sync", () => {
   const val = localStorage.getItem(KEY);
   let initObj: undefined | Partial<DefaultSetting>;
@@ -19,6 +20,13 @@ export const defaultSettingSync = defineStore("chat-setting-sync", () => {
     }
   }
   initObj ??= {};
+
+  const isMobileScreen = window.innerWidth < 500;
+  const mobile = ref({
+    isMobileScreen, //不是响应式的
+    showNav: !isMobileScreen,
+  });
+  if (isMobileScreen) initObj.isNavRail = false;
 
   const setting = ref<Partial<DefaultSetting>>(initObj);
   watch(
@@ -33,5 +41,6 @@ export const defaultSettingSync = defineStore("chat-setting-sync", () => {
     },
     { deep: true },
   );
-  return { setting };
+
+  return { setting, mobile };
 });

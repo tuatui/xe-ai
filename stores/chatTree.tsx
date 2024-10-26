@@ -1,4 +1,4 @@
-import { ChatTabs } from "#components";
+import { ChatTabs, ChatTabsMobile } from "#components";
 import { ViewTree, type ViewTreeWithMeta } from "#imports";
 
 export interface ChatTreeOrdinaryData {
@@ -17,7 +17,20 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       false,
       undefined,
       false,
-      [new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />, false, [], 1)],
+      [
+        new ViewTree(
+          true,
+          (key) =>
+            defaultSettingSync().mobile.isMobileScreen ? (
+              <ChatTabsMobile uniqueKey={key} />
+            ) : (
+              <ChatTabs uniqueKey={key} />
+            ),
+          false,
+          [],
+          1,
+        ),
+      ],
       1,
     ),
   );
@@ -33,7 +46,12 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         return;
       await nextTick();
       // 加载缓存的viewTree
-      tree.value = buildFromOrdinary(info.vt);
+      if (!defaultSettingSync().mobile.isMobileScreen) {
+        tree.value = buildFromOrdinary(info.vt);
+      } else {
+        const res = buildFromOrdinaryM(info.vt);
+        if (res) tree.value.children = [res];
+      }
     },
     { once: true },
   );
@@ -123,6 +141,26 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       data.children.map(buildFromOrdinary),
       data.space,
     );
+  const buildFromOrdinaryM = (data: ChatTreeOrdinary): ViewTree | void => {
+    if (data.isLeaf) {
+      return new ViewTree(
+        data.isLeaf,
+        (key) => {
+          const meta = data.meta;
+          if (meta) setTimeout(() => addTopicOneByOne(meta, key));
+          return <ChatTabsMobile uniqueKey={key} />;
+        },
+        data.isVertical,
+        [],
+        data.space,
+      );
+    }
+    for (const vt of data.children) {
+      const res = buildFromOrdinaryM(vt);
+      if (res) return res;
+    }
+    return;
+  };
 
   return { tree, add, buildFromOrdinary, toOrdinary };
 });

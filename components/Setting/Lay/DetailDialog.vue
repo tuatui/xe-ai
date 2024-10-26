@@ -73,7 +73,11 @@ const handleDelete = (id: number) => {
   emit("close");
 };
 const handleUse = () => {
-  ct.tree = buildFromOrdinary(form.value.vt);
+  if (defaultSettingSync().mobile.isMobileScreen)
+    notificationStore().pushNotification({
+      content: "无法在此屏幕上应用布局",
+    });
+  else ct.tree = buildFromOrdinary(form.value.vt);
 
   emit("close");
 };

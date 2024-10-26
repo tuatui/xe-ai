@@ -1,19 +1,24 @@
 <template>
   <VNavigationDrawer
+    v-model="mobile.showNav"
+    temporary
     :rail="isRail"
     disable-resize-watcher
-    permanent
+    :permanent="!mobile.isMobileScreen"
     :width="width"
-    class="bg-surface-light"
+    :class="bgSurface"
     :aria-label="$L.aria.sideNav"
   >
     <div class="h-full w-full flex flex-col">
-      <VToolbar density="compact">
+      <VToolbar
+        :density="mobile.isMobileScreen ? `default` : `compact`"
+        class="!bg-inherit"
+      >
         <XCommonBtn
           icon
           use-icon="i-mdi-menu"
           variant="text"
-          @click="setting.isNavRail = !setting.isNavRail"
+          @click="handleToggleNav"
           tooltip-location="right center"
           :use-tooltip="isRail ? $L.tips.expandMenu : $L.tips.collapseMenu"
         />
@@ -35,10 +40,7 @@
       <XNavList :is-hidden="isRail" @add-chat="(topic) => openNewChat(topic)" />
 
       <VDivider />
-      <div
-        class="bg-surface-light flex flex-wrap box-border px1"
-        :class="{ py1: isRail }"
-      >
+      <div class="flex flex-wrap box-border px1" :class="{ py1: isRail }">
         <Setting />
         <I18nSwitch />
         <ThemeSwitch />
@@ -47,14 +49,14 @@
     </div>
     <BottomSnackBar />
     <ChatViewConfDialog />
-    <Teleport to="body">
+    <Teleport to="body" v-if="!mobile.isMobileScreen">
       <XNavResizer v-model="width" v-show="!isRail" />
     </Teleport>
   </VNavigationDrawer>
 </template>
 <script setup lang="ts">
 import { chatTreeStore } from "~/stores/chatTree";
-const { setting } = storeToRefs(defaultSettingSync());
+const { setting, mobile } = storeToRefs(defaultSettingSync());
 
 const isRail = computed(() => Boolean(setting.value.isNavRail));
 const width = ref(201);
@@ -64,5 +66,14 @@ const handleAddTopic = async () => {
   const newTopic = { title: "" };
   const res = await updateTopic(newTopic);
   openNewChat(res);
+  if (mobile.value.isMobileScreen) mobile.value.showNav = !mobile.value.showNav;
+};
+const handleToggleNav = () => {
+  if (!mobile.value.isMobileScreen)
+    setting.value.isNavRail = !setting.value.isNavRail;
+  else mobile.value.showNav = !mobile.value.showNav;
+};
+const bgSurface = {
+  "bg-surface-light": !mobile.value.isMobileScreen,
 };
 </script>
