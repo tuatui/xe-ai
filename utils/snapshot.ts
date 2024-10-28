@@ -1,4 +1,4 @@
-export const toSnapshot = ({
+export const toSnapshot = async ({
   title,
   careClassNames,
   bodyClassName,
@@ -17,20 +17,29 @@ export const toSnapshot = ({
 }) => {
   careClassNames ??= [];
   let careCssString = "";
-  const headChildren = document.head.children;
-  for (let index = 0; index < headChildren.length; index++) {
-    const styleSheet = headChildren[index];
+
+  // https://github.com/w3c/csswg-drafts/issues/2515
+  // https://issues.chromium.org/issues/40771479
+  for (const styleSheet of document.styleSheets) {
     let addFlag = false;
-    for (let _index = 0; _index < careClassNames.length; _index++) {
-      const className = careClassNames[_index];
-      if (styleSheet.innerHTML.includes(`.${className}`)) {
-        careClassNames.splice(_index, 1);
-        addFlag = true;
+    for (let index = 0; index < careClassNames.length; index++) {
+      const className = careClassNames[index];
+      for (const rule of styleSheet.cssRules) {
+        if (rule.cssText.includes(`.${className}`)) {
+          careClassNames.splice(index, 1);
+          addFlag = true;
+          break;
+        }
       }
+      break;
     }
-    if (addFlag) careCssString += styleSheet.innerHTML + "\n";
+
+    if (addFlag)
+      for (const rule of styleSheet.cssRules) careCssString += rule.cssText;
+
     if (careClassNames.length === 0) break;
   }
+
   if (isDark) {
     careCssString += `
     .v-theme--dark{
@@ -51,6 +60,17 @@ export const toSnapshot = ({
           * {
             box-sizing: border-box;
           }
+          button {
+            background: none;
+            border: none;
+            cursor: pointer;
+          }
+          button:active {
+            background: grey;
+          }
+          button * {
+            mask: var(--un-icon) no-repeat;
+          }
           ${careCssString}
         </style>
       </head>
@@ -59,9 +79,26 @@ export const toSnapshot = ({
         <main class="${mainClassName}">
           ${html}
         </main>
-      </body>
-
+      </body> 
+      <script>
+        function cpy() {
+          var str = this.parentElement.firstChild.textContent;
+          if (window.navigator && window.navigator.clipboard)
+            navigator.clipboard.writeText(str);
+          else {
+            var i = document.createElement("textarea");
+            document.body.appendChild(i);
+            i.value = str;
+            i.select();
+            document.execCommand("copy");
+            document.body.removeChild(i);
+          }
+        }
+        var a = document.getElementsByTagName("button");
+        for (var index = 0; index < a.length; index++) a[index].onclick = cpy;
+      </script>
     </html>`;
+
   const blob = new Blob([template], { type: "text/html" });
   const elem = window.document.createElement("a");
   elem.href = window.URL.createObjectURL(blob);
