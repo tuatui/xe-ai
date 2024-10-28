@@ -21,6 +21,7 @@
   </div>
 </template>
 <script setup lang="tsx">
+import { LeafType } from "~/stores/chatTree";
 import type { LeafComponentProps } from "~/types/adjustableView";
 
 const { uniqueKey } = defineProps<LeafComponentProps>();
@@ -28,7 +29,7 @@ const { globalSharedTabs: globalTabs } = chatTabsStore();
 
 const data =
   globalTabs.get(uniqueKey) ||
-  ref<ChatTabsData>({ topics: [], currTab: undefined });
+  ref<ChatTabsData>({ topics: [], currTab: undefined, type: LeafType.tabsM });
 
 if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
 onUnmounted(() => globalTabs.delete(uniqueKey));

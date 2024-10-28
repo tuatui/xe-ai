@@ -1,4 +1,4 @@
-import { chatTreeStore, type ChatTreeOrdinary } from "./chatTree";
+import { chatTreeStore, LeafType, type ChatTreeOrdinary } from "./chatTree";
 
 export interface DefaultBotSetting {
   preferBotID: number;
@@ -26,6 +26,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
   const defaultBotInfo = ref<Partial<DefaultBotSetting>>({});
   getDefaultBotInfo().then((info) => {
     if (info) defaultBotInfo.value = info;
+    else defaultBotInfo.value = {};
   });
 
   const updateDefaultBotInfo = async (info: Partial<DefaultBotSetting>) => {
@@ -48,9 +49,15 @@ export const defaultBotStore = defineStore("default-bot", () => {
     const { doNotMemoVtOnUnload: doNotMemoVT, useCustomVT } =
       defaultBotInfo.value;
     if (doNotMemoVT || useCustomVT !== undefined) return;
-
+    const vt = chatTreeStore().toOrdinary();
+    // 对只留有一个欢迎页情况的特殊处理，这样能避免打开欢迎页两次
+    if (
+      vt.children.length === 1 &&
+      vt.children[0].meta?.type === LeafType.welcome
+    )
+      updateDefaultBotInfo({ vt: undefined });
     // 对于firefox和chrome，经过测试可以完成这个异步任务。
-    updateDefaultBotInfo({ vt: chatTreeStore().toOrdinary() });
+    else updateDefaultBotInfo({ vt });
   });
 
   return {

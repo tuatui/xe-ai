@@ -107,15 +107,6 @@
             @update-title="(n) => (i.title = n)"
           />
         </VTabsWindowItem>
-        <VBtn
-          v-if="data.topics.length === 0"
-          class="ma"
-          color="primary"
-          prepend-icon="i-mdi-forum-plus"
-          @click="handleNewChat"
-        >
-          {{ $L.chat.new }}
-        </VBtn>
         <Transition>
           <div
             v-if="dragCount"
@@ -129,6 +120,7 @@
 </template>
 <script setup lang="tsx">
 import { ChatTabs } from "#components";
+import { LeafType } from "~/stores/chatTree";
 import type { LeafComponentProps } from "~/types/adjustableView";
 
 // 未来的设计中，父组件最好不要动态改动uniqueKey，可以再创建新的组件实例
@@ -138,7 +130,7 @@ const tabRootEl = ref<HTMLDivElement>();
 
 const data =
   globalTabs.get(uniqueKey) ||
-  ref<ChatTabsData>({ topics: [], currTab: undefined });
+  ref<ChatTabsData>({ topics: [], currTab: undefined, type: LeafType.tabs });
 
 if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
 

@@ -1,8 +1,11 @@
+import type { LeafType } from "./chatTree";
+
 export interface ChatTabsData {
   topics: TopicData[];
   currTab: number | undefined;
   expose?: ChatTabsExpose;
   isCollapse?: boolean;
+  type?: LeafType;
 }
 
 export const chatTabsStore = defineStore("chat-tabs", () => {

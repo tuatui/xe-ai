@@ -5,9 +5,30 @@ export interface ChatTreeOrdinaryData {
   topicIds?: number[];
   currTopicId?: number;
   isCollapse?: boolean;
+  type?: LeafType;
 }
 export interface ChatTreeOrdinary
   extends ViewTreeWithMeta<ChatTreeOrdinaryData> {}
+
+export const enum LeafType {
+  tabs = 0,
+  tabsM,
+  welcome,
+}
+
+// 如果还要再添加组件，我们最好找个灵活一些的方法。
+const createChatLeaf = (
+  key: symbol,
+  type: LeafType = LeafType.tabs,
+): JSX.Element => {
+  if (type === LeafType.tabs) return <ChatTabs uniqueKey={key} />;
+  else if (type === LeafType.tabsM) return <ChatTabsMobile uniqueKey={key} />;
+  else if (type === LeafType.welcome)
+    return <ChatTabsWelcome uniqueKey={key} />;
+
+  console.warn("未知的组件id" + type);
+  return <ChatTabs uniqueKey={key} />;
+};
 
 export const chatTreeStore = defineStore("chat-tree-store", () => {
   const tabsStore = chatTabsStore();
@@ -22,13 +43,15 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
     ),
   );
   const init = () => {
-    tree.value = new ViewTree(true, (key) =>
-      defaultSettingSync().mobile.isMobileScreen ? (
-        <ChatTabsMobile uniqueKey={key} />
-      ) : (
-        <ChatTabs uniqueKey={key} />
+    tree.value.children = [
+      new ViewTree(true, (key) =>
+        defaultSettingSync().mobile.isMobileScreen ? (
+          <ChatTabsMobile uniqueKey={key} />
+        ) : (
+          <ChatTabs uniqueKey={key} />
+        ),
       ),
-    );
+    ];
   };
   watch(
     () => defaultBotStore().defaultBotInfo,
@@ -40,7 +63,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         !info.vt
       )
         return;
-      await nextTick();
+
       // 加载缓存的viewTree
       if (!defaultSettingSync().mobile.isMobileScreen) {
         tree.value = buildFromOrdinary(info.vt);
@@ -48,6 +71,11 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         const res = buildFromOrdinaryM(info.vt);
         if (res) tree.value.children = [res];
       }
+      // 对于保存了空页面的情况，多推一个欢迎页
+      if (!tree.value.isLeaf && tree.value.children.length === 0)
+        tree.value.children = [
+          new ViewTree(true, (key) => <ChatTabsWelcome uniqueKey={key} />),
+        ];
     },
     { once: true },
   );
@@ -64,15 +92,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         break;
       }
       if (focusedChat.chatTabsExpose) return;
-      else {
-        tree.value = new ViewTree(
-          true,
-          (key) => <ChatTabs uniqueKey={key} />,
-          false,
-          [],
-          1,
-        );
-      }
+      else tree.value = new ViewTree(false);
     }
     const newVT = new ViewTree(
       true,
@@ -95,6 +115,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         topicIds: tab.topics.map((each) => each.id),
         currTopicId: tab.currTab,
         isCollapse: tab.isCollapse,
+        type: tab.type,
       };
     };
 
@@ -134,11 +155,13 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
   const buildFromOrdinary = (data: ChatTreeOrdinary): ViewTree =>
     new ViewTree(
       data.isLeaf,
-      (key) => {
-        const meta = data.meta;
-        if (meta) setTimeout(() => addTopicOneByOne(meta, key));
-        return <ChatTabs uniqueKey={key} />;
-      },
+      data.isLeaf
+        ? (key) => {
+            const meta = data.meta;
+            if (meta) setTimeout(() => addTopicOneByOne(meta, key));
+            return createChatLeaf(key, meta?.type);
+          }
+        : undefined,
       data.isVertical,
       data.children.map(buildFromOrdinary),
       data.space,
@@ -147,11 +170,13 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
     if (data.isLeaf) {
       return new ViewTree(
         data.isLeaf,
-        (key) => {
-          const meta = data.meta;
-          if (meta) setTimeout(() => addTopicOneByOne(meta, key));
-          return <ChatTabsMobile uniqueKey={key} />;
-        },
+        data.isLeaf
+          ? (key) => {
+              const meta = data.meta;
+              if (meta) setTimeout(() => addTopicOneByOne(meta, key));
+              return createChatLeaf(key, meta?.type);
+            }
+          : undefined,
         data.isVertical,
         [],
         data.space,

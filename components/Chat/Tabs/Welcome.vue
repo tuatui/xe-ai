@@ -69,9 +69,18 @@
   </div>
 </template>
 <script setup lang="tsx">
+import { LeafType } from "~/stores/chatTree";
 import { chatTreeStore } from "~/stores/chatTree";
+const { uniqueKey } = defineProps<{ uniqueKey: symbol }>();
+const { globalSharedTabs: globalTabs } = chatTabsStore();
 
-defineProps<{ uniqueKey: symbol }>();
+const data =
+  globalTabs.get(uniqueKey) ||
+  ref<ChatTabsData>({ topics: [], currTab: undefined, type: LeafType.welcome });
+
+if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
+onUnmounted(() => globalTabs.delete(uniqueKey));
+
 const {
   mobile: { isMobileScreen },
 } = defaultSettingSync();
@@ -135,7 +144,7 @@ const handleSubmit = async () => {
   chatTreeStore().init();
 
   await nextTick();
-  const tab = [...chatTabsStore().globalSharedTabs.values()].at(-1);
+  const tab = [...globalTabs.values()].at(-1);
   if (!tab) throw new Error("The Tab just created cannot be found");
 
   const topic = await topicStore().updateTopic({ title: "无标题" });
@@ -157,7 +166,7 @@ const handleNewTab = async () => {
   chatTreeStore().init();
 
   await nextTick();
-  const tab = [...chatTabsStore().globalSharedTabs.values()].at(-1);
+  const tab = [...globalTabs.values()].at(-1);
   if (!tab) throw new Error("The Tab just created cannot be found");
 
   const topic = await topicStore().updateTopic({ title: "无标题" });

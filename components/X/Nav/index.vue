@@ -8,6 +8,7 @@
     :width="width"
     :class="bgSurface"
     :aria-label="$L.aria.sideNav"
+    :aria-hidden="!mobile.showNav"
   >
     <div class="h-full w-full flex flex-col">
       <VToolbar
