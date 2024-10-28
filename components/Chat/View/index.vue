@@ -290,7 +290,7 @@ const handleConf = async () => {
 };
 
 const chatInputArea = ref<HTMLElement | null>(null);
-const inputAreaHeight = ref(200);
+const inputAreaHeight = defineModel<number>("inputHeight", { default: 200 });
 const dragger = ref<HTMLElement | null>(null);
 const { isDragging } = useMouseDrag(
   dragger,

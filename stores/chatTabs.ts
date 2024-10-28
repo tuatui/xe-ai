@@ -5,6 +5,7 @@ export interface ChatTabsData {
   currTab: number | undefined;
   expose?: ChatTabsExpose;
   isCollapse?: boolean;
+  inputHeight?: number;
   type?: LeafType;
 }
 

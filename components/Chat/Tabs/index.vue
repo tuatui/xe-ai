@@ -103,6 +103,7 @@
             :topics="i"
             class="h-full"
             v-model="data.isCollapse"
+            v-model:input-height="data.inputHeight"
             @close="data.topics.splice(index, 1)"
             @update-title="(n) => (i.title = n)"
           />

@@ -5,6 +5,7 @@ export interface ChatTreeOrdinaryData {
   topicIds?: number[];
   currTopicId?: number;
   isCollapse?: boolean;
+  inputHeight?: number;
   type?: LeafType;
 }
 export interface ChatTreeOrdinary
@@ -115,6 +116,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         topicIds: tab.topics.map((each) => each.id),
         currTopicId: tab.currTab,
         isCollapse: tab.isCollapse,
+        inputHeight: tab.inputHeight,
         type: tab.type,
       };
     };
@@ -127,7 +129,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
     data: ChatTreeOrdinaryData,
     tabsKey: symbol,
   ) => {
-    const { topicIds, currTopicId, isCollapse } = data;
+    const { topicIds, currTopicId, isCollapse, inputHeight } = data;
     if (!topicIds) return;
 
     const tab = chatTabsStore().globalSharedTabs.get(tabsKey)?.value;
@@ -136,6 +138,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       return;
     }
     tab.isCollapse = isCollapse;
+    tab.inputHeight = inputHeight;
     const topics = tab.topics;
 
     const { getTopicData } = topicStore();
