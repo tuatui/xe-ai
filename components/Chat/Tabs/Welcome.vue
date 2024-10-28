@@ -71,8 +71,9 @@
       </div>
 
       <SettingBotDetailDialog
-        v-if="isDetailDialogOpen"
+        v-if="isDetailDialogExist"
         v-model="isDetailDialogOpen"
+        @leave="isDetailDialogExist = false"
         @new-bot-info="handleAddNewBot"
       />
     </div>
@@ -136,7 +137,9 @@ setTimeout(() => {
 }, 1000);
 
 const { pushNotification: note } = notificationStore();
+const isDetailDialogExist = ref(false);
 const isDetailDialogOpen = ref(false);
+watch(isDetailDialogOpen, (open) => open && (isDetailDialogExist.value = true));
 
 const handleSubmit = async () => {
   if (selectedBots.value === undefined) {

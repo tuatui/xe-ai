@@ -1,5 +1,9 @@
 <template>
-  <VDialog v-model="model" class="max-w-[max(40dvw,700px)]">
+  <VDialog
+    v-model="model"
+    class="max-w-[max(40dvw,700px)]"
+    @after-leave="$emit('leave')"
+  >
     <VForm @submit.prevent>
       <VCard>
         <template v-slot:title>
@@ -141,12 +145,11 @@
 </template>
 <script setup lang="ts">
 const model = defineModel({ default: false });
-const props = defineProps<{
-  botInfo?: BotCreationData;
-}>();
+const props = defineProps<{ botInfo?: BotCreationData }>();
 const emit = defineEmits<{
   newBotInfo: [BotCreationData];
   delete: [number];
+  leave: [];
 }>();
 const { Services } = chatServices();
 const createBotsInfo = (): BotCreationData => ({
