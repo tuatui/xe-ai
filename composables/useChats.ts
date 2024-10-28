@@ -7,6 +7,11 @@ export interface UseChatTempStore {
   shareEvent?: {
     title?: string;
     close?: boolean;
+    initChat?: {
+      userInput: string;
+      botData: BotsData;
+      modelName: string;
+    };
   };
 }
 

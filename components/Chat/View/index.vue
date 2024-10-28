@@ -212,14 +212,7 @@ watch(
   async (newSetting) => {
     selectedBots.value = newSetting?.useBotData;
     selectedModel.value = newSetting?.useModelName;
-    if (selectedBots.value) {
-      chatSession = await Services[
-        selectedBots.value.provider
-      ]?.createChatSession({
-        apiKey: selectedBots.value.secretKey,
-        baseURL: selectedBots.value.apiUrl,
-      });
-    } else chatSession = null;
+    chatSession = null;
   },
   { immediate: true },
 );
@@ -230,6 +223,14 @@ watch(
     if (!ev) return;
     if (ev.title) emit("updateTitle", ev.title);
     if (ev.close) emit("close");
+    if (ev.initChat) {
+      const init = ev.initChat;
+      userInput.value = init.userInput;
+      selectedBots.value = init.botData;
+      selectedModel.value = init.modelName;
+      ev.initChat = undefined;
+      updateHandle();
+    }
   },
 );
 
@@ -307,10 +308,10 @@ watch(
   },
   { once: true },
 );
-const postChatMsg = (isCreate?: boolean) =>
+const postChatMsg = (isCreate?: boolean, lastCount: number = -2) =>
   postWinMessage({
     updateChat: {
-      chats: data.value.chats.slice(-2).map((each) => toRaw(each)),
+      chats: data.value.chats.slice(lastCount).map((each) => toRaw(each)),
       isProducing: data.value.isProducing,
       topicId: props.topics.id,
       isChatting: data.value.isChatting,
@@ -321,7 +322,7 @@ const postChatStopMsg = () =>
   postWinMessage({ stopChat: { topicId: props.topics.id } });
 
 const updateHandle = async () => {
-  if (!chatSession || selectedModel.value === undefined) return;
+  if (!selectedBots.value || selectedModel.value === undefined) return;
   if (data.value.isProducing) return;
 
   if (data.value.chats.length === 0) {
@@ -329,12 +330,15 @@ const updateHandle = async () => {
       context: selectedBots.value?.prompt ?? "",
       from: ChatRole.system,
     });
+    postChatMsg(true, -1);
   }
+
   if (userInput.value) {
     await data.value.updateChat({
       context: userInput.value,
       from: ChatRole.user,
     });
+    postChatMsg(true, -1);
     userInput.value = "";
   }
 
@@ -348,8 +352,21 @@ const updateHandle = async () => {
   try {
     data.value.isProducing = true;
     data.value.isChatting = true;
-    postChatMsg(true);
+
     const chatLimit = selectedBots.value?.memoCount ?? 0;
+    if (!chatSession) {
+      chatSession = await Services[
+        selectedBots.value.provider
+      ]?.createChatSession({
+        apiKey: selectedBots.value.secretKey,
+        baseURL: selectedBots.value.apiUrl,
+      });
+      if (!chatSession) {
+        throw new Error(
+          "can not find chat services: " + selectedBots.value.provider,
+        );
+      }
+    }
     const chatSteam = await chatSession.createChat(
       data.value.chats.slice(-chatLimit),
       selectedModel.value,
@@ -359,17 +376,22 @@ const updateHandle = async () => {
       context: "",
       from: ChatRole.assistant,
     });
+    postChatMsg(true, -1);
     if (res < 0) throw new Error("Unable to update chat");
     const chat = data.value.chats.findLast((c) => c.id === res);
     if (chat === undefined) throw new Error("Unable to find chat");
 
     (async () => {
-      for await (const str of out) chat.context += str;
+      for await (const str of out) {
+        postChatMsg(false, -1);
+        chat.context += str;
+      }
       updateDebounced(data, chat);
 
       const meta = findChatMeta(chat.context);
       if (!meta) return;
       await updateTopic({ id: chat.topicId, title: meta.title }, false);
+      postChatMsg(false, -1);
       data.value.tempStore.shareEvent = { title: meta.title };
     })();
 
@@ -377,14 +399,13 @@ const updateHandle = async () => {
     for await (const { context } of chatSteam) {
       push(context);
       updateDebounced(data, chat);
-      postChatMsg();
     }
     stop();
   } catch (error) {
   } finally {
     data.value.isProducing = false;
     data.value.isChatting = false;
-    postChatMsg();
+
     stop();
   }
 };

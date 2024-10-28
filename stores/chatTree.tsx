@@ -17,18 +17,19 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       false,
       undefined,
       false,
-      [
-        new ViewTree(
-          true,
-          (key) => <ChatTabsWelcome uniqueKey={key} />,
-          false,
-          [],
-          1,
-        ),
-      ],
+      [new ViewTree(true, (key) => <ChatTabsWelcome uniqueKey={key} />)],
       1,
     ),
   );
+  const init = () => {
+    tree.value = new ViewTree(true, (key) =>
+      defaultSettingSync().mobile.isMobileScreen ? (
+        <ChatTabsMobile uniqueKey={key} />
+      ) : (
+        <ChatTabs uniqueKey={key} />
+      ),
+    );
+  };
   watch(
     () => defaultBotStore().defaultBotInfo,
     async (info) => {
@@ -163,5 +164,5 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
     return;
   };
 
-  return { tree, add, buildFromOrdinary, toOrdinary };
+  return { tree, add, buildFromOrdinary, toOrdinary, init };
 });

@@ -49,7 +49,7 @@
           rounded
           variant="text"
           size="small"
-          @click="isDetailDialogOpen = true"
+          @click="handleNewTab"
           use-icon="i-mdi-plus"
           :use-tooltip="$L.chat.new"
           tooltip-location="bottom"
@@ -68,7 +68,9 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
+import { chatTreeStore } from "~/stores/chatTree";
+
 defineProps<{ uniqueKey: symbol }>();
 const {
   mobile: { isMobileScreen },
@@ -117,17 +119,49 @@ setTimeout(() => {
 const { pushNotification: note } = notificationStore();
 const isDetailDialogOpen = ref(false);
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (selectedBots.value === undefined) {
     isDetailDialogOpen.value = true;
-    nextTick().then(() => note({ content: "请先添加一个机器人并选择模型" }));
+    await nextTick();
+    note({ content: "请先添加一个机器人并选择模型" });
     return;
   }
   if (selectedModel.value === undefined) {
     handleConf();
-    nextTick().then(() => note({ content: "请选择要参与对话的模型" }));
+    await nextTick();
+    note({ content: "请选择要参与对话的模型" });
+    return;
   }
-  console.log("sb");
+  chatTreeStore().init();
+
+  await nextTick();
+  const tab = [...chatTabsStore().globalSharedTabs.values()].at(-1);
+  if (!tab) throw new Error("The Tab just created cannot be found");
+
+  const topic = await topicStore().updateTopic({ title: "无标题" });
+  tab.value.expose?.add(topic);
+
+  await nextTick();
+  const chat = [...chatsStore().globalSharedChats.values()].at(-1);
+  if (!chat) throw new Error("The Chat just created cannot be found");
+
+  chat.value.tempStore.shareEvent = {
+    initChat: {
+      botData: selectedBots.value,
+      modelName: selectedModel.value,
+      userInput: useInput.value,
+    },
+  };
+};
+const handleNewTab = async () => {
+  chatTreeStore().init();
+
+  await nextTick();
+  const tab = [...chatTabsStore().globalSharedTabs.values()].at(-1);
+  if (!tab) throw new Error("The Tab just created cannot be found");
+
+  const topic = await topicStore().updateTopic({ title: "无标题" });
+  tab.value.expose?.add(topic);
 };
 const handleAddNewBot = async (data: BotCreationData) => {
   const { updateBot } = botsStore();
@@ -146,7 +180,13 @@ const handleConf = async () => {
     .showTopicConfDialog(selectedBots.value, selectedModel.value)
     .catch(() => undefined);
   if (!res) return;
-  selectedBots.value = res.newBot;
-  selectedModel.value = res.newModelName;
+  const { newBot, newModelName } = res;
+  selectedBots.value = newBot;
+  selectedModel.value = newModelName;
+  if (newBot?.id !== undefined && newModelName)
+    defaultBotStore().updateDefaultBotInfo({
+      preferBotID: newBot.id,
+      preferModelName: res.newModelName,
+    });
 };
 </script>
