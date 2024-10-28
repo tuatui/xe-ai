@@ -36,6 +36,8 @@ const lang = {
     layouts: "布局",
     use: "使用",
     copy: "复制",
+    options: "操作",
+    lineBreak: "换行",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,
@@ -68,6 +70,10 @@ const lang = {
     defaultModule: "默认模型",
     setDefault: "设为默认",
     addModel: "新增模型",
+    shortcut: {
+      sendImm: "是否按下回车立刻发送对话",
+      send: "发送方式",
+    },
     editModule: {
       press: "按下",
       enter: "回车",

@@ -76,10 +76,16 @@
           v-model="userInput"
           hide-details
           no-resize
+          @keydown.enter="
+            (e: KeyboardEvent) => {
+              if (e.ctrlKey === !ds.setting.enterToSend) updateHandle();
+              else if (e.ctrlKey) userInput += `\n`;
+            }
+          "
         />
         <VDivider />
         <div
-          class="bg-surface-light min-h-48px flex items-center px2 gap1 flex-wrap"
+          class="bg-surface-light h-48px flex items-center px2 gap1 flex-wrap overflow-hidden"
         >
           <VBtn
             class="relative z-6 my1"
@@ -106,7 +112,7 @@
             :use-tooltip="$L.chat.stop"
             tooltip-location="top"
           />
-
+          <div class="h-full w0"></div>
           <XCommonBtn
             icon
             density="comfortable"
@@ -138,6 +144,20 @@
             tooltip-location="top"
           />
           <VSpacer />
+          <div class="text-size-xs pr1">
+            <template v-if="ds.setting.enterToSend">
+              <p class="mb0.5"><VKbd>ENTER</VKbd> {{ $L.chat.send }}</p>
+              <p>
+                <VKbd>CTRL</VKbd> <VKbd>ENTER</VKbd> {{ $L.common.lineBreak }}
+              </p>
+            </template>
+            <template v-else>
+              <p class="mb0.5">
+                <VKbd>CTRL</VKbd> <VKbd>ENTER</VKbd> {{ $L.chat.send }}
+              </p>
+              <p><VKbd>ENTER</VKbd> {{ $L.common.lineBreak }}</p>
+            </template>
+          </div>
           <div class="text-body-2 text-medium-emphasis ellipsis-text">
             <VIcon icon="i-mdi-robot" size="small" />
             <p>{{ selectedBots?.nickName || $L.common.notSelected }}</p>
@@ -155,6 +175,7 @@ const emit = defineEmits<{ updateTitle: [newTitle: string]; close: [] }>();
 const userInput = ref("");
 const { globalSharedChats, postWinMessage } = chatsStore();
 const { updateTopic } = topicStore();
+const ds = defaultSettingSync();
 
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
@@ -323,7 +344,7 @@ const postChatStopMsg = () =>
 
 const updateHandle = async () => {
   if (!selectedBots.value || selectedModel.value === undefined) return;
-  if (data.value.isProducing) return;
+  if (data.value.isProducing || data.value.isChatting) return;
 
   if (data.value.chats.length === 0) {
     await data.value.updateChat({

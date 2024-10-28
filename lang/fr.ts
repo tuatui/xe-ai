@@ -36,6 +36,8 @@ export default {
     layouts: "Dispositions",
     use: "Utiliser",
     copy: "Copier",
+    options: "Options",
+    lineBreak: "Saut de ligne",
   },
   action: {
     deleteSome: (item) => `Supprimé "${item}"`,
@@ -89,6 +91,11 @@ export default {
       dataShowArea: "S'affichera ici après ajout d'une disposition",
       setAsDefault: "Définir par défaut",
       memo: "Se souvenir de la disposition à la fermeture",
+    },
+    shortcut: {
+      sendImm:
+        "Avez-vous appuyé sur Entrée pour envoyer la conversation immédiatement?",
+      send: "Méthode d'envoi",
     },
   },
   model: {

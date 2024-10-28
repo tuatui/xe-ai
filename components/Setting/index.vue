@@ -31,6 +31,8 @@
             </template>
           </VListItem>
           <SettingBotConfDialog v-model="isModelDialogOpen" />
+
+          <VListSubheader>{{ $L.common.layouts }}</VListSubheader>
           <VListItem
             :title="$L.setting.layouts.name"
             @click="isLayDialogOpen = true"
@@ -43,6 +45,25 @@
             </template>
           </VListItem>
           <SettingLay v-model="isLayDialogOpen" />
+
+          <VListSubheader>{{ $L.common.options }}</VListSubheader>
+          <VListItem @click="setting.enterToSend = !setting.enterToSend">
+            <template v-slot:prepend>
+              <VAvatar icon="i-mdi-send-circle" />
+            </template>
+            <VListItemTitle>{{ $L.setting.shortcut.send }}</VListItemTitle>
+            <VListItemSubtitle>{{
+              $L.setting.shortcut.sendImm
+            }}</VListItemSubtitle>
+            <template v-slot:append>
+              <VSwitch
+                hide-details
+                inset
+                v-model="setting.enterToSend"
+                color="primary"
+              />
+            </template>
+          </VListItem>
         </div>
       </VList>
     </VCard>
@@ -53,4 +74,6 @@
 const dialog = ref(false);
 const isModelDialogOpen = ref(false);
 const isLayDialogOpen = ref(false);
+
+const { setting } = storeToRefs(defaultSettingSync());
 </script>

@@ -35,6 +35,8 @@ export default {
     layouts: "Макеты",
     use: "Использовать",
     copy: "Копировать",
+    options: "Опции",
+    lineBreak: "Перенос строки",
   },
   action: {
     deleteSome: (item) => `Удалено "${item}"`,
@@ -88,6 +90,10 @@ export default {
       dataShowArea: "Отобразится здесь после добавления макета",
       setAsDefault: "Установить по умолчанию",
       memo: "Запомнить макет при закрытии",
+    },
+    shortcut: {
+      sendImm: "Вы нажали Enter, чтобы немедленно отправить разговор?",
+      send: "Способ отправки",
     },
   },
   model: {

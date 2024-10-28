@@ -35,6 +35,8 @@ export default {
     layouts: "Diseños",
     use: "Usar",
     copy: "Copiar",
+    options: "Opciones",
+    lineBreak: "Salto de línea",
   },
   action: {
     deleteSome: (item) => `Eliminado "${item}"`,
@@ -88,6 +90,10 @@ export default {
       dataShowArea: "Después de añadir un diseño, aparecerá aquí",
       setAsDefault: "Establecer como predeterminado",
       memo: "Recordar el diseño al cerrar",
+    },
+    shortcut: {
+      sendImm: "¿Presionaste Enter para enviar el diálogo inmediatamente?",
+      send: "Método de envío",
     },
   },
   model: {

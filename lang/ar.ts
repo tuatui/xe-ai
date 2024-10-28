@@ -36,6 +36,8 @@ export default {
     layouts: "التخطيطات",
     use: "استخدام",
     copy: "نسخ",
+    options: "خيارات",
+    lineBreak: "انتقال إلى السطر",
   },
   action: {
     deleteSome: (item) => `تم حذف "${item}"`,
@@ -89,6 +91,10 @@ export default {
       dataShowArea: "ستظهر هنا بعد إضافة التخطيط",
       setAsDefault: "تعيين كافتراضي",
       memo: "تذكر التخطيط عند الإغلاق",
+    },
+    shortcut: {
+      sendImm: "هل قمت بالضغط على Enter لإرسال المحادثة على الفور؟",
+      send: "طريقة الإرسال",
     },
   },
   model: {

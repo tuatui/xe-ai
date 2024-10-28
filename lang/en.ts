@@ -35,6 +35,8 @@ export default {
     layouts: "Layouts",
     use: "Use",
     copy: "Copy",
+    options: "Options",
+    lineBreak: "Line break",
   },
   action: {
     deleteSome: (item) => `Deleted "${item}"`,
@@ -88,6 +90,10 @@ export default {
       dataShowArea: "Will display here after adding a layout",
       setAsDefault: "Set as Default",
       memo: "Remember layout on close",
+    },
+    shortcut: {
+      sendImm: "Did you press Enter to send the conversation immediately?",
+      send: "Sending method",
     },
   },
   model: {

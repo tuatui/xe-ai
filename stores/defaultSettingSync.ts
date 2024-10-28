@@ -7,6 +7,7 @@ export const enum ThemeMod {
 export interface DefaultSetting {
   isNavRail: boolean;
   themeMod: ThemeMod;
+  enterToSend: boolean;
 }
 
 export const defaultSettingSync = defineStore("chat-setting-sync", () => {
