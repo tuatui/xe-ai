@@ -35,6 +35,7 @@ export default {
     save: "حفظ",
     layouts: "التخطيطات",
     use: "استخدام",
+    copy: "نسخ",
   },
   action: {
     deleteSome: (item: string) => `تم حذف "${item}"`,

@@ -35,6 +35,7 @@ const lang = {
     save: "保存",
     layouts: "布局",
     use: "使用",
+    copy: "复制",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,

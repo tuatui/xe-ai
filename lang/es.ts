@@ -34,6 +34,7 @@ export default {
     save: "Guardar",
     layouts: "Diseños",
     use: "Usar",
+    copy: "Copiar",
   },
   action: {
     deleteSome: (item: string) => `Eliminado "${item}"`,

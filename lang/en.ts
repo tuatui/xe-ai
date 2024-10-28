@@ -34,6 +34,7 @@ export default {
     save: "Save",
     layouts: "Layouts",
     use: "Use",
+    copy: "Copy",
   },
   action: {
     deleteSome: (item: string) => `Deleted "${item}"`,

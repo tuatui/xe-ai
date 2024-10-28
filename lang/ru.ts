@@ -34,6 +34,7 @@ export default {
     save: "Сохранить",
     layouts: "Макеты",
     use: "Использовать",
+    copy: "Копировать",
   },
   action: {
     deleteSome: (item: string) => `Удалено "${item}"`,

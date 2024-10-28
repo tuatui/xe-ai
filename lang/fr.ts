@@ -35,6 +35,7 @@ export default {
     save: "Sauvegarder",
     layouts: "Dispositions",
     use: "Utiliser",
+    copy: "Copier",
   },
   action: {
     deleteSome: (item: string) => `Supprimé "${item}"`,
