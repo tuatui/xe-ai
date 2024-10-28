@@ -37,7 +37,8 @@ export default {
     copy: "Copy",
   },
   action: {
-    deleteSome: (item: string) => `Deleted "${item}"`,
+    deleteSome: (item) => `Deleted "${item}"`,
+    ask: (name) => `Ask ${name || "AI"}`,
   },
   aria: {
     sideNav: "Side Navigation",
@@ -55,6 +56,8 @@ export default {
     send: "Send",
     inputTips: "Type your question here",
     scrollToBottom: "Scroll to Bottom",
+    memo: "Conversation memory",
+    prompt: "Prompt",
   },
   setting: {
     apiUrl: "Provider URL",
@@ -116,6 +119,11 @@ export default {
     botsEmp: "No data, please create at least one bot",
     primaryModelEmp: "No data, please add at least one model",
     botModulesEmp: "No data, try fetching a model in the edit model interface",
+    addBotAndSelect: "Please add a bot and select a model",
+    chooseModel: "Please select a model for the conversation",
+    needToAddModel: "You need to add a model to start the conversation",
+    pwdOrAddrErr: "Incorrect address or key",
+    notMemo: "The model will not remember the previous conversation",
   },
   theme: {
     switchTo: (mod) => `Switch to ${["Auto", "Light", "Dark"][mod]} mode`,

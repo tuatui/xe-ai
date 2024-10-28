@@ -39,6 +39,7 @@ const lang = {
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,
+    ask: (name?: string) => `问一问 ${name || "AI"}`,
   },
   aria: {
     sideNav: "侧边导航栏",
@@ -56,6 +57,8 @@ const lang = {
     send: "发送",
     inputTips: "在这里输入你的问题",
     scrollToBottom: "滑至底部",
+    memo: "对话记忆",
+    prompt: "提示词",
   },
   setting: {
     apiUrl: "服务提供商地址",
@@ -116,6 +119,11 @@ const lang = {
     botsEmp: "没有数据，请至少创建一个机器人",
     primaryModelEmp: "没有数据，请至少添加一个模型",
     botModulesEmp: "没有数据，尝试在编辑模型界面获取一下模型",
+    addBotAndSelect: "请先添加一个机器人并选择模型",
+    chooseModel: "请选择要参与对话的模型",
+    needToAddModel: "你需要添加模型才能开始对话",
+    pwdOrAddrErr: "地址或密钥有误",
+    notMemo: "模型不会记住在此之前的对话",
   },
   theme: {
     switchTo: (mod: ThemeMod) => `切换到${["自动", "浅色", "黑色"][mod]}模式`,

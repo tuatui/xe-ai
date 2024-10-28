@@ -17,8 +17,7 @@
           class="![&_input]:placeholder:opacity-100"
           variant="solo-filled"
           :rules="[
-            () =>
-              selectedModel === undefined ? '你需要添加模型才能开始对话' : true,
+            () => (selectedModel === undefined ? $L.tips.needToAddModel : true),
           ]"
           rounded
           type="text"
@@ -97,7 +96,7 @@ const { isMobileScreen } = mobile.value;
 
 const { defaultBotInfo } = storeToRefs(defaultBotStore());
 
-const askText = (str?: string) => `问一问 ${str || "AI"}`;
+const askText = (str?: string) => $L.action.ask(str);
 
 const placeholder = ref("");
 
@@ -117,8 +116,11 @@ const updatePlaceholder = (name?: string) => {
 const selectedBots = ref<BotsData>();
 const selectedModel = ref<string>();
 const useInput = ref("");
+const { $i18n } = useNuxtApp();
 
-watch(selectedModel, (newModel) => updatePlaceholder(newModel));
+watch([selectedModel, $i18n.locale], ([newModel]) =>
+  updatePlaceholder(newModel),
+);
 
 watch(
   defaultBotInfo,
@@ -140,18 +142,19 @@ const { pushNotification: note } = notificationStore();
 const isDetailDialogExist = ref(false);
 const isDetailDialogOpen = ref(false);
 watch(isDetailDialogOpen, (open) => open && (isDetailDialogExist.value = true));
+const { $L } = useNuxtApp();
 
 const handleSubmit = async () => {
   if (selectedBots.value === undefined) {
     isDetailDialogOpen.value = true;
     await nextTick();
-    note({ content: "请先添加一个机器人并选择模型" });
+    note({ content: $L.tips.addBotAndSelect });
     return;
   }
   if (selectedModel.value === undefined) {
     handleConf();
     await nextTick();
-    note({ content: "请选择要参与对话的模型" });
+    note({ content: $L.tips.chooseModel });
     return;
   }
   chatTreeStore().init();
@@ -160,7 +163,7 @@ const handleSubmit = async () => {
   const tab = [...globalTabs.values()].at(-1);
   if (!tab) throw new Error("The Tab just created cannot be found");
 
-  const topic = await topicStore().updateTopic({ title: "无标题" });
+  const topic = await topicStore().updateTopic({ title: $L.chat.untitled });
   tab.value.expose?.add(topic);
 
   await nextTick();
@@ -182,7 +185,7 @@ const handleNewTab = async () => {
   const tab = [...globalTabs.values()].at(-1);
   if (!tab) throw new Error("The Tab just created cannot be found");
 
-  const topic = await topicStore().updateTopic({ title: "无标题" });
+  const topic = await topicStore().updateTopic({ title: $L.chat.untitled });
   tab.value.expose?.add(topic);
 };
 const handleAddNewBot = async (data: BotCreationData) => {

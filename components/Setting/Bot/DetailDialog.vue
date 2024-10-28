@@ -112,7 +112,7 @@
           <!-- 是否需要引入vuetify/labs的VNumberInput? -->
           <VTextField
             type="number"
-            label="对话记忆"
+            :label="$L.chat.memo"
             clearable
             :model-value="botsInfoClone.memoCount"
             suffix="条"
@@ -124,7 +124,11 @@
               }
             "
           />
-          <VTextarea label="提示词" clearable v-model="botsInfoClone.prompt" />
+          <VTextarea
+            :label="$L.chat.prompt"
+            clearable
+            v-model="botsInfoClone.prompt"
+          />
         </VCardText>
         <VDivider />
         <VCardActions>
@@ -218,7 +222,9 @@ const handleGetModelList = async () => {
     isFetchingModelList.value = true;
     modelList.value = await session.getModelList();
   } catch (err) {
-    notificationStore().pushNotification({ content: "地址或密钥有误" });
+    notificationStore().pushNotification({
+      content: useNuxtApp().$L.tips.pwdOrAddrErr,
+    });
     console.warn(err);
   } finally {
     isFetchingModelList.value = false;

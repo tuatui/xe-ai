@@ -27,7 +27,7 @@
             role="separator"
             class="text-center bg-surface-light text-body-2 rounded my16"
           >
-            模型不会记住在此之前的对话
+            <div v-once>{{ $L.tips.notMemo }}</div>
           </div>
         </template>
       </article>

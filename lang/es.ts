@@ -37,7 +37,8 @@ export default {
     copy: "Copiar",
   },
   action: {
-    deleteSome: (item: string) => `Eliminado "${item}"`,
+    deleteSome: (item) => `Eliminado "${item}"`,
+    ask: (name) => `Pregunta a ${name || "AI"}`,
   },
   aria: {
     sideNav: "Barra lateral de navegación",
@@ -55,6 +56,8 @@ export default {
     send: "Enviar",
     inputTips: "Escribe tu pregunta aquí",
     scrollToBottom: "Desplazar al final",
+    memo: "Memoria de conversación",
+    prompt: "Palabra clave",
   },
   setting: {
     apiUrl: "URL del proveedor",
@@ -117,6 +120,11 @@ export default {
     primaryModelEmp: "Sin datos, añada al menos un modelo",
     botModulesEmp:
       "Sin datos, intente obtener un modelo en la interfaz de edición",
+    addBotAndSelect: "Por favor, añade un bot y selecciona un modelo",
+    chooseModel: "Por favor, selecciona el modelo para la conversación",
+    needToAddModel: "Necesitas añadir un modelo para comenzar la conversación",
+    pwdOrAddrErr: "Dirección o clave incorrecta",
+    notMemo: "El modelo no recordará la conversación anterior",
   },
   theme: {
     switchTo: (mod) =>

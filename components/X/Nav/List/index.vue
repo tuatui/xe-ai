@@ -57,7 +57,6 @@ dayjs.extend(relativeTime);
 defineProps<{ isHidden: boolean }>();
 const dragTooltip = ref<HTMLDivElement>();
 const dragTooltipText = ref("");
-const locale = ref("zh");
 
 defineEmits<{
   addChat: [item: TopicData];
@@ -138,10 +137,12 @@ const handleUpdateTopic = async (title: string, topic: TopicData) => {
 const relativeTimeTopic = ref<Map<string, TopicData[]>>(new Map());
 
 const { topics } = storeToRefs(ts);
+const { $i18n } = useNuxtApp();
+
 watch(
-  [locale, topics],
+  [$i18n.locale, topics],
   () => {
-    dayjs.locale(locale.value);
+    dayjs.locale($i18n.locale.value.code);
     const map = new Map<string, TopicData[]>();
     topics.value.forEach((each) => {
       const res = map.get(dayjs(each.updateTime).fromNow());

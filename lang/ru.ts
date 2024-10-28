@@ -37,7 +37,8 @@ export default {
     copy: "Копировать",
   },
   action: {
-    deleteSome: (item: string) => `Удалено "${item}"`,
+    deleteSome: (item) => `Удалено "${item}"`,
+    ask: (name) => `Спросить у ${name || "AI"}`,
   },
   aria: {
     sideNav: "Боковая панель навигации",
@@ -55,6 +56,8 @@ export default {
     send: "Отправить",
     inputTips: "Введите ваш вопрос здесь",
     scrollToBottom: "Прокрутить вниз",
+    memo: "Память беседы",
+    prompt: "Подсказка",
   },
   setting: {
     apiUrl: "URL поставщика",
@@ -117,6 +120,11 @@ export default {
     primaryModelEmp: "Нет данных, добавьте хотя бы одну модель",
     botModulesEmp:
       "Нет данных, попробуйте получить модель в интерфейсе редактирования",
+    addBotAndSelect: "Пожалуйста, добавьте бота и выберите модель",
+    chooseModel: "Пожалуйста, выберите модель для беседы",
+    needToAddModel: "Вам нужно добавить модель, чтобы начать беседу",
+    pwdOrAddrErr: "Неверный адрес или ключ",
+    notMemo: "Модель не запомнит предыдущую беседу",
   },
   theme: {
     switchTo: (mod) =>

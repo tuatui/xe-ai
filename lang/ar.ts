@@ -38,7 +38,8 @@ export default {
     copy: "نسخ",
   },
   action: {
-    deleteSome: (item: string) => `تم حذف "${item}"`,
+    deleteSome: (item) => `تم حذف "${item}"`,
+    ask: (name) => `اسأل ${name || "AI"}`,
   },
   aria: {
     sideNav: "شريط التنقل الجانبي",
@@ -56,6 +57,8 @@ export default {
     send: "إرسال",
     inputTips: "اكتب سؤالك هنا",
     scrollToBottom: "التمرير إلى الأسفل",
+    memo: "ذاكرة المحادثة",
+    prompt: "الكلمة المفتاحية",
   },
   setting: {
     apiUrl: "عنوان مزود الخدمة",
@@ -117,6 +120,11 @@ export default {
     primaryModelEmp: "لا توجد بيانات، يرجى إضافة نموذج واحد على الأقل",
     botModulesEmp:
       "لا توجد بيانات، حاول الحصول على نموذج في واجهة تحرير النموذج",
+    addBotAndSelect: "يرجى إضافة بوت واختيار نموذج",
+    chooseModel: "يرجى اختيار النموذج للمحادثة",
+    needToAddModel: "تحتاج إلى إضافة نموذج لبدء المحادثة",
+    pwdOrAddrErr: "العنوان أو المفتاح غير صحيح",
+    notMemo: "لن يتذكر النموذج المحادثة السابقة",
   },
   theme: {
     switchTo: (mod) => `التبديل إلى الوضع ${["تلقائي", "فاتح", "داكن"][mod]}`,
