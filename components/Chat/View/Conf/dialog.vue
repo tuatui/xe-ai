@@ -18,6 +18,7 @@
           <VSelect
             variant="outlined"
             :items="bots"
+            :no-data-text="$L.tips.botsEmp"
             v-model="selectedBot"
             @update:model-value="selectedModel = undefined"
             :item-props="(item) => ({ title: item.nickName })"
@@ -37,6 +38,7 @@
           </VSelect>
           <VSelect
             variant="outlined"
+            :no-data-text="$L.tips.botModulesEmp"
             :items="modelList"
             v-model="selectedModel"
             :item-props="

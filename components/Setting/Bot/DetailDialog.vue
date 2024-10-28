@@ -4,7 +4,7 @@
     class="max-w-[max(40dvw,700px)]"
     @after-leave="$emit('leave')"
   >
-    <VForm @submit.prevent>
+    <VForm @submit.prevent="handleUpdate">
       <VCard>
         <template v-slot:title>
           <VCardTitle class="!flex items-center justify-between">
@@ -17,6 +17,7 @@
         </template>
         <VCardText class="overflow-auto">
           <VSelect
+            :label="$L.model.provider"
             v-model="botsInfoClone.provider"
             :items="Services"
             :item-props="
@@ -27,6 +28,8 @@
             "
           />
           <VTextField
+            type="url"
+            :rules="[(s) => (s ? true : $L.tips.mustExist)]"
             v-model="botsInfoClone.apiUrl"
             :label="$L.setting.apiUrl"
             placeholder="https://"
@@ -39,12 +42,14 @@
           <VTextField
             v-model="botsInfoClone.secretKey"
             type="password"
+            :rules="[(s) => (s ? true : $L.tips.mustExist)]"
             autocomplete="one-time-code"
             :label="$L.model.secretKey"
           />
 
           <div class="flex gap-col-4 flex-wrap mb6">
             <VCombobox
+              :rules="[(s) => (s?.length ? true : $L.tips.mustExist)]"
               :label="$L.common.model"
               :hide-no-data="false"
               v-model:search="modelSearch"
@@ -91,7 +96,9 @@
           </div>
           <VSelect
             v-model="botsInfoClone.primaryModel"
+            :rules="[(s) => (s ? true : $L.tips.mustExist)]"
             :label="$L.setting.editModule.preferredModel"
+            :no-data-text="$L.tips.primaryModelEmp"
             clearable
             :items="botsInfoClone.availableModel"
             :item-props="
@@ -136,7 +143,6 @@
             type="submit"
             color="primary"
             :text="$L.common.submit"
-            @click="handleUpdate"
           />
         </VCardActions>
       </VCard>
@@ -144,6 +150,8 @@
   </VDialog>
 </template>
 <script setup lang="ts">
+import type { SubmitEventPromise } from "vuetify";
+
 const model = defineModel({ default: false });
 const props = defineProps<{ botInfo?: BotCreationData }>();
 const emit = defineEmits<{
@@ -156,7 +164,7 @@ const createBotsInfo = (): BotCreationData => ({
   nickName: "",
   secretKey: "",
   createTime: new Date(),
-  name: "chat-gpt-3.5",
+  name: "",
   availableModel: [],
   memoCount: undefined,
   primaryModel: undefined,
@@ -166,7 +174,9 @@ const createBotsInfo = (): BotCreationData => ({
     ? Services[props.botInfo.provider].info.defaultBaseUrl
     : Services[Provider.OpenAI].info.defaultBaseUrl,
 });
-const handleUpdate = () => {
+const handleUpdate = async (ev: SubmitEventPromise) => {
+  const res = await ev;
+  if (!res.valid) return;
   emit("newBotInfo", botsInfoClone.value);
   model.value = false;
 };
@@ -208,6 +218,7 @@ const handleGetModelList = async () => {
     isFetchingModelList.value = true;
     modelList.value = await session.getModelList();
   } catch (err) {
+    notificationStore().pushNotification({ content: "地址或密钥有误" });
     console.warn(err);
   } finally {
     isFetchingModelList.value = false;

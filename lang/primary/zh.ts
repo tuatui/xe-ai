@@ -111,6 +111,10 @@ const lang = {
     pwdIsDiff: "前后输入的密码不一致",
     doubleToRestore: "双击以恢复",
     copySuccess: "复制成功",
+    nodata: "没有数据",
+    botsEmp: "没有数据，请至少创建一个机器人",
+    primaryModelEmp: "没有数据，请至少添加一个模型",
+    botModulesEmp: "没有数据，尝试在编辑模型界面获取一下模型",
   },
   theme: {
     switchTo: (mod: ThemeMod) => `切换到${["自动", "浅色", "黑色"][mod]}模式`,
