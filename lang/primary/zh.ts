@@ -110,6 +110,7 @@ const lang = {
     pwdTooLooong: "密码过长",
     pwdIsDiff: "前后输入的密码不一致",
     doubleToRestore: "双击以恢复",
+    copySuccess: "复制成功",
   },
   theme: {
     switchTo: (mod: ThemeMod) => `切换到${["自动", "浅色", "黑色"][mod]}模式`,
