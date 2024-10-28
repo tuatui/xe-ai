@@ -1,5 +1,14 @@
 <template>
   <div class="w-full h-full flex items-center justify-center">
+    <VAppBar collapse v-if="isMobileScreen">
+      <template v-slot:prepend>
+        <VAppBarNavIcon @click="handleToggleNav" />
+      </template>
+
+      <VAppBarTitle>{{
+        data.topics[0]?.title || $L.chat.untitled
+      }}</VAppBarTitle>
+    </VAppBar>
     <div class="w-[min(100%,600px)] px4" :class="{ mta: isMobileScreen }">
       <VForm @submit.prevent="handleSubmit">
         <VTextField
@@ -17,14 +26,15 @@
       </VForm>
       <div
         class="text-body-2 text-medium-emphasis flex justify-between items-center gap-1"
+        :class="{ mb2: isMobileScreen }"
       >
         <XCommonBtn
           :ripple="false"
           icon
-          density="compact"
+          :density="isMobileScreen ? `comfortable` : `compact`"
+          :size="isMobileScreen ? undefined : `small`"
           rounded
           variant="text"
-          size="small"
           @click="isDetailDialogOpen = true"
           use-icon="i-mdi-robot"
           :use-tooltip="$L.setting.addModel"
@@ -33,10 +43,10 @@
         <XCommonBtn
           :ripple="false"
           icon
-          density="compact"
+          :density="isMobileScreen ? `comfortable` : `compact`"
+          :size="isMobileScreen ? undefined : `small`"
           rounded
           variant="text"
-          size="small"
           @click="handleConf"
           use-icon="i-mdi-message-settings-outline"
           :use-tooltip="$L.chat.setting"
@@ -45,10 +55,10 @@
         <XCommonBtn
           :ripple="false"
           icon
-          density="compact"
+          :density="isMobileScreen ? `comfortable` : `compact`"
+          :size="isMobileScreen ? undefined : `small`"
           rounded
           variant="text"
-          size="small"
           @click="handleNewTab"
           use-icon="i-mdi-plus"
           :use-tooltip="$L.chat.new"
@@ -81,9 +91,9 @@ const data =
 if (!globalTabs.has(uniqueKey)) globalTabs.set(uniqueKey, data);
 onUnmounted(() => globalTabs.delete(uniqueKey));
 
-const {
-  mobile: { isMobileScreen },
-} = defaultSettingSync();
+const { mobile } = storeToRefs(defaultSettingSync());
+const { isMobileScreen } = mobile.value;
+
 const { defaultBotInfo } = storeToRefs(defaultBotStore());
 
 const askText = (str?: string) => `问一问 ${str || "AI"}`;
@@ -198,4 +208,5 @@ const handleConf = async () => {
       preferModelName: res.newModelName,
     });
 };
+const handleToggleNav = () => (mobile.value.showNav = !mobile.value.showNav);
 </script>
