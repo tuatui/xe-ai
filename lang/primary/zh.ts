@@ -38,6 +38,7 @@ const lang = {
     copy: "复制",
     options: "操作",
     lineBreak: "换行",
+    about: "关于",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,

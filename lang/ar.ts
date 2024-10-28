@@ -38,6 +38,7 @@ export default {
     copy: "نسخ",
     options: "خيارات",
     lineBreak: "انتقال إلى السطر",
+    about: "حول",
   },
   action: {
     deleteSome: (item) => `تم حذف "${item}"`,

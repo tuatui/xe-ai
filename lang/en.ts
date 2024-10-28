@@ -37,6 +37,7 @@ export default {
     copy: "Copy",
     options: "Options",
     lineBreak: "Line break",
+    about: "About",
   },
   action: {
     deleteSome: (item) => `Deleted "${item}"`,

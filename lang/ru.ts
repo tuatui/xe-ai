@@ -37,6 +37,7 @@ export default {
     copy: "Копировать",
     options: "Опции",
     lineBreak: "Перенос строки",
+    about: "О программе",
   },
   action: {
     deleteSome: (item) => `Удалено "${item}"`,

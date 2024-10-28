@@ -64,6 +64,20 @@
               />
             </template>
           </VListItem>
+          <VListSubheader>{{ $L.common.about }}</VListSubheader>
+          <VListItem
+            @click="setting.enterToSend = !setting.enterToSend"
+            href="https://github.com/tuatui/xe-ai"
+            target="_blank"
+            title="Github"
+          >
+            <template v-slot:prepend>
+              <VAvatar icon="i-mdi-github" />
+            </template>
+            <template v-slot:append>
+              <VIcon icon="i-mdi-open-in-new" />
+            </template>
+          </VListItem>
         </div>
       </VList>
     </VCard>
