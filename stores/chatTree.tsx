@@ -177,12 +177,12 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
           ? (key) => {
               const meta = data.meta;
               if (meta) setTimeout(() => addTopicOneByOne(meta, key));
-              return createChatLeaf(key, meta?.type);
+              return <ChatTabsMobile uniqueKey={key} />;
             }
           : undefined,
         data.isVertical,
         [],
-        data.space,
+        1,
       );
     }
     for (const vt of data.children) {

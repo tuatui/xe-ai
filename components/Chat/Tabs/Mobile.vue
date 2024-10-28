@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <VAppBar>
+    <VAppBar :density="mobile.isMobileScreen ? `comfortable` : `compact`">
       <template v-slot:prepend>
         <VAppBarNavIcon @click="handleToggleNav" />
       </template>

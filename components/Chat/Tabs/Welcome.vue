@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full flex items-center justify-center">
-    <VAppBar collapse v-if="isMobileScreen">
+    <VAppBar collapse v-if="isMobileScreen" density="comfortable">
       <template v-slot:prepend>
         <VAppBarNavIcon @click="handleToggleNav" />
       </template>

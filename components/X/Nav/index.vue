@@ -12,7 +12,7 @@
   >
     <div class="h-full w-full flex flex-col">
       <VToolbar
-        :density="mobile.isMobileScreen ? `default` : `compact`"
+        :density="mobile.isMobileScreen ? `comfortable` : `compact`"
         class="!bg-inherit"
       >
         <XCommonBtn
