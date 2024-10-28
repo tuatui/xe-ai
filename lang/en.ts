@@ -32,6 +32,8 @@ export default {
     revocation: "Revocation",
     notSelected: "Not Selected",
     save: "Save",
+    layouts: "Layouts",
+    use: "Use",
   },
   action: {
     deleteSome: (item: string) => `Deleted "${item}"`,
@@ -74,6 +76,15 @@ export default {
       tip: "Changes here only affect the current topic",
     },
     user: "User",
+    layouts: {
+      name: "Layout Selection",
+      all: "All Layouts",
+      new: "New Layout",
+      empTitle: "No Layouts",
+      dataShowArea: "Will display here after adding a layout",
+      setAsDefault: "Set as Default",
+      memo: "Remember layout on close",
+    },
   },
   model: {
     config: "Configure Model",
@@ -98,5 +109,14 @@ export default {
     pwdTooShort: "Password must be at least 6 characters",
     pwdTooLooong: "Password too long",
     pwdIsDiff: "Passwords do not match",
+    doubleToRestore: "Double-click to restore",
+    copySuccess: "Copied successfully",
+    nodata: "No data",
+    botsEmp: "No data, please create at least one bot",
+    primaryModelEmp: "No data, please add at least one model",
+    botModulesEmp: "No data, try fetching a model in the edit model interface",
+  },
+  theme: {
+    switchTo: (mod) => `Switch to ${["Auto", "Light", "Dark"][mod]} mode`,
   },
 } satisfies BaseLang;

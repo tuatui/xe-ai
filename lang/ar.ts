@@ -1,4 +1,5 @@
 import type { BaseLang } from "./primary";
+
 export default {
   common: {
     chat: "دردشة",
@@ -32,6 +33,8 @@ export default {
     revocation: "إلغاء",
     notSelected: "لم يتم الاختيار",
     save: "حفظ",
+    layouts: "التخطيطات",
+    use: "استخدام",
   },
   action: {
     deleteSome: (item: string) => `تم حذف "${item}"`,
@@ -74,6 +77,15 @@ export default {
       tip: "التغييرات هنا تؤثر فقط على الموضوع الحالي",
     },
     user: "المستخدم",
+    layouts: {
+      name: "اختيار التخطيط",
+      all: "جميع التخطيطات",
+      new: "تخطيط جديد",
+      empTitle: "لا يوجد تخطيطات",
+      dataShowArea: "ستظهر هنا بعد إضافة التخطيط",
+      setAsDefault: "تعيين كافتراضي",
+      memo: "تذكر التخطيط عند الإغلاق",
+    },
   },
   model: {
     config: "تكوين النموذج",
@@ -96,5 +108,16 @@ export default {
     pwdTooShort: "كلمة المرور قصيرة جدًا",
     pwdTooLooong: "كلمة المرور طويلة جدًا",
     pwdIsDiff: "كلمات المرور غير متطابقة",
+
+    doubleToRestore: "انقر مرتين لاستعادة",
+    copySuccess: "تم النسخ بنجاح",
+    nodata: "لا توجد بيانات",
+    botsEmp: "لا توجد بيانات، يرجى إنشاء روبوت واحد على الأقل",
+    primaryModelEmp: "لا توجد بيانات، يرجى إضافة نموذج واحد على الأقل",
+    botModulesEmp:
+      "لا توجد بيانات، حاول الحصول على نموذج في واجهة تحرير النموذج",
+  },
+  theme: {
+    switchTo: (mod) => `التبديل إلى الوضع ${["تلقائي", "فاتح", "داكن"][mod]}`,
   },
 } satisfies BaseLang;

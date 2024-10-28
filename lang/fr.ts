@@ -33,6 +33,8 @@ export default {
     revocation: "Révocation",
     notSelected: "Non sélectionné",
     save: "Sauvegarder",
+    layouts: "Dispositions",
+    use: "Utiliser",
   },
   action: {
     deleteSome: (item: string) => `Supprimé "${item}"`,
@@ -75,6 +77,15 @@ export default {
       tip: "Les modifications ici affectent uniquement le sujet actuel",
     },
     user: "Utilisateur",
+    layouts: {
+      name: "Sélection de disposition",
+      all: "Toutes les dispositions",
+      new: "Nouvelle disposition",
+      empTitle: "Pas de dispositions",
+      dataShowArea: "S'affichera ici après ajout d'une disposition",
+      setAsDefault: "Définir par défaut",
+      memo: "Se souvenir de la disposition à la fermeture",
+    },
   },
   model: {
     config: "Configurer le modèle",
@@ -99,5 +110,16 @@ export default {
     pwdTooShort: "Le mot de passe doit contenir au moins 6 caractères",
     pwdTooLooong: "Mot de passe trop long",
     pwdIsDiff: "Les mots de passe ne correspondent pas",
+    doubleToRestore: "Double-cliquez pour restaurer",
+    copySuccess: "Copié avec succès",
+    nodata: "Aucune donnée",
+    botsEmp: "Aucune donnée, créez au moins un bot",
+    primaryModelEmp: "Aucune donnée, ajoutez au moins un modèle",
+    botModulesEmp:
+      "Aucune donnée, essayez de récupérer un modèle dans l'interface d'édition",
+  },
+  theme: {
+    switchTo: (mod) =>
+      `Passer en mode ${["Automatique", "Clair", "Sombre"][mod]}`,
   },
 } satisfies BaseLang;

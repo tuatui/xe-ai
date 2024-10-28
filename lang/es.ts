@@ -32,6 +32,8 @@ export default {
     revocation: "Revocar",
     notSelected: "No seleccionado",
     save: "Guardar",
+    layouts: "Diseños",
+    use: "Usar",
   },
   action: {
     deleteSome: (item: string) => `Eliminado "${item}"`,
@@ -74,6 +76,15 @@ export default {
       tip: "Estos cambios solo afectarán el tema actual",
     },
     user: "Usuario",
+    layouts: {
+      name: "Selección de diseño",
+      all: "Todos los diseños",
+      new: "Nuevo diseño",
+      empTitle: "No hay diseños",
+      dataShowArea: "Después de añadir un diseño, aparecerá aquí",
+      setAsDefault: "Establecer como predeterminado",
+      memo: "Recordar el diseño al cerrar",
+    },
   },
   model: {
     config: "Configurar modelo",
@@ -98,5 +109,16 @@ export default {
     pwdTooShort: "La contraseña debe tener al menos seis caracteres",
     pwdTooLooong: "Contraseña demasiado larga",
     pwdIsDiff: "Las contraseñas no coinciden",
+    doubleToRestore: "Doble clic para restaurar",
+    copySuccess: "Copiado con éxito",
+    nodata: "Sin datos",
+    botsEmp: "Sin datos, cree al menos un bot",
+    primaryModelEmp: "Sin datos, añada al menos un modelo",
+    botModulesEmp:
+      "Sin datos, intente obtener un modelo en la interfaz de edición",
+  },
+  theme: {
+    switchTo: (mod) =>
+      `Cambiar a modo ${["Automático", "Claro", "Oscuro"][mod]}`,
   },
 } satisfies BaseLang;
