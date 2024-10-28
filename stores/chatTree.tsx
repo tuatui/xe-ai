@@ -1,4 +1,4 @@
-import { ChatTabs, ChatTabsMobile } from "#components";
+import { ChatTabs, ChatTabsMobile, ChatTabsWelcome } from "#components";
 import { ViewTree, type ViewTreeWithMeta } from "#imports";
 
 export interface ChatTreeOrdinaryData {
@@ -20,12 +20,7 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       [
         new ViewTree(
           true,
-          (key) =>
-            defaultSettingSync().mobile.isMobileScreen ? (
-              <ChatTabsMobile uniqueKey={key} />
-            ) : (
-              <ChatTabs uniqueKey={key} />
-            ),
+          (key) => <ChatTabsWelcome uniqueKey={key} />,
           false,
           [],
           1,
@@ -67,10 +62,16 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
         focusedChat.chatTabsExpose.add(topic);
         break;
       }
-      if (!focusedChat.chatTabsExpose)
-        console.warn("存在标签页但是找不到可用的导出");
-
-      return;
+      if (focusedChat.chatTabsExpose) return;
+      else {
+        tree.value = new ViewTree(
+          true,
+          (key) => <ChatTabs uniqueKey={key} />,
+          false,
+          [],
+          1,
+        );
+      }
     }
     const newVT = new ViewTree(
       true,

@@ -87,4 +87,5 @@ export const bufferedOut = (
   })(),
   stop: (time: number = 1000) => ((stopFlag = true), (duration = time)),
   push: (str: string) => ((strBuff += str), (len = strBuff.length)),
+  clear: () => (strBuff = ""),
 });
