@@ -265,16 +265,13 @@ const handleConf = async () => {
       useBotData: res.newBot,
       useModelName: res.newModelName,
     };
-    await updateTopic(
-      {
-        id: props.topics.id,
-        preferSetting: {
-          preferBotID: res.newBot?.id,
-          preferModelName: res.newModelName,
-        },
+    await updateTopic({
+      id: props.topics.id,
+      preferSetting: {
+        preferBotID: res.newBot?.id,
+        preferModelName: res.newModelName,
       },
-      false,
-    );
+    });
     postWinMessage({
       updateSetting: {
         topicId: props.topics.id,
