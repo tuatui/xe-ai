@@ -72,6 +72,9 @@ export const toSnapshot = async ({
             mask: var(--un-icon) no-repeat;
           }
           ${careCssString}
+          .v-application {
+            display: block;
+          }
         </style>
       </head>
 
