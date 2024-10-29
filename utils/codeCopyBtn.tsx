@@ -41,18 +41,21 @@ export const createCodeCopyBtn = (el: HTMLElement) => {
   const title = useNuxtApp().$L.common.copy;
   for (const element of codeBlocks) {
     const pre = element.parentElement as HTMLPreElement;
-    pre.classList.add("relative");
 
+    const temp = document.createElement("template");
     render(
-      <button
-        class="absolute right-0 top-0 pa2 opacity-60"
-        onClick={(e) => handleCopy(e, element)}
-        title={title}
-      >
-        <div class="i-mdi-content-copy text-xl pointer-events-none " />
-        <div class="i-mdi-check-all text-xl hidden " />
-      </button>,
-      pre,
+      <div class="text-right h0">
+        <button
+          class="pa2 opacity-60"
+          onClick={(e) => handleCopy(e, element)}
+          title={title}
+        >
+          <div class="i-mdi-content-copy text-xl pointer-events-none " />
+          <div class="i-mdi-check-all text-xl hidden " />
+        </button>
+      </div>,
+      temp,
     );
+    pre.parentElement?.insertBefore(temp.firstChild!, pre);
   }
 };

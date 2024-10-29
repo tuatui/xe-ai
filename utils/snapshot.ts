@@ -82,7 +82,7 @@ export const toSnapshot = async ({
       </body> 
       <script>
         function cpy() {
-          var str = this.parentElement.firstChild.textContent;
+          var str = this.parentElement.nextElementSibling.textContent;
           if (window.navigator && window.navigator.clipboard)
             navigator.clipboard.writeText(str);
           else {
