@@ -6,6 +6,7 @@ export const enum ThemeMod {
 }
 export interface DefaultSetting {
   isNavRail: boolean;
+  useFullMDinput: boolean;
   themeMod: ThemeMod;
   enterToSend: boolean;
 }

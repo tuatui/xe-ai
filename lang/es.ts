@@ -38,6 +38,7 @@ export default {
     options: "Opciones",
     lineBreak: "Salto de línea",
     about: "Acerca de",
+    input: "Entrada",
   },
   action: {
     deleteSome: (item) => `Eliminado "${item}"`,
@@ -96,6 +97,8 @@ export default {
       sendImm: "¿Presionaste Enter para enviar el diálogo inmediatamente?",
       send: "Método de envío",
     },
+    mdInput:
+      "Habilitar sintaxis completa de MARKDOWN para el contenido que ingresas",
   },
   model: {
     config: "Configurar modelo",
@@ -132,6 +135,8 @@ export default {
     needToAddModel: "Necesitas añadir un modelo para comenzar la conversación",
     pwdOrAddrErr: "Dirección o clave incorrecta",
     notMemo: "El modelo no recordará la conversación anterior",
+    markdownCode:
+      "Al habilitarlo, el código XML debe estar entre bloques de código o bloques en línea, por ejemplo, `<script>a = 1</script>`",
   },
   theme: {
     switchTo: (mod) =>

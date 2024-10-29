@@ -64,6 +64,21 @@
               />
             </template>
           </VListItem>
+          <VListItem @click="setting.useFullMDinput = !setting.useFullMDinput">
+            <template v-slot:prepend>
+              <VAvatar icon="i-mdi-format-header-pound" />
+            </template>
+            <VListItemTitle>{{ $L.setting.mdInput }}</VListItemTitle>
+            <VListItemSubtitle>{{ $L.tips.markdownCode }}</VListItemSubtitle>
+            <template v-slot:append>
+              <VSwitch
+                hide-details
+                inset
+                v-model="setting.useFullMDinput"
+                color="primary"
+              />
+            </template>
+          </VListItem>
           <VListSubheader>{{ $L.common.about }}</VListSubheader>
           <VListItem
             @click="setting.enterToSend = !setting.enterToSend"

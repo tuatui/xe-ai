@@ -39,6 +39,7 @@ export default {
     options: "خيارات",
     lineBreak: "انتقال إلى السطر",
     about: "حول",
+    input: "إدخال",
   },
   action: {
     deleteSome: (item) => `تم حذف "${item}"`,
@@ -97,6 +98,7 @@ export default {
       sendImm: "هل قمت بالضغط على Enter لإرسال المحادثة على الفور؟",
       send: "طريقة الإرسال",
     },
+    mdInput: "تمكين التنسيق الكامل لـ MARKDOWN للمحتوى الذي تقوم بإدخاله",
   },
   model: {
     config: "تكوين النموذج",
@@ -132,6 +134,8 @@ export default {
     needToAddModel: "تحتاج إلى إضافة نموذج لبدء المحادثة",
     pwdOrAddrErr: "العنوان أو المفتاح غير صحيح",
     notMemo: "لن يتذكر النموذج المحادثة السابقة",
+    markdownCode:
+      "عند التمكين، يجب إحاطة كود XML بكتل كود أو كتل كود مضمنة، مثلًا `<script>a = 1</script>`",
   },
   theme: {
     switchTo: (mod) => `التبديل إلى الوضع ${["تلقائي", "فاتح", "داكن"][mod]}`,

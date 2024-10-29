@@ -39,6 +39,7 @@ const lang = {
     options: "操作",
     lineBreak: "换行",
     about: "关于",
+    input: "输入",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,
@@ -97,6 +98,7 @@ const lang = {
       memo: "记住上次关闭时的布局",
     },
     user: "用户",
+    mdInput: "为你输入的内容启用完整MARKDOWN语法",
   },
   model: {
     config: "配置模型",
@@ -131,6 +133,8 @@ const lang = {
     needToAddModel: "你需要添加模型才能开始对话",
     pwdOrAddrErr: "地址或密钥有误",
     notMemo: "模型不会记住在此之前的对话",
+    markdownCode:
+      "启用后需要使用代码块或行内代码块包裹xml代码，例如`<script>a = 1</script>`",
   },
   theme: {
     switchTo: (mod: ThemeMod) => `切换到${["自动", "浅色", "黑色"][mod]}模式`,

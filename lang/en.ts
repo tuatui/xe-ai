@@ -38,6 +38,7 @@ export default {
     options: "Options",
     lineBreak: "Line break",
     about: "About",
+    input: "Input",
   },
   action: {
     deleteSome: (item) => `Deleted "${item}"`,
@@ -96,6 +97,7 @@ export default {
       sendImm: "Did you press Enter to send the conversation immediately?",
       send: "Sending method",
     },
+    mdInput: "Enable full MARKDOWN syntax for the content you input",
   },
   model: {
     config: "Configure Model",
@@ -131,6 +133,8 @@ export default {
     needToAddModel: "You need to add a model to start the conversation",
     pwdOrAddrErr: "Incorrect address or key",
     notMemo: "The model will not remember the previous conversation",
+    markdownCode:
+      "Once enabled, XML code should be wrapped in code blocks or inline code blocks, e.g., `<script>a = 1</script>`",
   },
   theme: {
     switchTo: (mod) => `Switch to ${["Auto", "Light", "Dark"][mod]} mode`,

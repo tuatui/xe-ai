@@ -352,8 +352,16 @@ const updateHandle = async () => {
   }
 
   if (userInput.value) {
+    let context: string;
+    if (ds.setting.useFullMDinput) context = userInput.value;
+    else {
+      const temp = document.createElement("div");
+      temp.innerText = userInput.value;
+      context = temp.innerHTML;
+    }
+
     await data.value.updateChat({
-      context: userInput.value,
+      context,
       from: ChatRole.user,
     });
     postChatMsg(true, -1);

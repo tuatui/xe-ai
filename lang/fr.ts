@@ -39,6 +39,7 @@ export default {
     options: "Options",
     lineBreak: "Saut de ligne",
     about: "À propos",
+    input: "Entrée",
   },
   action: {
     deleteSome: (item) => `Supprimé "${item}"`,
@@ -98,6 +99,8 @@ export default {
         "Avez-vous appuyé sur Entrée pour envoyer la conversation immédiatement?",
       send: "Méthode d'envoi",
     },
+    mdInput:
+      "Activer la syntaxe MARKDOWN complète pour le contenu que vous saisissez",
   },
   model: {
     config: "Configurer le modèle",
@@ -135,6 +138,8 @@ export default {
       "Vous devez ajouter un modèle pour commencer la conversation",
     pwdOrAddrErr: "Adresse ou clé incorrecte",
     notMemo: "Le modèle ne se souviendra pas de la conversation précédente",
+    markdownCode:
+      "Une fois activé, le code XML doit être enveloppé dans des blocs de code ou des blocs de code en ligne, par exemple `<script>a = 1</script>`",
   },
   theme: {
     switchTo: (mod) =>

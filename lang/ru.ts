@@ -38,6 +38,7 @@ export default {
     options: "Опции",
     lineBreak: "Перенос строки",
     about: "О программе",
+    input: "Ввод",
   },
   action: {
     deleteSome: (item) => `Удалено "${item}"`,
@@ -96,6 +97,7 @@ export default {
       sendImm: "Вы нажали Enter, чтобы немедленно отправить разговор?",
       send: "Способ отправки",
     },
+    mdInput: "Включить полную синтаксис MARKDOWN для введенного вами контента",
   },
   model: {
     config: "Настроить модель",
@@ -132,6 +134,8 @@ export default {
     needToAddModel: "Вам нужно добавить модель, чтобы начать беседу",
     pwdOrAddrErr: "Неверный адрес или ключ",
     notMemo: "Модель не запомнит предыдущую беседу",
+    markdownCode:
+      "После включения XML-код должен быть заключен в блоки кода или встроенные блоки кода, например `<script>a = 1</script>`",
   },
   theme: {
     switchTo: (mod) =>
