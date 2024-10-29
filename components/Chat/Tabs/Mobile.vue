@@ -8,20 +8,28 @@
       <VAppBarTitle>{{
         data.topics[0]?.title || $L.chat.untitled
       }}</VAppBarTitle>
+      <template v-if="!mobile.isMobileScreen">
+        <VSpacer />
+        <VBtn
+          icon="i-mdi-close"
+          :title="$L.common.back"
+          @click="() => chatTreeStore().init()"
+        />
+      </template>
     </VAppBar>
-
-    <ChatView
-      v-if="data.topics[0]"
-      :key="data.topics[0].id"
-      :topics="data.topics[0]"
-      class="h-full"
-      v-model="data.isCollapse"
-      @update-title="(n) => (data.topics[0].title = n)"
-    />
+    <template v-if="data.topics[0]">
+      <ChatView
+        :key="data.topics[0].id"
+        :topics="data.topics[0]"
+        class="h-full"
+        v-model="data.isCollapse"
+        @update-title="(n) => (data.topics[0].title = n)"
+      />
+    </template>
   </div>
 </template>
 <script setup lang="tsx">
-import { LeafType } from "~/stores/chatTree";
+import { chatTreeStore, LeafType } from "~/stores/chatTree";
 import type { LeafComponentProps } from "~/types/adjustableView";
 
 const { uniqueKey } = defineProps<LeafComponentProps>();
@@ -43,6 +51,7 @@ data.value.expose = {
   getAll: () => data.value.topics,
   getCurr: () => data.value.topics[0],
 };
+focusedChatStore().chatTabsExpose = data.value.expose;
 const { mobile } = storeToRefs(defaultSettingSync());
 const handleToggleNav = () => (mobile.value.showNav = !mobile.value.showNav);
 </script>

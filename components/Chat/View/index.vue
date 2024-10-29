@@ -85,8 +85,9 @@
         />
         <VDivider />
         <div
-          class="bg-surface-light h-48px flex items-center px2 gap1 flex-wrap overflow-hidden"
+          class="bg-surface-light h-48px flex items-center px1 gap1 flex-wrap overflow-hidden"
         >
+          <div class="h-full w0"></div>
           <VBtn
             class="relative z-6 my1"
             prepend-icon="i-mdi-send"
@@ -112,7 +113,6 @@
             :use-tooltip="$L.chat.stop"
             tooltip-location="top"
           />
-          <div class="h-full w0"></div>
           <XCommonBtn
             icon
             density="comfortable"
@@ -144,7 +144,7 @@
             tooltip-location="top"
           />
           <VSpacer />
-          <div class="text-size-xs pr1">
+          <div class="text-size-xs pr1" v-if="!ds.mobile.isMobileScreen">
             <template v-if="ds.setting.enterToSend">
               <p class="mb0.5"><VKbd>ENTER</VKbd> {{ $L.chat.send }}</p>
               <p>
@@ -158,7 +158,7 @@
               <p><VKbd>ENTER</VKbd> {{ $L.common.lineBreak }}</p>
             </template>
           </div>
-          <div class="text-body-2 text-medium-emphasis ellipsis-text">
+          <div class="text-body-2 text-medium-emphasis ellipsis-text pr1">
             <VIcon icon="i-mdi-robot" size="small" />
             <p>{{ selectedBots?.nickName || $L.common.notSelected }}</p>
             <VIcon icon="i-mdi-brain" size="small" />
@@ -288,7 +288,7 @@ const handleConf = async () => {
     if (error) console.warn(error);
   }
 };
-
+const isCollapse = defineModel<boolean>({ default: false });
 const chatInputArea = ref<HTMLElement | null>(null);
 const inputAreaHeight = defineModel<number>("inputHeight", { default: 200 });
 const dragger = ref<HTMLElement | null>(null);
@@ -488,8 +488,6 @@ const takeSnapshot = async () => {
     title: props.topics.title || $L.chat.untitled,
   });
 };
-
-const isCollapse = defineModel<boolean>({ default: false });
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *

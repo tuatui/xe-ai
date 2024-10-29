@@ -38,7 +38,7 @@
       </div>
       <VDivider />
       <VSpacer v-show="isRail" />
-      <XNavList :is-hidden="isRail" @add-chat="(topic) => openNewChat(topic)" />
+      <XNavList :is-hidden="isRail" @add-chat="handleOpenNewChat" />
 
       <VDivider />
       <div class="flex flex-wrap box-border px1" :class="{ py1: isRail }">
@@ -73,6 +73,10 @@ const handleToggleNav = () => {
   if (!mobile.value.isMobileScreen)
     setting.value.isNavRail = !setting.value.isNavRail;
   else mobile.value.showNav = !mobile.value.showNav;
+};
+const handleOpenNewChat = (topic: TopicData) => {
+  openNewChat(topic);
+  if (mobile.value.isMobileScreen) mobile.value.showNav = !mobile.value.showNav;
 };
 const bgSurface = {
   "bg-surface-light": !mobile.value.isMobileScreen,

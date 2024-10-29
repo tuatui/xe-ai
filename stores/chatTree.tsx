@@ -95,14 +95,11 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       if (focusedChat.chatTabsExpose) return;
       else tree.value = new ViewTree(false);
     }
-    const newVT = new ViewTree(
-      true,
-      (key) => <ChatTabs uniqueKey={key} />,
-      false,
-      [],
-      1,
+    tree.value.children.push(
+      defaultSettingSync().mobile.isMobileScreen
+        ? new ViewTree(true, (key) => <ChatTabsMobile uniqueKey={key} />)
+        : new ViewTree(true, (key) => <ChatTabs uniqueKey={key} />),
     );
-    tree.value.children.push(newVT);
     await nextTick();
     focusedChat.chatTabsExpose?.add(topic);
   };
