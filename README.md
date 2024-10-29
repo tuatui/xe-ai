@@ -102,3 +102,10 @@ pnpm run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## TODO
+
+- add ESLint
+- add Gulp
+- add unit test
+- add e2e test
