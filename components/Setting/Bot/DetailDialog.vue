@@ -39,9 +39,8 @@
             autocomplete="name"
             :label="$L.common.name"
           />
-          <VTextField
+          <XInputPwd
             v-model="botsInfoClone.secretKey"
-            type="password"
             :rules="[(s) => (s ? true : $L.tips.mustExist)]"
             autocomplete="one-time-code"
             :label="$L.model.secretKey"
