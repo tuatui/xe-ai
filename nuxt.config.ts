@@ -82,11 +82,11 @@ export default defineNuxtConfig({
     // compressPublicAssets: true, // 启用br和gzip压缩
   },
   //  https://community.cloudflare.com/t/vite-stuck-in-build/696830/18
-  /* vite: {
+  vite: {
     css: {
       preprocessorOptions: { scss: { api: "modern-compiler" } },
     },
-  }, */
+  },
   /* devServer: {
     host: "0.0.0.0",
   }, */
