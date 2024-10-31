@@ -12,6 +12,7 @@
     <div class="w-[min(100%,600px)] px4" :class="{ mta: isMobileScreen }">
       <VForm @submit.prevent="handleSubmit">
         <VTextField
+          autofocus
           v-model="useInput"
           :placeholder
           class="![&_input]:placeholder:opacity-100"
