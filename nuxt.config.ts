@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     includeAssets: ["icons/favicon-apple-180.png", "icons/favicon.svg"],
     manifest: {
       name: "Xenon AI",
+      short_name: "Xe-AI",
       description: "Xe-AI is a user interface designed for ChatGPT api users",
       theme_color: "#3f51b5",
       icons: [
