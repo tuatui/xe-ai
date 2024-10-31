@@ -9,7 +9,7 @@ export default defineNuxtConfig({
         { charset: "utf-8" },
         {
           name: "description",
-          content: "Xe-AI is a website that provide AI chat server",
+          content: "Xe-AI is a user interface designed for ChatGPT api users",
         },
         {
           name: "viewport",
@@ -26,6 +26,7 @@ export default defineNuxtConfig({
           sizes: "any",
         },
         { rel: "apple-touch-icon", href: "icons/favicon-apple-180.png" },
+        { rel: "manifest", href: "manifest.webmanifest" },
       ],
       style: [
         {
@@ -40,8 +41,6 @@ export default defineNuxtConfig({
     transpile: ["trpc-nuxt"],
   },
   compatibilityDate: "2024-04-03",
-  // 这个功能目前还用不到
-  experimental: { appManifest: false },
   devtools: { enabled: true },
   modules: [
     "@pinia/nuxt",
@@ -55,19 +54,37 @@ export default defineNuxtConfig({
     strategies: "generateSW",
     registerType: "prompt",
     workbox: {
-      globPatterns: ["**/*.{js,css,html,png,svg}", "index.html", "/"],
+      globPatterns: ["**/*.{js,css,png,svg}", "index.html", "./"],
     },
-
+    includeAssets: ["icons/favicon-apple-180.png", "icons/favicon.svg"],
     manifest: {
       name: "Xenon AI",
-      short_name: "XeAI",
       description: "Xe-AI is a user interface designed for ChatGPT api users",
       theme_color: "#3f51b5",
       icons: [
         {
-          src: "icons/favicon.svg",
-          sizes: "any",
-          type: "image/svg+xml",
+          src: "icons/pwa-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: "icons/pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
+      ],
+      screenshots: [
+        {
+          sizes: "376x669",
+          src: "screenshot/mobile.png",
+          type: "image/png",
+          form_factor: "narrow",
+        },
+        {
+          sizes: "1920x954",
+          src: "screenshot/desktop.png",
+          type: "image/png",
+          form_factor: "wide",
         },
       ],
     },
