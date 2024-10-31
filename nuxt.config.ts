@@ -16,6 +16,7 @@ export default defineNuxtConfig({
           content:
             "width=device-width, initial-scale=1, interactive-widget=resizes-content",
         },
+        { name: "theme-color", content: "#3f51b5" },
       ],
       link: [
         {
@@ -48,7 +49,29 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "vuetify-nuxt-module",
     "unplugin-icons/nuxt",
+    "@vite-pwa/nuxt",
   ],
+  pwa: {
+    strategies: "generateSW",
+    registerType: "prompt",
+    workbox: {
+      globPatterns: ["**/*.{js,css,html,png,svg}", "index.html", "/"],
+    },
+
+    manifest: {
+      name: "Xenon AI",
+      short_name: "XeAI",
+      description: "Xe-AI is a user interface designed for ChatGPT api users",
+      theme_color: "#3f51b5",
+      icons: [
+        {
+          src: "icons/favicon.svg",
+          sizes: "any",
+          type: "image/svg+xml",
+        },
+      ],
+    },
+  },
   vuetify: {
     // 手动控制导入，以解决自带的类名和unocss冲突的问题
     moduleOptions: { disableVuetifyStyles: true },
