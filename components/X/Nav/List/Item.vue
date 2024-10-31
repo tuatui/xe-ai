@@ -1,12 +1,17 @@
 <template>
   <div>
     <div v-if="!isEdit" class="flex justify-between items-center nav-h-root">
-      <h2 class="grow v-list-item-title">{{ value }}</h2>
-      <VSpeedDial submenu location="right center" transition="scale-transition">
-        <template v-slot:activator="{ props: activatorProps }">
+      <h2 class="grow v-list-item-title" tabindex="0">{{ value }}</h2>
+      <VSpeedDial
+        submenu
+        location="right center"
+        transition="scale-transition"
+        v-model="isShow"
+      >
+        <template v-slot:activator="{ props }">
           <VBtn
-            v-bind="activatorProps"
-            :class="{ dialog: activatorProps['aria-expanded'] === 'false' }"
+            v-bind="props"
+            :class="{ dialog: !isShow }"
             size="small"
             icon="i-mdi-dots-vertical"
             variant="text"
@@ -16,6 +21,7 @@
         <XCommonBtn
           key="1"
           icon
+          :tabindex="isShow ? 0 : -1"
           @click="isEdit = true"
           use-icon="i-mdi-pencil"
           :use-tooltip="$L.common.edit"
@@ -24,6 +30,7 @@
         <XCommonBtn
           key="2"
           icon
+          :tabindex="isShow ? 0 : -1"
           color="error"
           @click="$emit('remove')"
           use-icon="i-mdi-delete"
@@ -55,6 +62,7 @@ const emit = defineEmits<{
   remove: [];
   update: [newVal: string];
 }>();
+const isShow = ref<boolean>(false);
 const valueCopy = ref(props.value);
 watch(
   () => props.value,
@@ -72,8 +80,7 @@ const handleEscape = () => {
 const isEdit = ref(false);
 </script>
 <style lang="css">
-.nav-h-root:not(:hover, :focus) .dialog {
-  opacity: 0.3;
+.nav-h-root:not(:hover, :focus) .v-btn:not(:focus).dialog {
   overflow: hidden;
   width: 0;
 }
