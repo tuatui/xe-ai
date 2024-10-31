@@ -34,15 +34,7 @@ const createChatLeaf = (
 export const chatTreeStore = defineStore("chat-tree-store", () => {
   const tabsStore = chatTabsStore();
   const focusedChat = focusedChatStore();
-  const tree = ref<ViewTree>(
-    new ViewTree(
-      false,
-      undefined,
-      false,
-      [new ViewTree(true, (key) => <ChatTabsWelcome uniqueKey={key} />)],
-      1,
-    ),
-  );
+  const tree = ref<ViewTree>(new ViewTree(false));
   const init = () => {
     tree.value.children = [
       new ViewTree(true, (key) =>
@@ -54,6 +46,16 @@ export const chatTreeStore = defineStore("chat-tree-store", () => {
       ),
     ];
   };
+  watch(
+    () => tree.value.children.length,
+    (len) => {
+      if (len !== 0) return;
+      tree.value.children = [
+        new ViewTree(true, (key) => <ChatTabsWelcome uniqueKey={key} />),
+      ];
+    },
+    { immediate: true },
+  );
   watch(
     () => defaultBotStore().defaultBotInfo,
     async (info) => {
