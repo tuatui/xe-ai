@@ -2,6 +2,9 @@
   "name": "nuxt-app",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">= 20"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -32,7 +35,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "@pinia/nuxt": "^0.5.3",
+    "@pinia/nuxt": "^0.6.0",
     "@prisma/client": "5.21.1",
     "@trpc/client": "^10.45.2",
     "@trpc/server": "^10.45.2",
