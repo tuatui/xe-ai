@@ -96,6 +96,7 @@
           v-for="(i, index) in data.topics"
           :key="i.id"
           class="h-full"
+          :class="{ '[&_*]:pointer-events-none': isDragging }"
         >
           <ChatView
             :topics="i"
