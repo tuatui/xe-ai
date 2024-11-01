@@ -4,8 +4,7 @@
 
 Aiming to create a user-friendly AI chat interface tailored for ChatGPT API users.
 
-特点：
-Features:
+## 特点 Features
 
 - 小，zstd压缩后首屏无缓存仅需300多kb
 - 快，打开一个新标签页只需要30ms
@@ -36,6 +35,18 @@ Features:
 - One-click export of chat history to an HTML file.
 - Cross-window communication for chats.
 - Development fatigue setting in… :)
+
+### 分屏 Split-screen
+
+![自由分屏.gif](https://www.freeimg.cn/i/2024/11/01/6724aa6a2d1c2.gif)
+
+### 保存布局 Save layouts
+
+![布局记忆.gif](https://www.freeimg.cn/i/2024/11/01/6724aa654ac2a.gif)
+
+### 深色主题 Dark themes
+
+![黑暗主题.gif](https://www.freeimg.cn/i/2024/11/01/6724aa3fb1248.gif)
 
 ## 开发进度 Development Progress
 
