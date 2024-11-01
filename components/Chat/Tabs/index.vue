@@ -84,9 +84,7 @@
     <div
       ref="dropZone"
       class="grow relative box-border overflow-hidden flex"
-      @dragover.prevent="handleDragOver"
-      @dragenter="dragCount++"
-      @dragleave="dragCount--"
+      @dragover.prevent="(e) => (handleDragOver(e), handleDragStatus())"
       @drop="handleDropEnd"
     >
       <VTabsWindow
@@ -110,7 +108,7 @@
         </VTabsWindowItem>
         <Transition>
           <div
-            v-if="dragCount"
+            v-if="isDragging"
             class="bg-secondary drag-overlay"
             :class="{ [dragOverlayType]: true }"
           ></div>
@@ -161,10 +159,21 @@ const handleClose = () => {
   const res = cutLeaf();
   globalTabs.delete(res);
 };
-const dragCount = ref(0);
 
+const isDragging = ref(false);
+let lastDragOver = () => {};
+const handleDragStatus = async () => {
+  lastDragOver();
+  isDragging.value = true;
+  const res = await new Promise<void>((resolve, reject) => {
+    lastDragOver = reject;
+    setTimeout(resolve, 100); // 或许 >=350ms ?
+  }).catch(() => 1);
+  if (res === 1) return;
+  isDragging.value = false;
+};
 const handleDropEnd = (ev: DragEvent) => {
-  dragCount.value--;
+  isDragging.value = false;
   const res = dragAndDropChat.getData(ev);
   if (!res) return;
   const el = dropZone.value;
