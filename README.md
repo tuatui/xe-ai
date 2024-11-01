@@ -38,15 +38,15 @@ Aiming to create a user-friendly AI chat interface tailored for ChatGPT API user
 
 ### 分屏 Split-screen
 
-![自由分屏.gif](https://www.freeimg.cn/i/2024/11/01/6724aa6a2d1c2.gif)
+![自由分屏.webp](https://pic.imgdb.cn/item/67251c68d29ded1a8cebce33.webp)
 
 ### 保存布局 Save layouts
 
-![布局记忆.gif](https://www.freeimg.cn/i/2024/11/01/6724aa654ac2a.gif)
+![布局记忆.webp](https://pic.imgdb.cn/item/67251c54d29ded1a8cebab36.webp)
 
 ### 深色主题 Dark themes
 
-![黑暗主题.gif](https://www.freeimg.cn/i/2024/11/01/6724aa3fb1248.gif)
+![黑暗主题.webp](https://pic.imgdb.cn/item/67251c65d29ded1a8cebc90a.webp)
 
 ## 开发进度 Development Progress
 
