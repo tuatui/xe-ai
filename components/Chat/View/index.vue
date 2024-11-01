@@ -187,8 +187,14 @@ if (!globalSharedChats.has(props.topics.id)) {
 
 onUnmounted(() => {
   if (data.value.chatRefCount === 1) {
-    globalSharedChats.delete(props.topics.id);
-    data.value.chatRefCount = 0;
+    setTimeout(() => {
+      if (data.value.chatRefCount > 1) {
+        data.value.chatRefCount--;
+        return;
+      }
+      globalSharedChats.delete(props.topics.id);
+      data.value.chatRefCount = 0;
+    });
   } else data.value.chatRefCount--;
 });
 
