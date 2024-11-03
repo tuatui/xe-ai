@@ -190,9 +190,15 @@ const handleDropEnd = (ev: DragEvent) => {
   else add(res.topic);
 
   if (splitRes)
-    nextTick().then(() =>
-      globalTabs.get(splitRes)?.value.expose?.add(res.topic),
-    );
+    nextTick().then(() => {
+      const tab = globalTabs.get(splitRes)?.value;
+      if (!tab) {
+        console.warn("找不到新增的tab");
+        return;
+      }
+      tab.expose?.add(res.topic);
+      if (ev.ctrlKey) tab.isCollapse = true;
+    });
 
   if (
     res.isMove &&
