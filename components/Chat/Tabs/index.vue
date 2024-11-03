@@ -5,16 +5,19 @@
     tabindex="0"
     ref="tabRootEl"
   >
-    <VSheet
-      class="!flex flex-row relative z-16 bg-primary"
-      elevation="4"
+    <div
+      class="flex flex-row relative z-16"
       :class="{
-        'tab-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
+        'text-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
       }"
     >
-      <VTabs v-model="data.currTab" show-arrows class="grow min-w-0">
+      <VTabs
+        v-model="data.currTab"
+        show-arrows
+        bg-color="primary"
+        class="grow min-w-0 [&+.v-window]:shrink-0"
+      >
         <VTab
-          class="tab-bg"
           :value="i.id"
           v-for="i in data.topics"
           :key="i.id"
@@ -47,40 +50,47 @@
             />
           </template>
         </VTab>
-      </VTabs>
-      <div class="flex-shrink-0 relative z-15">
-        <template v-if="viewSize.inlineSize > 300">
-          <ChatTabsBtnGroup
-            @handle-new-chat="handleNewChat"
-            @split-vert-handle="handleSplit(false, true)"
-            @split-horiz-handle="handleSplit(true, true)"
-            @close="handleClose"
-          />
-        </template>
-        <template v-else>
-          <VMenu open-on-hover open-on-click location="bottom end">
-            <template v-slot:activator="{ props }">
-              <VBtn
-                icon="i-mdi-dots-vertical"
-                variant="text"
-                v-bind="props"
-                :aria-label="$L.common.moreOptions"
+        <template #window>
+          <div class="bg-primary">
+            <template v-if="viewSize.inlineSize > 400">
+              <ChatTabsBtnGroup
+                @handle-new-chat="handleNewChat"
+                @split-vert-handle="handleSplit(false, true)"
+                @split-horiz-handle="handleSplit(true, true)"
+                @close="handleClose"
               />
             </template>
-            <VList>
-              <VListItem @click="handleNewChat">{{ $L.chat.new }}</VListItem>
-              <VListItem @click="handleSplit(false, true)">{{
-                $L.chat.splitRight
-              }}</VListItem>
-              <VListItem @click="handleSplit(true, true)">{{
-                $L.chat.splitDown
-              }}</VListItem>
-              <VListItem @click="handleClose">{{ $L.common.close }}</VListItem>
-            </VList>
-          </VMenu>
+            <template v-else>
+              <VMenu open-on-hover open-on-click location="bottom end">
+                <template v-slot:activator="{ props }">
+                  <VBtn
+                    icon="i-mdi-dots-vertical"
+                    variant="text"
+                    v-bind="props"
+                    :aria-label="$L.common.moreOptions"
+                  />
+                </template>
+                <VList>
+                  <VListItem @click="handleNewChat">{{
+                    $L.chat.new
+                  }}</VListItem>
+                  <VListItem @click="handleSplit(false, true)">{{
+                    $L.chat.splitRight
+                  }}</VListItem>
+                  <VListItem @click="handleSplit(true, true)">{{
+                    $L.chat.splitDown
+                  }}</VListItem>
+                  <VListItem @click="handleClose">{{
+                    $L.common.close
+                  }}</VListItem>
+                </VList>
+              </VMenu>
+            </template>
+          </div>
         </template>
-      </div>
-    </VSheet>
+      </VTabs>
+    </div>
+    <VDivider />
     <div
       ref="dropZone"
       class="grow relative box-border overflow-hidden flex"
@@ -298,15 +308,6 @@ watch(
 );
 </script>
 <style lang="scss" scoped>
-.tab-bg {
-  background: rgb(var(--v-theme-primary));
-}
-.tab-medium-emphasis {
-  color: rgb(
-    var(--v-theme-on-primary),
-    var(--v-medium-emphasis-opacity)
-  ) !important;
-}
 .drag-overlay {
   position: absolute;
   opacity: 0.3;
