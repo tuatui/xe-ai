@@ -13,9 +13,10 @@
     >
       <VTabs
         v-model="data.currTab"
-        show-arrows
-        bg-color="primary"
+        color="primary"
         class="grow min-w-0 [&+.v-window]:shrink-0"
+        :show-arrows="viewSize.inlineSize > 400 ? undefined : `desktop`"
+        :mobile-breakpoint="viewSize.inlineSize > 400 ? undefined : 9999"
       >
         <VTab
           :value="i.id"
@@ -36,7 +37,9 @@
               )
           "
         >
-          {{ i.title || $L.chat.untitled }}
+          <span class="text-truncate max-w80px">{{
+            i.title || $L.chat.untitled
+          }}</span>
           <template #append>
             <XCommonBtn
               variant="text"
@@ -51,8 +54,8 @@
           </template>
         </VTab>
         <template #window>
-          <div class="bg-primary">
-            <template v-if="viewSize.inlineSize > 400">
+          <div>
+            <template v-if="viewSize.inlineSize > 500">
               <ChatTabsBtnGroup
                 @handle-new-chat="handleNewChat"
                 @split-vert-handle="handleSplit(false, true)"
@@ -306,6 +309,21 @@ watch(
     setTimeout(() => tabRootEl.value && (tabRootEl.value.title = ""), 3000);
   },
 );
+
+let slideEl: HTMLDivElement | undefined | null = null;
+const mapVerScrollToHor = (e: WheelEvent) => {
+  if (!e.deltaY || !slideEl) return;
+  slideEl.scrollLeft -= e.deltaY;
+};
+onMounted(() => {
+  // TODO: 或许我们应该自制一个XTabs以取代VTabs
+  slideEl = tabRootEl.value?.querySelector(".v-slide-group__container");
+  slideEl?.addEventListener("wheel", mapVerScrollToHor, { passive: true });
+});
+onUnmounted(() => {
+  slideEl?.removeEventListener("wheel", mapVerScrollToHor);
+  slideEl = null;
+});
 </script>
 <style lang="scss" scoped>
 .drag-overlay {
