@@ -24,7 +24,10 @@
           :use-tooltip="isRail ? $L.tips.expandMenu : $L.tips.collapseMenu"
         />
       </VToolbar>
-      <div class="px4 py14px box-border" :class="{ px1: isRail, py2: isRail }">
+      <div
+        class="box-border"
+        :class="{ 'px1 py2': isRail, 'px4 py14px': !isRail }"
+      >
         <XCommonBtn
           class="overflow-hidden"
           :icon="isRail"
