@@ -19,6 +19,7 @@
         :mobile-breakpoint="viewSize.inlineSize > 400 ? undefined : 9999"
       >
         <VTab
+          class="!normal-case"
           :value="i.id"
           v-for="i in data.topics"
           :key="i.id"
@@ -37,9 +38,7 @@
               )
           "
         >
-          <span class="text-truncate max-w80px">{{
-            i.title || $L.chat.untitled
-          }}</span>
+          {{ i.title || $L.chat.untitled }}
           <template #append>
             <XCommonBtn
               variant="text"
