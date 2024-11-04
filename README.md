@@ -36,6 +36,10 @@ Aiming to create a user-friendly AI chat interface tailored for ChatGPT API user
 - Cross-window communication for chats.
 - Try the Web APP version at <https://pwa.xenoncore.cc/>
 
+### Lighthouse
+
+![Lighthouse](https://github.com/user-attachments/assets/d262d2c7-960d-49f3-9508-d8fe79fe88bf)
+
 ### 分屏 Split-screen
 
 [](https://github.com/user-attachments/assets/2363c857-c4ff-4665-a4ca-bce77775166a)
