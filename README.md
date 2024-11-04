@@ -4,14 +4,13 @@
 
 Aiming to create a user-friendly AI chat interface tailored for ChatGPT API users.
 
-特点：
-Features:
+## 特点 Features
 
 - 小，zstd压缩后首屏无缓存仅需300多kb
 - 快，打开一个新标签页只需要30ms
 - 流畅，充分利用本地缓存，最大可能减少卡顿感
 - 安全，不需要上传你的API密钥
-- 灵活，可以以静态文件部署，现在就可以在<https://xenoncore.pages.dev/>体验
+- 灵活，可以以静态文件部署，现在就可以在<https://chat.xenoncore.cc/>体验
 - 像VScode一样灵活分屏
 - 保存你的分屏布局，并随时恢复
 - 自适应多语言
@@ -20,13 +19,13 @@ Features:
 - 支持近两百种编程语言的高亮（使用highlight.js）
 - 支持一键导出当前聊天为html文件
 - 聊天跨窗口通讯
-- 肝不动了。。。
+- 在<https://pwa.xenoncore.cc/>试一试Web APP版本
 
 - Lightweight: Initial load is only around 300KB with zstd compression, even without - caching.
 - Fast: Opens a new tab in just 30ms.
 - Smooth: Fully utilizes local caching to minimize lag.
 - Secure: No need to upload your API key.
-- Flexible: Deployable as static files; try it now at <https://xenoncore.pages.dev/>.
+- Flexible: Deployable as static files; try it now at <https://chat.xenoncore.cc/>.
 - Split-screen interface, as flexible as VSCode.
 - Save and restore split-screen layouts.
 - Adaptive to multiple languages.
@@ -35,7 +34,19 @@ Features:
 - Syntax highlighting for nearly 200 programming languages (using highlight.js).
 - One-click export of chat history to an HTML file.
 - Cross-window communication for chats.
-- Development fatigue setting in… :)
+- Try the Web APP version at <https://pwa.xenoncore.cc/>
+
+### 分屏 Split-screen
+
+![自由分屏.webp](https://pic.imgdb.cn/item/67251c68d29ded1a8cebce33.webp)
+
+### 保存布局 Save layouts
+
+![布局记忆.webp](https://pic.imgdb.cn/item/67251c54d29ded1a8cebab36.webp)
+
+### 深色主题 Dark themes
+
+![黑暗主题.webp](https://pic.imgdb.cn/item/67251c65d29ded1a8cebc90a.webp)
 
 ## 开发进度 Development Progress
 

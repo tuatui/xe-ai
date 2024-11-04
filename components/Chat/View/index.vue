@@ -50,7 +50,6 @@
         </div>
       </div>
     </div>
-    <VDivider />
     <div class="view-dragger-parent">
       <div
         class="view-dragger offset-y"
@@ -65,6 +64,7 @@
         :style="{ height: `${inputAreaHeight}px` }"
         ref="chatInputArea"
       >
+        <VDivider />
         <VTextarea
           autofocus
           variant="solo"
@@ -293,7 +293,7 @@ const handleConf = async () => {
 };
 const isCollapse = defineModel<boolean>({ default: false });
 const chatInputArea = ref<HTMLElement | null>(null);
-const inputAreaHeight = defineModel<number>("inputHeight", { default: 200 });
+const inputAreaHeight = defineModel<number>("inputHeight", { default: 201 });
 const dragger = ref<HTMLElement | null>(null);
 const { isDragging } = useMouseDrag(
   dragger,
@@ -305,9 +305,9 @@ const { isDragging } = useMouseDrag(
       const { bottom, top } = el.getBoundingClientRect();
       const targetMinHeight = Math.min(
         bottom - Math.max(pos.y, top),
-        el.scrollHeight - 65 /* 为了不占满空间 */,
+        el.scrollHeight - 63 /* 为了不占满空间 */,
       );
-      inputAreaHeight.value = targetMinHeight < 102 ? 102 : targetMinHeight;
+      inputAreaHeight.value = Math.max(targetMinHeight, 102);
       if (isScrollToEnd.value)
         nextTick().then(
           () =>
