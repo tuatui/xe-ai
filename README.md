@@ -36,17 +36,21 @@ Aiming to create a user-friendly AI chat interface tailored for ChatGPT API user
 - Cross-window communication for chats.
 - Try the Web APP version at <https://pwa.xenoncore.cc/>
 
+### Lighthouse
+
+![Lighthouse](https://github.com/user-attachments/assets/d262d2c7-960d-49f3-9508-d8fe79fe88bf)
+
 ### 分屏 Split-screen
 
-![自由分屏.webp](https://pic.imgdb.cn/item/67251c68d29ded1a8cebce33.webp)
+[](https://github.com/user-attachments/assets/2363c857-c4ff-4665-a4ca-bce77775166a)
 
 ### 保存布局 Save layouts
 
-![布局记忆.webp](https://pic.imgdb.cn/item/67251c54d29ded1a8cebab36.webp)
+[](https://github.com/user-attachments/assets/e6ecd615-7a33-400c-870a-b49ba4d80683)
 
 ### 深色主题 Dark themes
 
-![黑暗主题.webp](https://pic.imgdb.cn/item/67251c65d29ded1a8cebc90a.webp)
+[](https://github.com/user-attachments/assets/77cbf8df-3b03-4003-9e07-8a90a46c591e)
 
 ## 开发进度 Development Progress
 

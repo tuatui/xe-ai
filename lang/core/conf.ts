@@ -17,7 +17,9 @@ export interface Locales {
    * 格式[ISO-639]-[ISO-3166]?
    */
   languages: string[];
+  dir?: NotificationDirection;
 }
+
 export const locales: Locales[] = [
   {
     code: "zh",
@@ -54,5 +56,6 @@ export const locales: Locales[] = [
     file: "ar.ts",
     name: "اَلْعَرَبِيَّةُ",
     languages: ["ar"],
+    dir: "rtl",
   },
 ];

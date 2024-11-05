@@ -31,8 +31,8 @@
           </div>
         </template>
       </article>
-      <div class="sticky bottom-0 w-[min(100%,calc(45rem+120px))] mxa h0">
-        <div class="absolute bottom-0 right-0 h48px mr2">
+      <div class="fab-btn-wrapper">
+        <div class="h48px">
           <VFab
             :title="$L.chat.scrollToBottom"
             class="w-full justify-end"
@@ -531,8 +531,12 @@ const takeSnapshot = async () => {
     }
   }
 }
+
 .btn-t {
   transform: translateX(-100%) scale(0.5);
+  [dir="rtl"] & {
+    transform: translateX(100%) scale(0.5);
+  }
   :first-child {
     transition: opacity 0.2s ease-in-out;
   }
@@ -551,5 +555,19 @@ const takeSnapshot = async () => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+.fab-btn-wrapper {
+  position: sticky;
+  bottom: 0;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+  width: min(100%, calc(52rem));
+  height: 0;
+
+  margin: 0 auto;
+  padding: 0 0.5rem;
 }
 </style>

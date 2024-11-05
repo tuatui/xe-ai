@@ -4,11 +4,9 @@
   </template>
   <template v-else>
     <div
-      class="flex w-full h-full"
+      class="flex w-full h-full rtl:flex-row-reverse"
       ref="viewParent"
-      :style="{
-        flexDirection: viewTree.isVertical ? 'column' : 'row',
-      }"
+      :class="{ '!flex-col': viewTree.isVertical }"
     >
       <template v-for="(vt, i) in viewTree.children" :key="vt.uniqueKey">
         <AdjustableView
@@ -313,6 +311,7 @@ const resizeNegotiate = (
   }
 }
 .view-dragger-parent {
+  direction: ltr;
   position: relative;
   .view-dragger {
     width: 100%;
