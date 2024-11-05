@@ -75,8 +75,9 @@ export class I18nManager {
       }
     }
   };
-  private setHtmlLangTag = (lang: string[]) => {
-    document.documentElement.lang = lang.slice(0, 1).pop() ?? "";
+  private setHtmlLangTag = (lang: string, dir?: NotificationDirection) => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = dir ?? "";
   };
 
   public setLang = async (lang: string, memo = true) => {
@@ -84,7 +85,10 @@ export class I18nManager {
       deepMerge(this.L.value, PrimaryLang);
       triggerRef(this.L);
       this.locale.value = this.primaryLocales;
-      this.setHtmlLangTag(this.locale.value.languages);
+      this.setHtmlLangTag(
+        this.locale.value.languages[0] ?? "",
+        this.locale.value.dir,
+      );
     } else {
       const locale = locales.find(({ code }) => code === lang);
       if (!locale)
@@ -98,7 +102,7 @@ export class I18nManager {
       triggerRef(this.L);
 
       this.locale.value = locale;
-      this.setHtmlLangTag(locale.languages);
+      this.setHtmlLangTag(locale.languages[0] ?? "", locale.dir);
     }
 
     if (memo)

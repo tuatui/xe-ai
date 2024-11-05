@@ -25,4 +25,9 @@
 </template>
 <script setup lang="ts">
 import { locales } from "~/lang/core/conf";
+const locale = useNuxtApp().$i18n.locale;
+const vLocal = useLocale();
+watch(locale, () => (vLocal.current.value = locale.value.code), {
+  immediate: true,
+});
 </script>
