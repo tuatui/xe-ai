@@ -24,9 +24,11 @@
   </VMenu>
 </template>
 <script setup lang="ts">
-import { locales } from "~/lang/core/conf";
+import { locales, VLangs } from "~/lang/core/conf";
 const locale = useNuxtApp().$i18n.locale;
 const vLocal = useLocale();
+vLocal.messages.value = VLangs;
+
 watch(locale, () => (vLocal.current.value = locale.value.code), {
   immediate: true,
 });

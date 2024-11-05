@@ -5,6 +5,11 @@ import "dayjs/locale/ru";
 import "dayjs/locale/es";
 import "dayjs/locale/ar";
 
+import type { LocaleMessages } from "vuetify";
+import { zhHans, en, fr, ru, es, ar } from "vuetify/locale";
+
+export const VLangs: LocaleMessages = { zh: zhHans, en, fr, ru, es, ar };
+
 export interface Locales {
   /**
    * 对应文件名字
