@@ -55,13 +55,7 @@
               v-model="botsInfoClone.availableModel"
               :loading="isFetchingModelList"
               :items="modelList"
-              :item-props="
-                (item) => ({
-                  title: item.name,
-                  subtitle: `${item.owner} ${item.provider}`,
-                  value: item.name,
-                })
-              "
+              :item-props="(i) => toModelListSelectItemProps(i)"
               clearable
               return-object
               chips
@@ -100,13 +94,7 @@
             :no-data-text="$L.tips.primaryModelEmp"
             clearable
             :items="botsInfoClone.availableModel"
-            :item-props="
-              (item) => ({
-                title: item.name,
-                subtitle: item.owner,
-                value: item.name,
-              })
-            "
+            :item-props="(i) => toModelListSelectItemProps(i)"
           />
           <!-- 是否需要引入vuetify/labs的VNumberInput? -->
           <VTextField

@@ -34,7 +34,7 @@ export const hidePartialStr = (
 const upperChar = /[A-Z]+/;
 const lowerChar = /[a-z]+/;
 const numberChar = /[0-9]+/;
-const specialChar = /[!-\/:-@[-`{-~]+/;
+const specialChar = /[!-/:-@[-`{-~]+/;
 export const testPasswordStrong = (pwd: string) => {
   let point = 0;
   if (pwd.length < 6) return point;
@@ -88,4 +88,10 @@ export const bufferedOut = (
   stop: (time: number = 1000) => ((stopFlag = true), (duration = time)),
   push: (str: string) => ((strBuff += str), (len = strBuff.length)),
   clear: () => (strBuff = ""),
+});
+
+export const toModelListSelectItemProps = (item: ModelList) => ({
+  title: item.name,
+  subtitle: ` ${item.provider ?? ""} ${item.owner}`,
+  value: item.name,
 });

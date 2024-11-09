@@ -41,13 +41,7 @@
             :no-data-text="$L.tips.botModulesEmp"
             :items="modelList"
             v-model="selectedModel"
-            :item-props="
-              (item) => ({
-                title: item.name,
-                subtitle: item.owner,
-                value: item.name,
-              })
-            "
+            :item-props="(i) => toModelListSelectItemProps(i)"
             :label="$L.common.model"
           />
         </VCardText>
