@@ -6,7 +6,7 @@
     ref="tabRootEl"
   >
     <div
-      class="flex flex-row relative z-16"
+      class="flex flex-row"
       :class="{
         'text-medium-emphasis': toRaw(focusedChat.chatTabsExpose) !== expose,
       }"
