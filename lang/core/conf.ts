@@ -4,11 +4,12 @@ import "dayjs/locale/fr";
 import "dayjs/locale/ru";
 import "dayjs/locale/es";
 import "dayjs/locale/ar";
+import "dayjs/locale/vi";
 
 import type { LocaleMessages } from "vuetify";
-import { zhHans, en, fr, ru, es, ar } from "vuetify/locale";
+import { zhHans, en, fr, ru, es, ar, vi } from "vuetify/locale";
 
-export const VLangs: LocaleMessages = { zh: zhHans, en, fr, ru, es, ar };
+export const VLangs: LocaleMessages = { zh: zhHans, en, fr, ru, es, ar, vi };
 
 export interface Locales {
   /**
@@ -62,5 +63,11 @@ export const locales: Locales[] = [
     name: "اَلْعَرَبِيَّةُ",
     languages: ["ar"],
     dir: "rtl",
+  },
+  {
+    code: "vi",
+    file: "vi.ts",
+    name: "tiếng Việt",
+    languages: ["vi"],
   },
 ];
