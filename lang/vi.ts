@@ -62,6 +62,8 @@ export default {
     scrollToBottom: "Cuộn xuống cuối",
     memo: "Ghi nhớ cuộc trò chuyện",
     prompt: "Nhắc nhở",
+    noVerLimit: "Không giới hạn độ rộng nội dung",
+    verLimit: "Giới hạn độ rộng nội dung",
   },
   setting: {
     apiUrl: "URL của nhà cung cấp",

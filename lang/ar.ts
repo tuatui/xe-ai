@@ -63,6 +63,8 @@ export default {
     scrollToBottom: "التمرير إلى الأسفل",
     memo: "ذاكرة المحادثة",
     prompt: "الكلمة المفتاحية",
+    noVerLimit: "لا حدود لعقود المحتوى",
+    verLimit: "حدود لعقود المحتوى",
   },
   setting: {
     apiUrl: "عنوان مزود الخدمة",

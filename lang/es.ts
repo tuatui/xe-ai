@@ -62,6 +62,8 @@ export default {
     scrollToBottom: "Desplazar al final",
     memo: "Memoria de conversación",
     prompt: "Palabra clave",
+    noVerLimit: "Sin límite en el ancho del contenido",
+    verLimit: "Límite en el ancho del contenido",
   },
   setting: {
     apiUrl: "URL del proveedor",

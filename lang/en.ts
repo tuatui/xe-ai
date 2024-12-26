@@ -62,6 +62,8 @@ export default {
     scrollToBottom: "Scroll to Bottom",
     memo: "Conversation memory",
     prompt: "Prompt",
+    noVerLimit: "No limit on content width",
+    verLimit: "Limit on content width",
   },
   setting: {
     apiUrl: "Provider URL",

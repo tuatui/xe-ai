@@ -63,6 +63,8 @@ export default {
     scrollToBottom: "Défiler vers le bas",
     memo: "Mémoire de conversation",
     prompt: "Mot-clé",
+    noVerLimit: "Pas de limite sur la largeur du contenu",
+    verLimit: "Limite de la largeur du contenu",
   },
   setting: {
     apiUrl: "Adresse du fournisseur",

@@ -6,7 +6,13 @@
       ref="contentBody"
       @scroll.passive="handleScroll"
     >
-      <article class="w-[min(100%,45rem)] mxa px2">
+      <article
+        class="mxa px2"
+        :class="{
+          'w-[min(100%,45rem)]': articleVerLimit,
+          'w-full': !articleVerLimit,
+        }"
+      >
         <template v-for="(i, index) in data.chats" :key="i.id">
           <ChatContentItem
             :is-scroll-to-end="isScrollToEnd"
@@ -139,8 +145,24 @@
             rounded
             variant="text"
             @click="isCollapse = true"
-            use-icon="i-mdi-arrow-collapse"
+            use-icon="i-mdi-arrow-collapse-vertical"
             :use-tooltip="$L.chat.collapse"
+            tooltip-location="top"
+          />
+          <XCommonBtn
+            icon
+            density="comfortable"
+            rounded
+            variant="text"
+            @click="articleVerLimit = !articleVerLimit"
+            :use-icon="
+              articleVerLimit
+                ? 'i-mdi-monitor-screenshot'
+                : 'i-mdi-cellphone-screenshot'
+            "
+            :use-tooltip="
+              articleVerLimit ? $L.chat.noVerLimit : $L.chat.verLimit
+            "
             tooltip-location="top"
           />
           <VSpacer />
@@ -499,6 +521,8 @@ const takeSnapshot = async () => {
     title: props.topics.title || $L.chat.untitled,
   });
 };
+
+const articleVerLimit = ref(true);
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *

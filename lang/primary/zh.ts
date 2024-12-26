@@ -63,6 +63,8 @@ const lang = {
     scrollToBottom: "滑至底部",
     memo: "对话记忆",
     prompt: "提示词",
+    noVerLimit: "不限制内容宽度",
+    verLimit: "限制内容宽度",
   },
   setting: {
     apiUrl: "服务提供商地址",

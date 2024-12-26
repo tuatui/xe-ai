@@ -62,6 +62,8 @@ export default {
     scrollToBottom: "Прокрутить вниз",
     memo: "Память беседы",
     prompt: "Подсказка",
+    noVerLimit: "Нет ограничений на ширину содержимого",
+    verLimit: "Ограничение ширины содержимого",
   },
   setting: {
     apiUrl: "URL поставщика",
