@@ -312,7 +312,7 @@ watch(
 let slideEl: HTMLDivElement | undefined | null = null;
 const mapVerScrollToHor = (e: WheelEvent) => {
   if (!e.deltaY || !slideEl) return;
-  slideEl.scrollLeft -= e.deltaY;
+  slideEl.scrollLeft += e.deltaY;
 };
 onMounted(() => {
   // TODO: 或许我们应该自制一个XTabs以取代VTabs
