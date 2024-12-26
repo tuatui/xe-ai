@@ -85,7 +85,14 @@
           @keydown.enter="
             (e: KeyboardEvent) => {
               if (e.ctrlKey === !ds.setting.enterToSend) updateHandle();
-              else if (e.ctrlKey) userInput += `\n`;
+              else if (e.ctrlKey) {
+                const pos = (e.target as HTMLTextAreaElement).selectionEnd ?? 0;
+                userInput = `${userInput.slice(0, pos)}\n${userInput.slice(pos)}`;
+                nextTick(
+                  () =>
+                    ((e.target as HTMLTextAreaElement).selectionEnd = pos + 1),
+                );
+              }
             }
           "
         />
