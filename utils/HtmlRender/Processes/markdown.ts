@@ -7,6 +7,14 @@ for (const [alias, languageName] of langAliasAddition.entries()) {
   hljsCore.registerAliases([alias], { languageName });
 }
 
+// 注册常用的代码块platintext以减少请求
+hljsCore.registerLanguage("plaintext", () => ({
+  name: "Plain text",
+  aliases: ["text", "txt"],
+  disableAutodetect: true,
+  contains: [],
+}));
+
 // 😅
 const langPack = ["xml", "javascript", "typescript", "css", "scss"];
 let isLangPackInstalled = false;
@@ -34,9 +42,6 @@ const analyzeAndImport = async (lang: string) => {
       `../../../node_modules/highlight.js/es/languages/${target}.js`
     );
     hljsCore.registerLanguage(target, res.default);
-  } else if (!hljsCore.getLanguage("plaintext")) {
-    const res = await import(`highlight.js/lib/languages/plaintext`);
-    hljsCore.registerLanguage("plaintext", res.default);
   }
 };
 const marked = new Marked(
