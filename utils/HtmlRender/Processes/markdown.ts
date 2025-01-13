@@ -20,21 +20,6 @@ const langPack = ["xml", "javascript", "typescript", "css", "scss"];
 let isLangPackInstalled = false;
 
 const analyzeAndImport = async (lang: string) => {
-  if (!isLangPackInstalled) {
-    const res = await Promise.all(
-      langPack.map(
-        (lang) =>
-          import(`../../../node_modules/highlight.js/es/languages/${lang}.js`),
-      ),
-    );
-    if (!isLangPackInstalled) {
-      langPack.forEach((each, i) =>
-        hljsCore.registerLanguage(each, res[i].default),
-      );
-      hljsCore.registerLanguage("vue", hljsDefineVue);
-    }
-    isLangPackInstalled = true;
-  }
   if (hljsCore.getLanguage(lang)) return;
   const target = langAliasMap.get(lang);
   if (target !== undefined) {
@@ -42,6 +27,23 @@ const analyzeAndImport = async (lang: string) => {
       `../../../node_modules/highlight.js/es/languages/${target}.js`
     );
     hljsCore.registerLanguage(target, res.default);
+    if (!isLangPackInstalled) {
+      const res = await Promise.all(
+        langPack.map(
+          (lang) =>
+            import(
+              `../../../node_modules/highlight.js/es/languages/${lang}.js`
+            ),
+        ),
+      );
+      if (!isLangPackInstalled) {
+        langPack.forEach((each, i) =>
+          hljsCore.registerLanguage(each, res[i].default),
+        );
+        hljsCore.registerLanguage("vue", hljsDefineVue);
+      }
+      isLangPackInstalled = true;
+    }
   }
 };
 const marked = new Marked(
