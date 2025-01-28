@@ -417,7 +417,6 @@ const updateHandle = async () => {
   const { out, push, stop } = bufferedOut();
 
   try {
-    data.value.isProducing = true;
     data.value.isChatting = true;
 
     const chatLimit = selectedBots.value?.memoCount ?? 0;
@@ -463,6 +462,7 @@ const updateHandle = async () => {
     })();
 
     data.value.stopChatting = chatSteam.stop;
+    data.value.isProducing = true;
     for await (const { context } of chatSteam) {
       push(context);
       updateDebounced(data, chat);
