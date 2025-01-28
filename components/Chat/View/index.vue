@@ -272,10 +272,11 @@ watch(
   async (newSetting) => {
     selectedBots.value = newSetting?.useBotData;
     selectedModel.value = newSetting?.useModelName;
-    chatSession = null;
   },
   { immediate: true },
 );
+
+watch(selectedBots, () => (chatSession = null), { deep: true });
 
 watch(
   () => data.value.tempStore.shareEvent,
