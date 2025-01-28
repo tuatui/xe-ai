@@ -36,6 +36,7 @@
             <div v-once>{{ $L.tips.notMemo }}</div>
           </div>
         </template>
+        <ChatViewErrorTag ref="errTag" />
       </article>
       <div class="fab-btn-wrapper">
         <div class="h48px">
@@ -199,12 +200,15 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { ChatViewErrorTag } from "#build/components";
+
 const props = defineProps<{ topics: TopicData }>();
 const emit = defineEmits<{ updateTitle: [newTitle: string]; close: [] }>();
 const userInput = ref("");
 const { globalSharedChats, postWinMessage } = chatsStore();
 const { updateTopic } = topicStore();
 const ds = defaultSettingSync();
+const errTag = ref<InstanceType<typeof ChatViewErrorTag>>();
 
 const data =
   globalSharedChats.get(props.topics.id) || useChats(props.topics.id);
@@ -375,12 +379,13 @@ const postChatStopMsg = () =>
   postWinMessage({ stopChat: { topicId: props.topics.id } });
 
 const updateHandle = async () => {
+  errTag.value?.clear();
   if (!selectedBots.value || selectedModel.value === undefined) return;
   if (data.value.isProducing || data.value.isChatting) return;
 
-  if (data.value.chats.length === 0) {
+  if (data.value.chats.length === 0 && selectedBots.value.prompt) {
     await data.value.updateChat({
-      context: selectedBots.value?.prompt ?? "",
+      context: selectedBots.value.prompt,
       from: ChatRole.system,
     });
     postChatMsg(true, -1);
@@ -462,7 +467,11 @@ const updateHandle = async () => {
       updateDebounced(data, chat);
     }
     stop();
-  } catch (error) {
+  } catch (error: any) {
+    errTag.value?.push(
+      error?.code ?? "Error",
+      error?.message ?? JSON.stringify(error),
+    );
   } finally {
     data.value.isProducing = false;
     data.value.isChatting = false;
