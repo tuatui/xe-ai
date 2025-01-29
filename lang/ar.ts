@@ -65,6 +65,7 @@ export default {
     prompt: "الكلمة المفتاحية",
     noVerLimit: "لا حدود لعقود المحتوى",
     verLimit: "حدود لعقود المحتوى",
+    reasoningDetail: ["جارٍ التفكير...", "عرض المسودة", "إخفاء المسودة"],
   },
   setting: {
     apiUrl: "عنوان مزود الخدمة",

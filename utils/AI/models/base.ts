@@ -7,6 +7,8 @@ export enum Provider {
 
 export interface ChatChunk {
   context: string;
+  /* 思维链模型可能具有此字段，用于显示推理内容 */
+  reasoning_content: string | null | undefined;
   [key: string]: unknown;
 }
 

@@ -65,6 +65,7 @@ const lang = {
     prompt: "提示词",
     noVerLimit: "不限制内容宽度",
     verLimit: "限制内容宽度",
+    reasoningDetail: ["推理中...", "查看草稿", "隐藏草稿"],
   },
   setting: {
     apiUrl: "服务提供商地址",

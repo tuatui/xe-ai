@@ -52,7 +52,7 @@
     "@mdi/font": "^7.4.47",
     "@types/dompurify": "^3.0.5",
     "@types/jsonwebtoken": "^9.0.7",
-    "@unocss/nuxt": "^0.62.3",
+    "@unocss/nuxt": "^65.4.3",
     "@vueuse/core": "^11.0.3",
     "@vueuse/nuxt": "^11.0.3",
     "dayjs": "^1.11.13",
@@ -72,9 +72,9 @@
     "sass-embedded": "1.79.3",
     "temml": "^0.10.29",
     "type-fest": "^4.26.1",
-    "unocss": "^0.62.3",
+    "unocss": "^65.4.3",
     "unplugin-icons": "^0.19.3",
-    "vue-tsc": "^2.1.6",
+    "vue-tsc": "^2.2.0",
     "vuetify": "3.7.1",
     "vuetify-nuxt-module": "0.18.2"
   }

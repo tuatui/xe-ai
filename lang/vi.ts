@@ -64,6 +64,7 @@ export default {
     prompt: "Nhắc nhở",
     noVerLimit: "Không giới hạn độ rộng nội dung",
     verLimit: "Giới hạn độ rộng nội dung",
+    reasoningDetail: ["Đang suy luận...", "Xem bản nháp", "Ẩn bản nháp"],
   },
   setting: {
     apiUrl: "URL của nhà cung cấp",

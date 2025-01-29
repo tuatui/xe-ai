@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { presetUno, presetIcons } from "unocss";
+import { presetUno, presetIcons, transformerDirectives } from "unocss";
 
 export default defineNuxtConfig({
   app: {
@@ -70,6 +70,7 @@ export default defineNuxtConfig({
       // presetIcons({prefix: "") }
       presetIcons(),
     ],
+    transformers: [transformerDirectives()],
   },
   css: [
     "~/assets/vuetify/main.scss",

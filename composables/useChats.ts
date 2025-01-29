@@ -22,7 +22,12 @@ export type useChatReturn = Ref<{
   isChatting: boolean;
   isProducing: boolean;
   updateChat: (
-    data: { context: string; from: number; id?: number },
+    data: {
+      context: string;
+      from: number;
+      id?: number;
+      reasoningContent?: string;
+    },
     autoUpdateCache?: boolean,
   ) => Promise<number>;
   chatRefCount: number;
@@ -61,6 +66,7 @@ export const useChats = (topicId: number): useChatReturn => {
       context: string;
       from: number;
       id?: number;
+      reasoningContent?: string;
     },
     autoUpdateCache = true,
   ) => {

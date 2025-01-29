@@ -64,6 +64,7 @@ export default {
     prompt: "Prompt",
     noVerLimit: "No limit on content width",
     verLimit: "Limit on content width",
+    reasoningDetail: ["Reasoning...", "View Draft", "Hide Draft"],
   },
   setting: {
     apiUrl: "Provider URL",

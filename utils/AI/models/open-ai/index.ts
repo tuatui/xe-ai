@@ -1,3 +1,4 @@
+import type { UnknownRecord } from "type-fest";
 import type { ChatChunk, ChatService, ChatStream } from "../base";
 import { defaultChatSessionConf, Provider } from "../base";
 
@@ -16,7 +17,12 @@ class OpenAIStream implements ChatStream {
     const stream = this.steam;
     return (async function* () {
       for await (const chunk of stream)
-        yield { context: chunk.choices[0]?.delta?.content ?? "", chunk };
+        yield {
+          context: chunk.choices[0]?.delta?.content ?? "",
+          reasoning_content: (chunk.choices[0]?.delta as UnknownRecord)
+            ?.reasoning_content as undefined | string,
+          chunk,
+        };
     })();
   };
 }

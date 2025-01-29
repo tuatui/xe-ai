@@ -2,6 +2,7 @@ export interface ChatData {
   id: number;
   topicId: number;
   context: string;
+  reasoningContent?: string;
   from: ChatRole;
 }
 export type ChatCreationData = Omit<ChatData, "id"> &

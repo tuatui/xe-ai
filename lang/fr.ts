@@ -65,6 +65,11 @@ export default {
     prompt: "Mot-clé",
     noVerLimit: "Pas de limite sur la largeur du contenu",
     verLimit: "Limite de la largeur du contenu",
+    reasoningDetail: [
+      "Raisonnement en cours...",
+      "Voir le brouillon",
+      "Masquer le brouillon",
+    ],
   },
   setting: {
     apiUrl: "Adresse du fournisseur",

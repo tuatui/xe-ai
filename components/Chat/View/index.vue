@@ -415,10 +415,10 @@ const updateHandle = async () => {
   });
 
   const { out, push, stop } = bufferedOut();
-
+  const { out: reasonOut, push: pushReason, stop: stopReaBuff } = bufferedOut();
   try {
     data.value.isChatting = true;
-
+    postChatMsg(false, -1);
     const chatLimit = selectedBots.value?.memoCount ?? 0;
     if (!chatSession) {
       chatSession = await Services[
@@ -460,14 +460,23 @@ const updateHandle = async () => {
       postChatMsg(false, -1);
       data.value.tempStore.shareEvent = { title: meta.title };
     })();
+    (async () => {
+      for await (const str of reasonOut) {
+        chat.reasoningContent ??= "";
+        chat.reasoningContent += str;
+        postChatMsg(false, -1);
+      }
+      updateDebounced(data, chat);
+    })();
 
     data.value.stopChatting = chatSteam.stop;
     data.value.isProducing = true;
-    for await (const { context } of chatSteam) {
+    postChatMsg(false, -1);
+    for await (const { context, reasoning_content } of chatSteam) {
       push(context);
       updateDebounced(data, chat);
+      if (reasoning_content) pushReason(reasoning_content);
     }
-    stop();
   } catch (error: any) {
     errTag.value?.push(
       error?.code ?? "Error",
@@ -476,8 +485,9 @@ const updateHandle = async () => {
   } finally {
     data.value.isProducing = false;
     data.value.isChatting = false;
-
+    stopReaBuff(200);
     stop();
+    postChatMsg(false, -1);
   }
 };
 const updateDebounced = useDebounceFn(
@@ -487,6 +497,7 @@ const updateDebounced = useDebounceFn(
         context: chat.context,
         from: ChatRole.assistant,
         id: chat.id,
+        reasoningContent: chat.reasoningContent,
       },
       false,
     ),
