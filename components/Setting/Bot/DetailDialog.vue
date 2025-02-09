@@ -111,11 +111,32 @@
               }
             "
           />
-          <VTextarea
-            :label="$L.chat.prompt"
-            clearable
-            v-model="botsInfoClone.prompt"
-          />
+          <VRadioGroup inline v-model="botsInfoClone.promptType">
+            <VRadio
+              label="使用默认提示词"
+              :value="BotPrompt2Use.default"
+            ></VRadio>
+            <VRadio label="无提示词" :value="BotPrompt2Use.noPrompt"></VRadio>
+            <VRadio label="自定义" :value="BotPrompt2Use.custom"></VRadio>
+          </VRadioGroup>
+          <template v-if="botsInfoClone.promptType === BotPrompt2Use.custom">
+            <VTextarea
+              :label="$L.chat.prompt"
+              clearable
+              v-model="botsInfoClone.prompt"
+              hide-details
+            />
+          </template>
+          <VCheckbox
+            label="对话中显示提示词"
+            hide-details
+            v-model="botsInfoClone.showPrompt"
+          ></VCheckbox>
+          <VCheckbox
+            label="每轮对话开始时都带上提示词"
+            hide-details
+            v-model="botsInfoClone.addPromptEveryTime"
+          ></VCheckbox>
         </VCardText>
         <VDivider />
         <VCardActions>
@@ -164,6 +185,9 @@ const createBotsInfo = (): BotCreationData => ({
   apiUrl: props.botInfo?.provider
     ? Services[props.botInfo.provider].info.defaultBaseUrl
     : Services[Provider.OpenAI].info.defaultBaseUrl,
+  promptType: BotPrompt2Use.default,
+  addPromptEveryTime: false,
+  showPrompt: false,
 });
 const handleUpdate = async (ev: SubmitEventPromise) => {
   const res = await ev;
@@ -234,5 +258,10 @@ watch(
       owner: "user input",
     };
   },
+);
+watch(
+  () => botsInfoClone.value.promptType,
+  () => (botsInfoClone.value.promptType ??= BotPrompt2Use.default),
+  { immediate: true },
 );
 </script>

@@ -1,6 +1,6 @@
 export const XeAiMetaEleName = "xe-ai-chat-meta";
 export const chatMetaExamplePrompt =
-  '```\n你是一个Ai助手。\n首次回复需要提炼简短的标题，并在回答中插入<xe-ai-chat-meta title="[提炼出的标题]"/>\n```';
+  '```\n你是一个Ai助手。\n你需要按用户的语言回答问题，首次回复需要提炼简短的标题，并在回答最后插入<xe-ai-chat-meta title="[提炼出的标题]"/>\n```';
 
 interface XeAiChatMeta {
   title: string;

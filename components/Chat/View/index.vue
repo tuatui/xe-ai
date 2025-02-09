@@ -15,6 +15,7 @@
       >
         <template v-for="(i, index) in data.chats" :key="i.id">
           <ChatContentItem
+            v-if="selectedBots?.showPrompt || i.from !== ChatRole.system"
             :is-scroll-to-end="isScrollToEnd"
             :chat="i"
             @should-scroll="
@@ -384,12 +385,21 @@ const updateHandle = async () => {
   if (!selectedBots.value || selectedModel.value === undefined) return;
   if (data.value.isProducing || data.value.isChatting) return;
 
-  if (data.value.chats.length === 0 && selectedBots.value.prompt) {
-    await data.value.updateChat({
-      context: selectedBots.value.prompt,
-      from: ChatRole.system,
-    });
-    postChatMsg(true, -1);
+  if (
+    data.value.chats.length === 0 &&
+    selectedBots.value.promptType !== BotPrompt2Use.noPrompt
+  ) {
+    const prompt =
+      selectedBots.value.promptType !== BotPrompt2Use.custom
+        ? chatMetaExamplePrompt
+        : selectedBots.value.prompt;
+    if (prompt) {
+      await data.value.updateChat({
+        context: prompt,
+        from: ChatRole.system,
+      });
+      postChatMsg(true, -1);
+    }
   }
 
   if (userInput.value) {
@@ -433,8 +443,16 @@ const updateHandle = async () => {
         );
       }
     }
+
+    const sessionChatsData = data.value.chats.slice(-chatLimit);
+    if (
+      selectedBots.value.addPromptEveryTime &&
+      sessionChatsData[0].from !== ChatRole.system &&
+      data.value.chats[0].from === ChatRole.system
+    )
+      sessionChatsData.unshift(data.value.chats[0]);
     const chatSteam = await chatSession.createChat(
-      data.value.chats.slice(-chatLimit),
+      sessionChatsData,
       selectedModel.value,
     );
 

@@ -7,9 +7,17 @@ export interface BotsData {
   primaryModel: string | undefined | null;
   memoCount: number | undefined;
   prompt: string;
+  promptType: BotPrompt2Use | undefined | null;
+  addPromptEveryTime: boolean | undefined | null;
+  showPrompt: boolean | undefined | null;
   name: string;
   apiUrl: string;
   createTime: Date;
+}
+export enum BotPrompt2Use {
+  default = 0,
+  noPrompt,
+  custom,
 }
 export type BotCreationData = Omit<BotsData, "id"> &
   Pick<Partial<BotsData>, "id">;
