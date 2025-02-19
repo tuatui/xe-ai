@@ -89,6 +89,7 @@ export const bufferedOut = (
   push: (str: string) => ((strBuff += str), (len = strBuff.length)),
   clear: () => (strBuff = ""),
 });
+export type BufferedOut = ReturnType<typeof bufferedOut>;
 
 export const toModelListSelectItemProps = (item: ModelList) => ({
   title: item.name,

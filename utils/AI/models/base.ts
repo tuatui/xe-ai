@@ -1,4 +1,5 @@
 import type { VNode } from "vue";
+import type { UnknownRecord } from "type-fest";
 
 export enum Provider {
   OpenAI,
@@ -6,9 +7,9 @@ export enum Provider {
 }
 
 export interface ChatChunk {
-  context: string;
-  /* 思维链模型可能具有此字段，用于显示推理内容 */
-  reasoning_content: string | null | undefined;
+  index: number;
+  delta: ChatDeltaData;
+  finish_reason?: string | null;
   [key: string]: unknown;
 }
 
@@ -20,6 +21,32 @@ export interface ChatSessionConf {
 export const defaultChatSessionConf: Partial<ChatSessionConf> = {
   timeout: 120 * 1000, // 一些模型需要较长时间响应，例如o1
 };
+export enum ToolCallResStatus {
+  success,
+  error,
+}
+export interface ToolCallSuccessReturn {
+  code: ToolCallResStatus.success;
+  res: UnknownRecord;
+  id: string;
+}
+export interface ToolCallErrReturn {
+  code: ToolCallResStatus.error;
+  err: Error;
+  id: string;
+}
+export type ToolCallReturn = ToolCallSuccessReturn | ToolCallErrReturn;
+
+export type ChatDeltaData = Omit<ChatData, "id" | "topicId">;
+export interface ChatTool {
+  name: string;
+  icon: VNode;
+  defaultEnable?: boolean;
+  tool: unknown;
+  i18nKey: string;
+  exec: (data: ChatToolCall) => Promise<ToolCallReturn>;
+}
+
 export interface ChatService {
   readonly feature?: {
     isSupportIMG?: boolean;
@@ -31,6 +58,7 @@ export interface ChatService {
     icon: VNode;
     defaultBaseUrl: string;
   };
+  readonly tools: ChatTool[];
   createChatSession: (conf: Partial<ChatSessionConf>) => Promise<ChatSession>;
 }
 export interface ModelList {
@@ -42,7 +70,7 @@ export interface ChatStream extends AsyncIterable<ChatChunk> {
   stop: () => void;
 }
 export interface ChatSession {
-  createChat: (chatData: ChatData[], model: string) => Promise<ChatStream>;
+  createChat: (chatData: ChatData[], model: string) => ChatStream;
   formatMessage?: (chats: ChatData[]) => unknown;
   getModelList?: () => Promise<ModelList[]>;
 }

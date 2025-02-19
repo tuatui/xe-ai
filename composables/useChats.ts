@@ -1,3 +1,5 @@
+import type { ChatToolCall } from "~/utils";
+
 export interface UseChatTempStore {
   scrollTop?: number;
   chatSetting?: {
@@ -27,6 +29,9 @@ export type useChatReturn = Ref<{
       from: number;
       id?: number;
       reasoningContent?: string;
+      toolCalls?: ChatToolCall[];
+      toolCallId?: string;
+      provider: Provider;
     },
     autoUpdateCache?: boolean,
   ) => Promise<number>;
@@ -67,6 +72,9 @@ export const useChats = (topicId: number): useChatReturn => {
       from: number;
       id?: number;
       reasoningContent?: string;
+      provider: Provider;
+      toolCalls?: ChatToolCall[];
+      toolCallId?: string;
     },
     autoUpdateCache = true,
   ) => {

@@ -24,7 +24,9 @@ export class ChatLocal implements ChatInterface {
         id = await db.add(IDB_VAR.CHATS, toRawDeep(data));
       else {
         const oldVal = (await db.get(IDB_VAR.CHATS, data.id)) as ChatData;
-        const mergedVal = mergeDeep(oldVal, data);
+        const mergedVal = mergeDeep(oldVal, data) as ChatData;
+        if (mergedVal.toolCalls)
+          mergedVal.toolCalls = mergedVal.toolCalls.map((each) => toRaw(each));
         await db.put(IDB_VAR.CHATS, mergedVal);
       }
     } catch (error) {

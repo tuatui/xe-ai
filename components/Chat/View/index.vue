@@ -397,6 +397,7 @@ const updateHandle = async () => {
       await data.value.updateChat({
         context: prompt,
         from: ChatRole.system,
+        provider: selectedBots.value.provider,
       });
       postChatMsg(true, -1);
     }
@@ -414,6 +415,7 @@ const updateHandle = async () => {
     await data.value.updateChat({
       context,
       from: ChatRole.user,
+      provider: selectedBots.value.provider,
     });
     postChatMsg(true, -1);
     userInput.value = "";
@@ -424,8 +426,6 @@ const updateHandle = async () => {
       scrollToEnd(contentBody.value, { behavior: "instant" });
   });
 
-  const { out, push, stop } = bufferedOut();
-  const { out: reasonOut, push: pushReason, stop: stopReaBuff } = bufferedOut();
   try {
     data.value.isChatting = true;
     postChatMsg(false, -1);
@@ -445,77 +445,121 @@ const updateHandle = async () => {
     }
 
     const sessionChatsData = data.value.chats.slice(-chatLimit);
+    const currChatSessionProvider = selectedBots.value.provider;
     if (
       selectedBots.value.addPromptEveryTime &&
       sessionChatsData[0].from !== ChatRole.system &&
       data.value.chats[0].from === ChatRole.system
     )
       sessionChatsData.unshift(data.value.chats[0]);
-    const chatSteam = await chatSession.createChat(
+    const chatSteam = chatSession.createChat(
       sessionChatsData,
       selectedModel.value,
     );
 
-    const res = await data.value.updateChat({
-      context: "",
-      from: ChatRole.assistant,
-    });
-    postChatMsg(true, -1);
-    if (res < 0) throw new Error("Unable to update chat");
-    const chat = data.value.chats.findLast((c) => c.id === res);
-    if (chat === undefined) throw new Error("Unable to find chat");
-
-    (async () => {
-      for await (const str of out) {
-        postChatMsg(false, -1);
-        chat.context += str;
-      }
-      updateDebounced(data, chat);
-
-      const meta = findChatMeta(chat.context);
-      if (!meta) return;
-      await updateTopic({ id: chat.topicId, title: meta.title }, false);
-      postChatMsg(false, -1);
-      data.value.tempStore.shareEvent = { title: meta.title };
-    })();
-    (async () => {
-      for await (const str of reasonOut) {
-        chat.reasoningContent ??= "";
-        chat.reasoningContent += str;
-        postChatMsg(false, -1);
-      }
-      updateDebounced(data, chat);
-    })();
-
     data.value.stopChatting = chatSteam.stop;
     data.value.isProducing = true;
-    postChatMsg(false, -1);
-    for await (const { context, reasoning_content } of chatSteam) {
-      push(context);
-      updateDebounced(data, chat);
-      if (reasoning_content) pushReason(reasoning_content);
+
+    const sessionCtx: {
+      chatData: ChatData;
+      update: (delta: ChatChunk["delta"]) => void;
+      remove: () => void;
+      reasoningBuff?: BufferedOut;
+      contextBuff?: BufferedOut;
+    }[] = [];
+    for await (const { finish_reason, index, delta } of chatSteam) {
+      if (sessionCtx[index]) sessionCtx[index].update(delta);
+      else {
+        const nid = await data.value.updateChat({
+          provider: currChatSessionProvider,
+          ...structuredClone(delta),
+        });
+        postChatMsg(false, -1);
+        const cIndex = index;
+        sessionCtx[index] = {
+          chatData: data.value.chats.findLast(({ id }) => id === nid)!,
+          update: (delta) => {
+            const ctx = sessionCtx[cIndex];
+            if (delta.context) {
+              if (!ctx.contextBuff) {
+                ctx.contextBuff = bufferedOut();
+                const out = ctx.contextBuff.out;
+                (async () => {
+                  for await (const str of out) {
+                    postChatMsg(false, -1);
+                    ctx.chatData.context += str;
+                  }
+                  updateDebounced(data, ctx.chatData, currChatSessionProvider);
+                  const meta = findChatMeta(ctx.chatData.context);
+                  if (!meta) return;
+                  await updateTopic(
+                    { id: ctx.chatData.topicId, title: meta.title },
+                    false,
+                  );
+                  postChatMsg(false, -1);
+                  data.value.tempStore.shareEvent = { title: meta.title };
+                })();
+              }
+              ctx.contextBuff.push(delta.context);
+            }
+            if (delta.reasoningContent) {
+              if (!ctx.reasoningBuff) {
+                ctx.reasoningBuff = bufferedOut();
+                const rOut = ctx.reasoningBuff.out;
+                (async () => {
+                  for await (const str of rOut) {
+                    ctx.chatData.reasoningContent ??= "";
+                    ctx.chatData.reasoningContent += str;
+                    postChatMsg(false, -1);
+                  }
+                  updateDebounced(data, ctx.chatData, currChatSessionProvider);
+                })();
+              }
+            }
+            if (delta.toolCalls) {
+              ctx.chatData.toolCalls ??= [];
+              for (const [index, toolCall] of delta.toolCalls.entries()) {
+                if (!ctx.chatData.toolCalls[index])
+                  ctx.chatData.toolCalls[index] = { ...toolCall };
+                else ctx.chatData.toolCalls[index].arg += toolCall.arg;
+              }
+              postChatMsg(false, -1);
+              updateDebounced(data, ctx.chatData, currChatSessionProvider);
+            }
+          },
+          remove: () => {
+            const ctx = sessionCtx[cIndex];
+            ctx.contextBuff?.stop();
+            ctx.contextBuff = undefined;
+            ctx.reasoningBuff?.stop();
+            ctx.reasoningBuff = undefined;
+          },
+        };
+      }
+      if (finish_reason) sessionCtx[index].remove();
     }
+    sessionCtx.forEach((each) => each.remove());
   } catch (error: any) {
-    errTag.value?.push(
-      error?.code ?? "Error",
-      error?.message ?? JSON.stringify(error),
-    );
+    let msg = error?.message ?? JSON.stringify(error);
+    if (error.stack) msg += `\n${error.stack}`;
+    errTag.value?.push(error?.code ?? "Error", msg);
   } finally {
     data.value.isProducing = false;
     data.value.isChatting = false;
-    stopReaBuff(200);
-    stop();
     postChatMsg(false, -1);
   }
 };
 const updateDebounced = useDebounceFn(
-  (data: useChatReturn, chat: ChatData) =>
+  (data: useChatReturn, chat: ChatData, provider: Provider) =>
     data.value.updateChat(
       {
         context: chat.context,
         from: ChatRole.assistant,
         id: chat.id,
         reasoningContent: chat.reasoningContent,
+        provider,
+        toolCalls: chat.toolCalls,
+        toolCallId: chat.toolCallId,
       },
       false,
     ),

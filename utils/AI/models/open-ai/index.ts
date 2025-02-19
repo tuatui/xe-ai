@@ -1,37 +1,16 @@
-import type { UnknownRecord } from "type-fest";
+import { ChatRole, type ChatToolCall } from "~/utils/CRUD";
 import type { ChatChunk, ChatService, ChatStream } from "../base";
-import { defaultChatSessionConf, Provider } from "../base";
-
+import { defaultChatSessionConf, Provider, ToolCallResStatus } from "../base";
+import { tools } from "./tools";
 import { icon } from "./icon";
 
 import type OpenAI from "openai";
 import type { ClientOptions } from "openai";
-import type { Stream } from "openai/streaming.mjs";
 
-class OpenAIStream implements ChatStream {
-  constructor(
-    public steam: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>,
-  ) {}
-  stop = () => this.steam.controller.abort();
-  [Symbol.asyncIterator] = () => {
-    const stream = this.steam;
-    return (async function* () {
-      for await (const chunk of stream)
-        yield {
-          context: chunk.choices[0]?.delta?.content ?? "",
-          reasoning_content: (chunk.choices[0]?.delta as UnknownRecord)
-            ?.reasoning_content as undefined | string,
-          chunk,
-        };
-    })();
-  };
+// 兼容DeepSeek的reason格式
+interface DsReasonContent {
+  reasoning_content?: string;
 }
-
-const toOpenAiMessages = (chats: ChatData[]): OpenAiMessage[] =>
-  chats.map((chat) => ({
-    content: chat.context,
-    role: (ChatRole[chat.from] ?? "system") as keyof typeof ChatRole,
-  }));
 
 export type OpenAiMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
 export type GPTModel = OpenAI.Chat.ChatModel | (string & {});
@@ -41,6 +20,7 @@ export interface GPTChatChunk extends ChatChunk {
 }
 
 let OpenAIClass: typeof OpenAI | undefined = undefined;
+const OpenAIChatTools = tools.map((each) => each.tool);
 export const GPTChatService: ChatService = {
   info: {
     provider: "Open AI",
@@ -48,6 +28,7 @@ export const GPTChatService: ChatService = {
     icon,
     defaultBaseUrl: "https://api.openai.com/v1/",
   },
+  tools,
   createChatSession: async (conf) => {
     const finalConf: Partial<ClientOptions> = {
       // 目前服务端将不会直接保存用户的secret key，并且不代理用户的请求。
@@ -66,14 +47,18 @@ export const GPTChatService: ChatService = {
     const openAI = new OpenAIClass(finalConf);
 
     return {
-      async createChat(chats: ChatData[], model: GPTModel) {
+      createChat(chats: ChatData[], model: GPTModel) {
         const messages = toOpenAiMessages(chats);
-        const stream = await openAI.chat.completions.create({
-          model,
-          stream: true,
-          messages,
-        });
-        return new OpenAIStream(stream);
+
+        return new OpenAIStream(
+          {
+            model,
+            stream: true,
+            messages,
+            tools: OpenAIChatTools,
+          },
+          openAI,
+        );
       },
       formatMessage: toOpenAiMessages,
       getModelList: async () =>
@@ -85,3 +70,182 @@ export const GPTChatService: ChatService = {
     };
   },
 };
+class OpenAIStream implements ChatStream {
+  public completions;
+  public stop;
+  constructor(
+    public req: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming,
+    private cls: OpenAI,
+  ) {
+    const ac = new AbortController();
+    this.stop = () => ac.abort();
+    this.completions = cls.chat.completions.create(req, { signal: ac.signal });
+  }
+
+  [Symbol.asyncIterator] = () =>
+    async function* (this: OpenAIStream) {
+      let stream = await this.completions;
+      let isFinish = false;
+      const out = {
+        curr: 0,
+        get index(): number {
+          return out.curr++;
+        },
+      };
+
+      while (!isFinish) {
+        const toolCallList: ChatToolCall[] = [];
+        const currChatMsg: OpenAiMessage = { role: "assistant", content: "" };
+        const index = out.index;
+        for await (const chunk of stream) {
+          const chatChunk: ChatChunk = {
+            delta: {
+              context: "",
+              from: ChatRole.assistant,
+              provider: Provider.OpenAI,
+            },
+            index,
+            chunk,
+            accumulative: currChatMsg,
+          };
+          if (chunk.choices.length <= 0) {
+            yield chatChunk;
+            continue;
+          }
+          const { delta, finish_reason } = chunk.choices[0];
+          chatChunk.finish_reason = finish_reason;
+          if (!delta) {
+            yield chatChunk;
+            continue;
+          }
+          if (delta.content) {
+            chatChunk.delta.context = delta.content;
+            currChatMsg.content += delta.content;
+          }
+
+          if ((delta as DsReasonContent).reasoning_content) {
+            chatChunk.delta.reasoningContent = (
+              delta as DsReasonContent
+            ).reasoning_content;
+          }
+
+          if (Array.isArray(delta.tool_calls)) {
+            chatChunk.delta.toolCalls = delta.tool_calls
+              .map(({ index, function: newFunc, id, type }) => {
+                const func = toolCallList[index];
+                if (!newFunc) return;
+                const { arguments: arg = "", name } = newFunc;
+                if (!func) {
+                  if (!id || !type || !name) return;
+                  toolCallList[index] = { id, type, name, arg };
+                  return toolCallList[index];
+                } else {
+                  func.arg = arg;
+                  return func;
+                }
+              })
+              .filter((each) => each !== undefined);
+
+            if (!currChatMsg.tool_calls) currChatMsg.tool_calls = [];
+            toolCallList.forEach((tool, index) => {
+              if (!currChatMsg.tool_calls![index])
+                currChatMsg.tool_calls![index] = {
+                  function: { arguments: tool.arg, name: tool.name },
+                  id: tool.id,
+                  type: "function",
+                };
+              else
+                currChatMsg.tool_calls![index].function.arguments += tool.arg;
+            });
+          }
+
+          yield chatChunk;
+        }
+        if (!currChatMsg.tool_calls || currChatMsg.tool_calls.length === 0)
+          isFinish = true;
+        else {
+          this.req.messages.push(currChatMsg);
+
+          for (const [index, toolReturn] of (
+            await Promise.all(
+              currChatMsg.tool_calls.map(
+                ({
+                  function: { name: c_name, arguments: arg },
+                  id,
+                  type,
+                }): Promise<ToolCallReturn> => {
+                  const tool = tools.find(({ name }) => name === c_name);
+                  if (tool) return tool.exec({ id, arg, name: c_name, type });
+
+                  return Promise.resolve({
+                    code: ToolCallResStatus.error,
+                    err: new Error(`Tool:${c_name} is not exist. Skipping...`),
+                    id,
+                  });
+                },
+              ),
+            )
+          ).entries()) {
+            const toolCallId = toolCallList[index].id;
+            const toolCallChunk: ChatChunk = {
+              delta: {
+                context: "",
+                from: ChatRole.tool,
+                provider: Provider.OpenAI,
+                toolCallId,
+              },
+              index: out.index,
+            };
+            if (toolReturn.code === ToolCallResStatus.success)
+              toolCallChunk.delta.context = JSON.stringify(toolReturn.res);
+            else toolCallChunk.delta.context = errorFormatter(toolReturn.err);
+            console.log(toolReturn);
+            this.req.messages.push({
+              role: "tool",
+              content: toolCallChunk.delta.context,
+              tool_call_id: toolCallId,
+            });
+            yield toolCallChunk;
+          }
+
+          stream = await this.cls.chat.completions.create(this.req);
+        }
+      }
+    }.call(this);
+}
+
+const toOpenAiMessages = (chats: ChatData[]): OpenAiMessage[] =>
+  chats.map((chat): OpenAiMessage => {
+    const role = ChatRole[chat.from] as keyof typeof ChatRole;
+    if (role === "tool") {
+      return {
+        content: chat.context,
+        role: "tool",
+        tool_call_id: chat.toolCallId ?? chat.id.toString(),
+      };
+    } else if (role === "function") {
+      // 已经被OpenAI SDK标记为弃用
+      return {
+        content: chat.context,
+        role: "function",
+        name: "123",
+      };
+    } else if (role === "assistant") {
+      return {
+        role,
+        content: chat.context,
+        tool_calls: chat.toolCalls?.map(({ arg, id, name }) => ({
+          function: { arguments: arg, name },
+          id,
+          type: "function", // 目前只有"function"
+        })),
+      };
+    }
+    return {
+      content: chat.context,
+      role,
+    };
+  });
+
+const errorFormatter = (err: Error) => `${err.name}: ${err.message}
+  ${err.stack}]`;
