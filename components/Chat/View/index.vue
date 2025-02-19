@@ -518,7 +518,8 @@ const updateHandle = async () => {
             }
             if (delta.toolCalls) {
               ctx.chatData.toolCalls ??= [];
-              for (const [index, toolCall] of delta.toolCalls.entries()) {
+              for (const toolCall of delta.toolCalls) {
+                const index = toolCall.index;
                 if (!ctx.chatData.toolCalls[index])
                   ctx.chatData.toolCalls[index] = { ...toolCall };
                 else ctx.chatData.toolCalls[index].arg += toolCall.arg;

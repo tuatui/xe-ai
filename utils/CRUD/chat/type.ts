@@ -3,6 +3,7 @@ export interface ChatToolCall {
   arg: string;
   type: string;
   id: string;
+  index: number;
 }
 export type ChatData = {
   id: number;

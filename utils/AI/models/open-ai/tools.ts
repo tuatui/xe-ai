@@ -18,6 +18,7 @@ const JsTools: OpenAI.Chat.Completions.ChatCompletionTool = {
           \`sendResult2Chat\`的参数可以为是任何类型，但是必须可以被\`structuredClone\`函数拷贝。
           例如如果包含回调函数则会报错。如果传入被Proxy代理的对象也会报错，此时建议调用前使用\`JSON.parse(JSON.stringify())\`先处理一遍。
           \`sendError2Chat\`的参数只能是一个Error的实例。
+          注意：必须在代码结束时调用sendResult2Chat或sendError2Chat，否则代码不会结束并且会导致超时错误。console.log目前无法用于输出。
             `,
         },
       },

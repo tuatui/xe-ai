@@ -130,52 +130,48 @@ class OpenAIStream implements ChatStream {
           }
 
           if (Array.isArray(delta.tool_calls)) {
+            currChatMsg.tool_calls ??= [];
             chatChunk.delta.toolCalls = delta.tool_calls
               .map(({ index, function: newFunc, id, type }) => {
                 const func = toolCallList[index];
                 if (!newFunc) return;
                 const { arguments: arg = "", name } = newFunc;
+
                 if (!func) {
                   if (!id || !type || !name) return;
-                  toolCallList[index] = { id, type, name, arg };
+                  toolCallList[index] = { id, type, name, arg, index };
+                  currChatMsg.tool_calls![index] = {
+                    function: { arguments: arg, name },
+                    id,
+                    type: "function",
+                  };
                   return toolCallList[index];
                 } else {
                   func.arg = arg;
+                  currChatMsg.tool_calls![index].function.arguments += arg;
                   return func;
                 }
               })
               .filter((each) => each !== undefined);
-
-            if (!currChatMsg.tool_calls) currChatMsg.tool_calls = [];
-            toolCallList.forEach((tool, index) => {
-              if (!currChatMsg.tool_calls![index])
-                currChatMsg.tool_calls![index] = {
-                  function: { arguments: tool.arg, name: tool.name },
-                  id: tool.id,
-                  type: "function",
-                };
-              else
-                currChatMsg.tool_calls![index].function.arguments += tool.arg;
-            });
           }
 
           yield chatChunk;
         }
+
         if (!currChatMsg.tool_calls || currChatMsg.tool_calls.length === 0)
           isFinish = true;
         else {
           this.req.messages.push(currChatMsg);
-
           for (const [index, toolReturn] of (
             await Promise.all(
               currChatMsg.tool_calls.map(
-                ({
-                  function: { name: c_name, arguments: arg },
-                  id,
-                  type,
-                }): Promise<ToolCallReturn> => {
+                (
+                  { function: { name: c_name, arguments: arg }, id, type },
+                  index,
+                ): Promise<ToolCallReturn> => {
                   const tool = tools.find(({ name }) => name === c_name);
-                  if (tool) return tool.exec({ id, arg, name: c_name, type });
+                  if (tool)
+                    return tool.exec({ id, arg, name: c_name, type, index });
 
                   return Promise.resolve({
                     code: ToolCallResStatus.error,
@@ -199,7 +195,6 @@ class OpenAIStream implements ChatStream {
             if (toolReturn.code === ToolCallResStatus.success)
               toolCallChunk.delta.context = JSON.stringify(toolReturn.res);
             else toolCallChunk.delta.context = errorFormatter(toolReturn.err);
-            console.log(toolReturn);
             this.req.messages.push({
               role: "tool",
               content: toolCallChunk.delta.context,
