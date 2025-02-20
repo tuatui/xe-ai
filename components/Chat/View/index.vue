@@ -509,6 +509,7 @@ const updateHandle = async () => {
                   updateDebounced(data, ctx.chatData, currChatSessionProvider);
                 })();
               }
+              ctx.reasoningBuff.push(delta.reasoningContent);
             }
             if (delta.toolCalls) {
               ctx.chatData.toolCalls ??= [];
