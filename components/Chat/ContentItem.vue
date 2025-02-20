@@ -19,13 +19,7 @@ const enum ChatDetailStatus {
   hideDraft,
 }
 const mdBodyEl = ref<HTMLDivElement | null>();
-const props = defineProps<{
-  chat: ChatData;
-  isScrollToEnd?: boolean;
-}>();
-const emit = defineEmits<{
-  shouldScroll: [];
-}>();
+const props = defineProps<{ chat: ChatData }>();
 
 let isBusy = false;
 let shouldRerender = false;
@@ -45,8 +39,6 @@ const handleToHtml = async () => {
     shouldRerender = false;
     isBusy = true;
 
-    const shouldScroll = props.isScrollToEnd;
-
     const res = props.chat.context
       ? await render(props.chat.id, props.chat.context)
       : "";
@@ -56,8 +48,6 @@ const handleToHtml = async () => {
       await nextTick();
     }
     if (mdBodyEl.value) mdBodyEl.value.innerHTML = res;
-
-    if (shouldScroll) emit("shouldScroll");
 
     isBusy = false;
   } while (shouldRerender);

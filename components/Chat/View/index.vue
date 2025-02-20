@@ -5,9 +5,11 @@
       @dblclick="isCollapse = false"
       ref="contentBody"
       @scroll.passive="handleScroll"
+      @wheel="(ev) => ev.deltaY < 0 && (isStick2End = false)"
     >
       <article
         class="mxa px2"
+        ref="article"
         :class="{
           'w-[min(100%,45rem)]': articleVerLimit,
           'w-full': !articleVerLimit,
@@ -16,14 +18,7 @@
         <template v-for="(i, index) in data.chats" :key="i.id">
           <ChatContentItem
             v-if="selectedBots?.showPrompt || i.from !== ChatRole.system"
-            :is-scroll-to-end="isScrollToEnd"
             :chat="i"
-            @should-scroll="
-              () => {
-                scrollToEnd(contentBody!, { behavior: 'instant' });
-                isScrollToEnd = true;
-              }
-            "
             class="max-w-full text-wrap break-words mt16"
           />
           <div
@@ -44,8 +39,8 @@
           <VFab
             :title="$L.chat.scrollToBottom"
             class="w-full justify-end"
-            :active="!isScrollToEnd"
-            @click="scrollToEnd(contentBody!)"
+            :active="!isStick2End"
+            @click="handleScroll2End"
             variant="elevated"
             color="secondary"
             icon
@@ -343,12 +338,11 @@ const { isDragging } = useMouseDrag(
         el.scrollHeight - 63 /* 为了不占满空间 */,
       );
       inputAreaHeight.value = Math.max(targetMinHeight, 102);
-      if (isScrollToEnd.value)
-        nextTick().then(
-          () =>
-            contentBody.value &&
-            scrollToEnd(contentBody.value, { behavior: "instant" }),
-        );
+      if (!isStick2End.value) return;
+      nextTick().then(() => {
+        if (!contentBody.value) return;
+        scrollToEnd(contentBody.value, { behavior: "instant" });
+      });
     },
   },
 );
@@ -363,7 +357,7 @@ watch(
       return;
     scrollToEnd(contentBody.value, { behavior: "instant" });
     data.value.tempStore.scrollTop = contentBody.value.scrollTop;
-    isScrollToEnd.value = true;
+    isStick2End.value = true;
   },
   { once: true },
 );
@@ -574,12 +568,35 @@ const handleStopChat = () => {
 };
 
 const contentBody = ref<HTMLDivElement>();
-const isScrollToEnd = ref(true);
+const article = ref<HTMLElement>();
+let ignoreNextScrollEv = false;
+const articleResizeObz = new ResizeObserver(() => {
+  if (!contentBody.value || !isStick2End.value) return;
+  scrollToEnd(contentBody.value, { behavior: "instant" });
+  ignoreNextScrollEv = true;
+});
+onMounted(() => article.value && articleResizeObz.observe(article.value));
+onUnmounted(() => articleResizeObz.disconnect());
+
+const isStick2End = ref(true);
 const handleScroll = (ev: Event) => {
+  if (ignoreNextScrollEv) {
+    ignoreNextScrollEv = false;
+    return;
+  }
   const target = ev.target as HTMLDivElement;
-  isScrollToEnd.value =
+  isStick2End.value =
     Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) < 20;
   handleUpdateScrollStatus();
+};
+
+const handleScroll2End = () => {
+  if (!contentBody.value) return;
+  if (!data.value.isChatting) scrollToEnd(contentBody.value);
+  else {
+    scrollToEnd(contentBody.value, { behavior: "instant" });
+    isStick2End.value = true;
+  }
 };
 const handleUpdateScrollStatus = useDebounceFn(() => {
   data.value.tempStore.scrollTop = contentBody.value?.scrollTop;
