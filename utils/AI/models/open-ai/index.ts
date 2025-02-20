@@ -73,13 +73,15 @@ export const GPTChatService: ChatService = {
 class OpenAIStream implements ChatStream {
   public completions;
   public stop;
+  private opt: OpenAI.RequestOptions;
   constructor(
     public req: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming,
     private cls: OpenAI,
   ) {
     const ac = new AbortController();
     this.stop = () => ac.abort();
-    this.completions = cls.chat.completions.create(req, { signal: ac.signal });
+    this.opt = { signal: ac.signal };
+    this.completions = cls.chat.completions.create(req, this.opt);
   }
 
   [Symbol.asyncIterator] = () =>
@@ -202,8 +204,7 @@ class OpenAIStream implements ChatStream {
             });
             yield toolCallChunk;
           }
-
-          stream = await this.cls.chat.completions.create(this.req);
+          stream = await this.cls.chat.completions.create(this.req, this.opt);
         }
       }
     }.call(this);
