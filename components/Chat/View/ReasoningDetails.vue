@@ -7,7 +7,7 @@
     <summary class="leading-9 pr4 pl2">
       <slot name="title"></slot>
     </summary>
-    <article class="px4">
+    <article class="px4 whitespace-pre-wrap">
       <slot name="content"></slot>
     </article>
   </details>

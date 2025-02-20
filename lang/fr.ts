@@ -79,6 +79,11 @@ export default {
     defaultModule: "Modèle par défaut",
     setDefault: "Définir par défaut",
     addModel: "Ajouter un nouveau modèle",
+    useDefault: "Utiliser l'invite par défaut",
+    noPrompt: "Aucune invite",
+    custom: "Personnalisé",
+    showSysCtx: "Afficher l'invite dans le chat",
+    useSysCtxEveryTime: "Utiliser l'invite à chaque tour",
     editModule: {
       press: "Appuyez",
       enter: "Entrer",

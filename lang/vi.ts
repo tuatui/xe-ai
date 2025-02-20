@@ -74,6 +74,11 @@ export default {
     defaultModule: "Mô hình mặc định",
     setDefault: "Đặt làm mặc định",
     addModel: "Thêm mô hình mới",
+    useDefault: "Sử dụng gợi ý mặc định",
+    noPrompt: "Không có gợi ý",
+    custom: "Tùy chỉnh",
+    showSysCtx: "Hiển thị gợi ý trong trò chuyện",
+    useSysCtxEveryTime: "Sử dụng gợi ý mỗi lượt",
     editModule: {
       press: "Nhấn",
       enter: "Nhập",

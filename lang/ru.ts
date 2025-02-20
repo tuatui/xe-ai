@@ -78,6 +78,11 @@ export default {
     defaultModule: "Модель по умолчанию",
     setDefault: "Установить по умолчанию",
     addModel: "Добавить новую модель",
+    useDefault: "Использовать подсказку по умолчанию",
+    noPrompt: "Без подсказки",
+    custom: "Настроить",
+    showSysCtx: "Показывать подсказку в чате",
+    useSysCtxEveryTime: "Использовать подсказку каждый раунд",
     editModule: {
       press: "Нажмите",
       enter: "Ввод",

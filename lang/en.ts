@@ -74,6 +74,11 @@ export default {
     defaultModule: "Default Model",
     setDefault: "Set as Default",
     addModel: "Add New Model",
+    useDefault: "Use default prompt",
+    noPrompt: "No prompt",
+    custom: "Custom",
+    showSysCtx: "Show prompt in chat",
+    useSysCtxEveryTime: "Use prompt every round",
     editModule: {
       press: "Press",
       enter: "Enter",

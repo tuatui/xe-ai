@@ -75,6 +75,11 @@ export default {
     defaultModule: "النموذج الافتراضي",
     setDefault: "تعيين كافتراضي",
     addModel: "إضافة نموذج جديد",
+    useDefault: "استخدام التلميح الافتراضي",
+    noPrompt: "بدون تلميح",
+    custom: "مخصص",
+    showSysCtx: "إظهار التلميح في الدردشة",
+    useSysCtxEveryTime: "استخدام التلميح في كل جولة",
     editModule: {
       press: "اضغط",
       enter: "أدخل",

@@ -79,6 +79,11 @@ const lang = {
       sendImm: "是否按下回车立刻发送对话",
       send: "发送方式",
     },
+    useDefault: "使用默认提示词",
+    noPrompt: "无提示词",
+    custom: "自定义",
+    showSysCtx: "对话中显示提示词",
+    useSysCtxEveryTime: "每轮对话开始时都带上提示词",
     editModule: {
       press: "按下",
       enter: "回车",

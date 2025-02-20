@@ -74,6 +74,11 @@ export default {
     defaultModule: "Modelo por defecto",
     setDefault: "Establecer como predeterminado",
     addModel: "Añadir modelo",
+    useDefault: "Usar sugerencia predeterminada",
+    noPrompt: "Sin sugerencia",
+    custom: "Personalizado",
+    showSysCtx: "Mostrar sugerencia en el chat",
+    useSysCtxEveryTime: "Usar sugerencia cada ronda",
     editModule: {
       press: "Presiona",
       enter: "Enter",

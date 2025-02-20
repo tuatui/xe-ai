@@ -113,11 +113,17 @@
           />
           <VRadioGroup inline v-model="botsInfoClone.promptType">
             <VRadio
-              label="使用默认提示词"
+              :label="$L.setting.useDefault"
               :value="BotPrompt2Use.default"
             ></VRadio>
-            <VRadio label="无提示词" :value="BotPrompt2Use.noPrompt"></VRadio>
-            <VRadio label="自定义" :value="BotPrompt2Use.custom"></VRadio>
+            <VRadio
+              :label="$L.setting.noPrompt"
+              :value="BotPrompt2Use.noPrompt"
+            ></VRadio>
+            <VRadio
+              :label="$L.setting.custom"
+              :value="BotPrompt2Use.custom"
+            ></VRadio>
           </VRadioGroup>
           <template v-if="botsInfoClone.promptType === BotPrompt2Use.custom">
             <VTextarea
@@ -128,12 +134,12 @@
             />
           </template>
           <VCheckbox
-            label="对话中显示提示词"
+            :label="$L.setting.showSysCtx"
             hide-details
             v-model="botsInfoClone.showPrompt"
           ></VCheckbox>
           <VCheckbox
-            label="每轮对话开始时都带上提示词"
+            :label="$L.setting.useSysCtxEveryTime"
             hide-details
             v-model="botsInfoClone.addPromptEveryTime"
           ></VCheckbox>
