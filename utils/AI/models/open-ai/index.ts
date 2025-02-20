@@ -20,7 +20,7 @@ export interface GPTChatChunk extends ChatChunk {
 }
 
 let OpenAIClass: typeof OpenAI | undefined = undefined;
-const OpenAIChatTools = tools.map((each) => each.tool);
+//const OpenAIChatTools = tools.map((each) => each.tool);
 export const GPTChatService: ChatService = {
   info: {
     provider: "Open AI",
@@ -55,7 +55,7 @@ export const GPTChatService: ChatService = {
             model,
             stream: true,
             messages,
-            tools: OpenAIChatTools,
+            /*  tools: OpenAIChatTools, */
           },
           openAI,
         );
