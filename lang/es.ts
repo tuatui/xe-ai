@@ -79,6 +79,7 @@ export default {
     custom: "Personalizado",
     showSysCtx: "Mostrar sugerencia en el chat",
     useSysCtxEveryTime: "Usar sugerencia cada ronda",
+    round: "Ronda",
     editModule: {
       press: "Presiona",
       enter: "Enter",
@@ -142,7 +143,7 @@ export default {
     chooseModel: "Por favor, selecciona el modelo para la conversación",
     needToAddModel: "Necesitas añadir un modelo para comenzar la conversación",
     pwdOrAddrErr: "Dirección o clave incorrecta",
-    notMemo: "El modelo no recordará la conversación anterior",
+    notMemo: "Olvidar conversación anterior próxima vez",
     markdownCode:
       "Al habilitarlo, el código XML debe estar entre bloques de código o bloques en línea, por ejemplo, `<script>a = 1</script>`",
   },

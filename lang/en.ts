@@ -91,6 +91,7 @@ export default {
       title: "Topic Settings",
       tip: "Changes here only affect the current topic",
     },
+    round: "Round",
     user: "User",
     layouts: {
       name: "Layout Selection",
@@ -140,7 +141,7 @@ export default {
     chooseModel: "Please select a model for the conversation",
     needToAddModel: "You need to add a model to start the conversation",
     pwdOrAddrErr: "Incorrect address or key",
-    notMemo: "The model will not remember the previous conversation",
+    notMemo: "Forget the above conversation next time",
     markdownCode:
       "Once enabled, XML code should be wrapped in code blocks or inline code blocks, e.g., `<script>a = 1</script>`",
   },

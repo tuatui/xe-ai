@@ -80,6 +80,7 @@ export default {
     custom: "مخصص",
     showSysCtx: "إظهار التلميح في الدردشة",
     useSysCtxEveryTime: "استخدام التلميح في كل جولة",
+    round: "جولة",
     editModule: {
       press: "اضغط",
       enter: "أدخل",
@@ -141,7 +142,7 @@ export default {
     chooseModel: "يرجى اختيار النموذج للمحادثة",
     needToAddModel: "تحتاج إلى إضافة نموذج لبدء المحادثة",
     pwdOrAddrErr: "العنوان أو المفتاح غير صحيح",
-    notMemo: "لن يتذكر النموذج المحادثة السابقة",
+    notMemo: "النسيان المحادثة أعلاه في المرة القادمة",
     markdownCode:
       "عند التمكين، يجب إحاطة كود XML بكتل كود أو كتل كود مضمنة، مثلًا `<script>a = 1</script>`",
   },

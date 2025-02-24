@@ -79,6 +79,7 @@ export default {
     custom: "Tùy chỉnh",
     showSysCtx: "Hiển thị gợi ý trong trò chuyện",
     useSysCtxEveryTime: "Sử dụng gợi ý mỗi lượt",
+    round: "Lượt",
     editModule: {
       press: "Nhấn",
       enter: "Nhập",
@@ -141,7 +142,7 @@ export default {
     chooseModel: "Vui lòng chọn một mô hình cho cuộc trò chuyện",
     needToAddModel: "Bạn cần thêm mô hình để bắt đầu cuộc trò chuyện",
     pwdOrAddrErr: "Địa chỉ hoặc khóa không chính xác",
-    notMemo: "Mô hình sẽ không ghi nhớ cuộc trò chuyện trước đó",
+    notMemo: "Quên cuộc trò chuyện trên lần sau",
     markdownCode:
       "Khi bật, mã XML nên được bao bọc trong khối mã hoặc mã nội tuyến, ví dụ: `<script>a = 1</script>`",
   },

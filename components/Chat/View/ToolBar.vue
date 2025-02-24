@@ -69,9 +69,4 @@ const handleUpdate = (tool: ChatTool) => {
   else tNamesSet.value.add(tool.name);
   toolNames.value = [...tNamesSet.value];
 };
-watch(
-  () => botToolNames,
-  () => console.log(1),
-  { deep: true },
-);
 </script>

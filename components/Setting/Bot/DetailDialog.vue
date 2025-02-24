@@ -124,11 +124,15 @@
             :label="$L.chat.memo"
             clearable
             :model-value="botsInfoClone.memoCount"
-            suffix="条"
+            :suffix="$L.setting.round"
             @update:model-value="
               (str: string) => {
+                if (!str) {
+                  botsInfoClone.memoCount = undefined;
+                  return;
+                }
                 const num = Number(str);
-                if (!num || num < 0) botsInfoClone.memoCount = undefined;
+                if (isNaN(num) || num < 0) botsInfoClone.memoCount = undefined;
                 else botsInfoClone.memoCount = Math.min(num, 2 ** 31 - 1);
               }
             "

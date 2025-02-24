@@ -15,25 +15,20 @@
         }"
       >
         <template v-for="(i, index) in data.chats" :key="i.id">
+          <div v-if="index === memoIdx" role="separator" class="text-center h0">
+            <div v-once class="bg-surface-light text-body-2 rounded">
+              {{ $L.tips.notMemo }}
+            </div>
+          </div>
           <ChatContentItem
             v-if="
               selectedBots?.showPrompt ||
               (i.from !== ChatRole.system && i.from !== ChatRole.tool)
             "
             :chat="i"
-            class="max-w-full text-wrap break-words mt16"
+            class="max-w-full text-wrap break-words mt16 pb1"
           />
-          <ChatTool v-if="i.from === ChatRole.tool" :chat="i" />
-          <div
-            v-if="
-              selectedBots?.memoCount !== undefined &&
-              index === data.chats.length - selectedBots.memoCount - 1
-            "
-            role="separator"
-            class="text-center bg-surface-light text-body-2 rounded my16"
-          >
-            <div v-once>{{ $L.tips.notMemo }}</div>
-          </div>
+          <ChatTool v-else-if="i.from === ChatRole.tool" :chat="i" />
         </template>
         <ChatViewErrorTag ref="errTag" />
       </article>
@@ -452,6 +447,11 @@ const updateHandle = async () => {
     }
   }
 
+  const chatTruncateIdx =
+    selectedBots.value?.memoCount === undefined
+      ? 0
+      : calcChatRound(data.value.chats, selectedBots.value.memoCount);
+
   if (userInput.value) {
     let context: string;
     if (ds.setting.useFullMDinput) context = userInput.value;
@@ -478,7 +478,7 @@ const updateHandle = async () => {
   try {
     data.value.isChatting = true;
     postChatMsg(false, -1);
-    const chatLimit = selectedBots.value?.memoCount ?? 0;
+
     if (!chatSession) {
       chatSession = await Services[
         selectedBots.value.provider
@@ -493,7 +493,7 @@ const updateHandle = async () => {
       }
     }
 
-    const sessionChatsData = data.value.chats.slice(-chatLimit);
+    const sessionChatsData = data.value.chats.slice(chatTruncateIdx);
     const currChatSessionProvider = selectedBots.value.provider;
     if (
       selectedBots.value.addPromptEveryTime &&
@@ -691,6 +691,28 @@ const takeSnapshot = async () => {
 };
 
 const articleVerLimit = ref(true);
+
+const calcChatRound = (chats: ChatData[], count: number): number => {
+  if (count === 0) return chats.length;
+  for (let index = chats.length - 1; index >= 0; index--) {
+    const chat = chats[index];
+    if (chat.from === ChatRole.user) count--;
+    if (count <= 0) return index;
+  }
+  return 0;
+};
+const memoIdx = ref<number>();
+watch(
+  [() => selectedBots.value?.memoCount, () => data.value.chats.length],
+  ([newVal]) => {
+    if (newVal === undefined) {
+      memoIdx.value = undefined;
+      return;
+    }
+    const idx = calcChatRound(data.value.chats, newVal);
+    memoIdx.value = idx === 0 ? undefined : idx;
+  },
+);
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *

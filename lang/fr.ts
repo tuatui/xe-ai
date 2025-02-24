@@ -84,6 +84,7 @@ export default {
     custom: "Personnalisé",
     showSysCtx: "Afficher l'invite dans le chat",
     useSysCtxEveryTime: "Utiliser l'invite à chaque tour",
+    round: "Tour",
     editModule: {
       press: "Appuyez",
       enter: "Entrer",
@@ -149,7 +150,7 @@ export default {
     needToAddModel:
       "Vous devez ajouter un modèle pour commencer la conversation",
     pwdOrAddrErr: "Adresse ou clé incorrecte",
-    notMemo: "Le modèle ne se souviendra pas de la conversation précédente",
+    notMemo: "Oublier la conversation ci-dessus prochaine fois",
     markdownCode:
       "Une fois activé, le code XML doit être enveloppé dans des blocs de code ou des blocs de code en ligne, par exemple `<script>a = 1</script>`",
   },

@@ -86,6 +86,7 @@ const lang = {
     showSysCtx: "对话中显示提示词",
     tools: "工具",
     useSysCtxEveryTime: "每轮对话开始时都带上提示词",
+    round: "轮",
     editModule: {
       press: "按下",
       enter: "回车",
@@ -142,7 +143,7 @@ const lang = {
     chooseModel: "请选择要参与对话的模型",
     needToAddModel: "你需要添加模型才能开始对话",
     pwdOrAddrErr: "地址或密钥有误",
-    notMemo: "模型不会记住在此之前的对话",
+    notMemo: "下次回答时上面的对话将被遗忘",
     markdownCode:
       "启用后需要使用代码块或行内代码块包裹xml代码，例如`<script>a = 1</script>`",
   },
