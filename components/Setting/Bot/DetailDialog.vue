@@ -96,6 +96,28 @@
             :items="botsInfoClone.availableModel"
             :item-props="(i) => toModelListSelectItemProps(i)"
           />
+          <VSelect
+            :label="$L.setting.tools"
+            v-model="botsInfoClone.tools"
+            :items="Services[botsInfoClone.provider]?.tools ?? []"
+            :item-props="(i) => ({ title: i.name })"
+            :item-value="(i) => i.name"
+            clearable
+            multiple
+          >
+            <template
+              #selection="{
+                item: {
+                  raw: { icon },
+                  title,
+                },
+              }"
+            >
+              <VChip :prepend-icon="icon" label density="comfortable">
+                {{ title }}
+              </VChip>
+            </template>
+          </VSelect>
           <!-- 是否需要引入vuetify/labs的VNumberInput? -->
           <VTextField
             type="number"
@@ -184,6 +206,7 @@ const createBotsInfo = (): BotCreationData => ({
   createTime: new Date(),
   name: "",
   availableModel: [],
+  tools: Services[Provider.OpenAI].tools.map((each) => each.name),
   memoCount: undefined,
   primaryModel: undefined,
   prompt: chatMetaExamplePrompt,
@@ -195,6 +218,10 @@ const createBotsInfo = (): BotCreationData => ({
   addPromptEveryTime: false,
   showPrompt: false,
 });
+const botInfoDefault: Partial<BotCreationData> = {
+  promptType: BotPrompt2Use.default,
+  tools: [],
+};
 const handleUpdate = async (ev: SubmitEventPromise) => {
   const res = await ev;
   if (!res.valid) return;
@@ -205,7 +232,9 @@ const handleDelete = (id: number) => {
   emit("delete", id);
   model.value = false;
 };
-const botsInfoClone = ref<BotCreationData>(props.botInfo ?? createBotsInfo());
+const botsInfoClone = ref<BotCreationData>(
+  props.botInfo ? { ...botInfoDefault, ...props.botInfo } : createBotsInfo(),
+);
 const isUpdate = computed(() => botsInfoClone.value.id !== undefined);
 watch([() => props.botInfo, model], ([newVal, isOpen]) => {
   if (!isOpen) return;
@@ -216,8 +245,8 @@ watch([() => props.botInfo, model], ([newVal, isOpen]) => {
 watch(
   () => botsInfoClone.value.provider,
   (newVal) => {
-    if (!newVal) return;
     botsInfoClone.value.apiUrl = Services[newVal].info.defaultBaseUrl;
+    botsInfoClone.value.tools = Services[newVal].tools.map((each) => each.name);
   },
 );
 const modelSearch = ref("");
@@ -264,10 +293,5 @@ watch(
       owner: "user input",
     };
   },
-);
-watch(
-  () => botsInfoClone.value.promptType,
-  () => (botsInfoClone.value.promptType ??= BotPrompt2Use.default),
-  { immediate: true },
 );
 </script>

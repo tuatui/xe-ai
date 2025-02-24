@@ -20,7 +20,7 @@ export interface GPTChatChunk extends ChatChunk {
 }
 
 let OpenAIClass: typeof OpenAI | undefined = undefined;
-//const OpenAIChatTools = tools.map((each) => each.tool);
+
 export const GPTChatService: ChatService = {
   info: {
     provider: "Open AI",
@@ -47,15 +47,27 @@ export const GPTChatService: ChatService = {
     const openAI = new OpenAIClass(finalConf);
 
     return {
-      createChat(chats: ChatData[], model: GPTModel) {
+      createChat(
+        chats: ChatData[],
+        model: GPTModel,
+        opt?: { toolNames?: string[] },
+      ) {
         const messages = toOpenAiMessages(chats);
-
+        const chatTools = opt?.toolNames
+          ? opt.toolNames
+              .map((toolName) => {
+                const res = tools.find((tool) => tool.name === toolName);
+                if (!res) console.warn("Missing tool: " + toolName);
+                else return res.tool;
+              })
+              .filter((each) => each !== undefined)
+          : undefined;
         return new OpenAIStream(
           {
             model,
             stream: true,
             messages,
-            /*  tools: OpenAIChatTools, */
+            tools: chatTools?.length ? chatTools : undefined,
           },
           openAI,
         );
@@ -243,5 +255,5 @@ const toOpenAiMessages = (chats: ChatData[]): OpenAiMessage[] =>
     };
   });
 
-const errorFormatter = (err: Error) => `${err.name}: ${err.message}
-  ${err.stack}]`;
+const errorFormatter = (err: Error) =>
+  err.stack ?? `${err.name}: ${err.message}`;

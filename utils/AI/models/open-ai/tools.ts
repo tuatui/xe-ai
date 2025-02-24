@@ -2,13 +2,15 @@ import type OpenAI from "openai";
 import { randomDataId } from "~/utils/dragAndDrop";
 import { jsIcon } from "./icon";
 import type { ChatCompletionTool } from "openai/resources/index.mjs";
+import { ChatToolOpenAIJavaScript } from "#components";
+
 const name = "JavaScript";
 const JsTools: OpenAI.Chat.Completions.ChatCompletionTool = {
   type: "function",
   function: {
     name,
     description:
-      "使用JS进行数学计算和调用公开的Web API。可以访问隔离的DOM、BOM等API，无法访问indexDB。",
+      "使用原生JS获取时间、数学计算和调用公开的Web API。可以访问隔离的DOM、BOM等API，无法访问indexDB。",
     parameters: {
       type: "object",
       properties: {
@@ -18,8 +20,13 @@ const JsTools: OpenAI.Chat.Completions.ChatCompletionTool = {
           \`sendResult2Chat\`的参数可以为是任何类型，但是必须可以被\`structuredClone\`函数拷贝。
           例如如果包含回调函数则会报错。如果传入被Proxy代理的对象也会报错，此时建议调用前使用\`JSON.parse(JSON.stringify())\`先处理一遍。
           \`sendError2Chat\`的参数只能是一个Error的实例。
-          注意：必须在代码结束时调用sendResult2Chat或sendError2Chat，否则代码不会结束并且会导致超时错误。console.log目前无法用于输出。
+          注意：必须在代码结束时调用sendResult2Chat或sendError2Chat，否则代码不会结束并且会导致超时错误。AI助手无法获得console.log warn和 error的输出，而用户只有打开控制台才能看到。
+          代码运行在用户浏览器而并非node.js。
             `,
+        },
+        timeout: {
+          type: "number",
+          description: `代码的超时时间（秒），同步任务推荐为5秒，异步任务推荐为10秒。如果调用需要长时间才能返回的WebAPI（如AI），请设为30秒。默认：5，最大：无限制，但是可能被用户切断。`,
         },
       },
       required: ["code"],
@@ -28,7 +35,7 @@ const JsTools: OpenAI.Chat.Completions.ChatCompletionTool = {
   },
 };
 
-const jsRun = (code: string) =>
+const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
   new Promise<ToolCallReturn>((resolve) => {
     const id = randomDataId();
 
@@ -40,6 +47,9 @@ const jsRun = (code: string) =>
     );
     window.sendResult2Chat = (res) => __send_msg({code: 0, res});
     window.sendError2Chat = (err) => __send_msg({code: 1, err});
+    window.addEventListener("error", (ev) => {
+      __send_msg({ code: 1, err: ev.error});
+    });
     </script>
     <script>
     try {
@@ -66,7 +76,6 @@ const jsRun = (code: string) =>
     iframe.setAttribute("sandbox", "allow-scripts");
 
     let isDone = false;
-    // 在这里判断超时
     const callback = (ev: MessageEvent) => {
       if (isDone) return;
       const data: ToolCallReturn = ev.data;
@@ -75,22 +84,26 @@ const jsRun = (code: string) =>
       final();
       isDone = true;
     };
-    const timeout = setTimeout(() => {
-      if (isDone) return;
-      const err = new Error("timeout");
-      err.name = "Code error";
-      resolve({ code: ToolCallResStatus.error, id, err });
-      final();
-      isDone = true;
-    }, 30000);
+    const timeLimit = setTimeout(
+      () => {
+        if (isDone) return;
+        const err = new Error("timeout");
+        err.name = "Code error";
+        resolve({ code: ToolCallResStatus.error, id, err });
+        final();
+        isDone = true;
+      },
+      (timeout ?? 5) * 1000,
+    );
     const final = () => {
       globalThis.removeEventListener("message", callback, false);
       document.body.removeChild(iframe);
-      clearTimeout(timeout);
+      clearTimeout(timeLimit);
     };
     globalThis.addEventListener("message", callback, false);
     document.body.appendChild(iframe);
   });
+
 export const tools: (ChatTool & { tool: ChatCompletionTool })[] = [
   {
     exec: async (toolCall) => {
@@ -104,10 +117,10 @@ export const tools: (ChatTool & { tool: ChatCompletionTool })[] = [
           ),
         };
 
-      return await jsRun(arg.code);
+      return await jsRun(arg);
     },
+    component: ChatToolOpenAIJavaScript,
     tool: JsTools,
-    defaultEnable: true,
     icon: jsIcon,
     name,
     i18nKey: "oai-javascript-tool",

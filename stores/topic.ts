@@ -32,8 +32,8 @@ export const topicStore = defineStore("topic-store", () => {
       } else {
         const index = topics.value.findIndex((topic) => topic.id === res);
         if (index >= 0) {
-          topics.value.splice(index, 1);
-          topics.value.unshift(data as TopicData);
+          const [oldData] = topics.value.splice(index, 1);
+          topics.value.unshift(mergeDeep(oldData, data) as TopicData);
           triggerRef(topics);
         }
       }

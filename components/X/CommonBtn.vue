@@ -21,13 +21,13 @@
   </VBtn>
 </template>
 <script lang="ts" setup>
-import type { VTooltip } from "vuetify/components";
-import type { VBtn } from "vuetify/components";
+import type { VIcon, VTooltip } from "vuetify/components";
+import type { VBtn, VMenu } from "vuetify/components";
 type TextFieldSlots = InstanceType<typeof VTooltip>["location"];
 type VBtnProps = VBtn["$props"];
 const cID = useId();
 interface Props extends /* @vue-ignore */ VBtnProps {
-  useIcon?: string;
+  useIcon?: VIcon["icon"];
   useTooltip?: string;
   embedTooltip?: boolean;
   tooltipLocation?: TextFieldSlots;

@@ -9,9 +9,21 @@
     </ChatViewReasoningDetails>
     <div ref="mdBodyEl" v-if="haveContext"></div>
     <VSkeletonLoader v-else type="article" class="h50" />
+    <template v-if="chat.toolCalls && chat.provider !== undefined">
+      <component
+        :is="
+          services[chat.provider].tools.find(
+            ({ name }) => name === toolCall.name,
+          )?.component
+        "
+        :tool-call="toolCall"
+        v-for="toolCall in chat.toolCalls"
+      ></component>
+    </template>
   </div>
 </template>
 <script setup lang="ts">
+import { services } from "~/utils/AI/models/all";
 import { createCodeCopyBtn } from "~/utils/codeCopyBtn";
 const enum ChatDetailStatus {
   reasoning = 0,
@@ -21,44 +33,32 @@ const enum ChatDetailStatus {
 const mdBodyEl = ref<HTMLDivElement | null>();
 const props = defineProps<{ chat: ChatData }>();
 
-let isBusy = false;
-let shouldRerender = false;
-
-const detailsStatus = ref(ChatDetailStatus.viewDraft);
 const isDetailsOpen = ref(false);
 const haveContext = ref(false);
 const { render } = chatRender();
 const codeCopyBtnDB = useDebounceFn(createCodeCopyBtn, 60);
-const handleToHtml = async () => {
-  if (isBusy) {
-    shouldRerender = true;
-    return;
+const tasks = new CyclicTasks(async () => {
+  const res = props.chat.context
+    ? await render(props.chat.id, props.chat.context)
+    : "";
+
+  if (!haveContext.value) {
+    haveContext.value = true;
+    await nextTick();
   }
+  if (mdBodyEl.value) {
+    mdBodyEl.value.innerHTML = res;
+    codeCopyBtnDB(mdBodyEl.value);
+  }
+});
+const detailsStatus = ref(ChatDetailStatus.viewDraft);
 
-  do {
-    shouldRerender = false;
-    isBusy = true;
-
-    const res = props.chat.context
-      ? await render(props.chat.id, props.chat.context)
-      : "";
-
-    if (!haveContext.value) {
-      haveContext.value = true;
-      await nextTick();
-    }
-    if (mdBodyEl.value) mdBodyEl.value.innerHTML = res;
-
-    isBusy = false;
-  } while (shouldRerender);
-  if (mdBodyEl.value) codeCopyBtnDB(mdBodyEl.value);
-};
 const updateDetailOpenStatus = () =>
   (detailsStatus.value = isDetailsOpen.value
     ? ChatDetailStatus.hideDraft
     : ChatDetailStatus.viewDraft);
 
-watch(() => props.chat.context, handleToHtml);
+watch(() => props.chat.context, tasks.exec);
 watch(
   () => props.chat.reasoningContent,
   () => (
@@ -73,5 +73,5 @@ watch(isDetailsOpen, () => {
   if (!props.chat.context && props.chat.reasoningContent) return;
   updateDetailOpenStatus();
 });
-onMounted(handleToHtml);
+onMounted(tasks.exec);
 </script>

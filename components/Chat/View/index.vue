@@ -5,7 +5,6 @@
       @dblclick="isCollapse = false"
       ref="contentBody"
       @scroll.passive="handleScroll"
-      @wheel="(ev) => ev.deltaY < 0 && (isStick2End = false)"
     >
       <article
         class="mxa px2"
@@ -17,10 +16,14 @@
       >
         <template v-for="(i, index) in data.chats" :key="i.id">
           <ChatContentItem
-            v-if="selectedBots?.showPrompt || i.from !== ChatRole.system"
+            v-if="
+              selectedBots?.showPrompt ||
+              (i.from !== ChatRole.system && i.from !== ChatRole.tool)
+            "
             :chat="i"
             class="max-w-full text-wrap break-words mt16"
           />
+          <ChatTool v-if="i.from === ChatRole.tool" :chat="i" />
           <div
             v-if="
               selectedBots?.memoCount !== undefined &&
@@ -190,6 +193,18 @@
             <VIcon icon="i-mdi-brain" size="small" />
             <p>{{ selectedModel || $L.common.notSelected }}</p>
           </div>
+          <template
+            v-if="
+              selectedBots?.provider !== undefined && selectedBots.tools?.length
+            "
+          >
+            <ChatViewToolBar
+              :server="Services[selectedBots.provider]"
+              :bot-tool-names="selectedBots.tools"
+              v-model:model-value="selectedTools"
+              @update:model-value="handleUpdateTools"
+            />
+          </template>
         </div>
       </div>
     </VExpandTransition>
@@ -230,6 +245,7 @@ onUnmounted(() => {
 const defaultBot = defaultBotStore();
 const selectedBots = ref<BotsData>();
 const selectedModel = ref<string>();
+const selectedTools = ref<string[]>();
 const isBotReady = computed(
   () => selectedBots.value !== undefined && selectedModel.value !== undefined,
 );
@@ -238,6 +254,7 @@ const { chatSetting } = data.value.tempStore;
 if (chatSetting) {
   selectedBots.value = chatSetting.useBotData;
   selectedModel.value = chatSetting.useModelName;
+  selectedTools.value = chatSetting.useTools;
 } else
   watch(
     () => defaultBot.defaultBotInfo,
@@ -248,13 +265,13 @@ if (chatSetting) {
         ...defaultBot.defaultBotInfo,
         ...props.topics.preferSetting,
       };
-
       if (conf.preferBotID === undefined) return;
       await until(() => botsStore().bots.length).toBeTruthy();
 
       data.value.tempStore.chatSetting = {
         useBotData: botsStore().bots.find((bot) => bot.id === conf.preferBotID),
         useModelName: conf.preferModelName,
+        useTools: conf.tools,
       };
     },
     { immediate: true },
@@ -266,13 +283,33 @@ const { Services } = chatServices();
 watch(
   () => data.value.tempStore.chatSetting,
   async (newSetting) => {
-    selectedBots.value = newSetting?.useBotData;
-    selectedModel.value = newSetting?.useModelName;
+    if (!newSetting) return;
+    selectedBots.value = newSetting.useBotData;
+    selectedModel.value = newSetting.useModelName;
+    if (newSetting.useTools) selectedTools.value = newSetting.useTools;
+    else selectedTools.value = selectedBots.value?.tools?.slice(0);
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 );
 
-watch(selectedBots, () => (chatSession = null), { deep: true });
+watch(
+  selectedBots,
+  () => {
+    // 如果模型组被删了，这里仍然有状态残留
+    chatSession = null;
+    selectedTools.value = selectedBots.value?.tools?.slice(0);
+    if (!selectedModel.value) return;
+    if (
+      selectedBots.value?.availableModel.find(
+        ({ name }) => name === selectedModel.value,
+      )
+    )
+      return;
+    if (selectedBots.value?.primaryModel)
+      selectedModel.value = selectedBots.value?.primaryModel;
+  },
+  { deep: true },
+);
 
 watch(
   () => data.value.tempStore.shareEvent,
@@ -285,6 +322,7 @@ watch(
       userInput.value = init.userInput;
       selectedBots.value = init.botData;
       selectedModel.value = init.modelName;
+      selectedTools.value = init.tools;
       ev.initChat = undefined;
       updateHandle();
     }
@@ -320,6 +358,23 @@ const handleConf = async () => {
   } catch (error) {
     if (error) console.warn(error);
   }
+};
+const handleUpdateTools = async (newTools: string[]) => {
+  data.value.tempStore.chatSetting ??= {};
+  data.value.tempStore.chatSetting.useTools = newTools;
+  await updateTopic(
+    {
+      id: props.topics.id,
+      preferSetting: { tools: newTools },
+    },
+    false,
+  );
+  postWinMessage({
+    updateSetting: {
+      topicId: props.topics.id,
+      setting: { useTools: newTools },
+    },
+  });
 };
 const isCollapse = defineModel<boolean>({ default: false });
 const chatInputArea = ref<HTMLElement | null>(null);
@@ -403,7 +458,7 @@ const updateHandle = async () => {
     else {
       const temp = document.createElement("div");
       temp.innerText = userInput.value;
-      context = temp.innerHTML;
+      context = `<p>${temp.innerHTML}</p>`;
     }
 
     await data.value.updateChat({
@@ -449,6 +504,7 @@ const updateHandle = async () => {
     const chatSteam = chatSession.createChat(
       sessionChatsData,
       selectedModel.value,
+      { toolNames: selectedTools.value },
     );
 
     data.value.stopChatting = chatSteam.stop;
@@ -487,7 +543,10 @@ const updateHandle = async () => {
                   const meta = findChatMeta(ctx.chatData.context);
                   if (!meta) return;
                   await updateTopic(
-                    { id: ctx.chatData.topicId, title: meta.title },
+                    {
+                      id: ctx.chatData.topicId,
+                      title: meta.title,
+                    },
                     false,
                   );
                   postChatMsg(false, -1);

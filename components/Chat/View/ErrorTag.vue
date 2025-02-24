@@ -2,8 +2,8 @@
   <VAlert
     v-for="(item, index) in errList"
     :model-value="true"
-    @update:model-value="(newVal) => errList.splice(index, 1)"
-    class="mb-5"
+    @update:model-value="(_) => errList.splice(index, 1)"
+    class="mb-5 whitespace-pre-wrap"
     :key="index"
     :title="item.title"
     :text="item.text"

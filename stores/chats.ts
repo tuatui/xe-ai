@@ -53,8 +53,13 @@ export const chatsStore = defineStore("chats-store", () => {
     }
     if (updateSetting) {
       const currChatStore = globalSharedChats.get(updateSetting.topicId);
-      if (currChatStore)
-        currChatStore.value.tempStore.chatSetting = updateSetting.setting;
+      if (currChatStore) {
+        currChatStore.value.tempStore.chatSetting ??= {};
+        Object.assign(
+          currChatStore.value.tempStore.chatSetting,
+          updateSetting.setting,
+        );
+      }
     }
   };
 

@@ -5,6 +5,7 @@ export interface UseChatTempStore {
   chatSetting?: {
     useBotData?: BotsData;
     useModelName?: string;
+    useTools?: string[];
   };
   shareEvent?: {
     title?: string;
@@ -13,6 +14,7 @@ export interface UseChatTempStore {
       userInput: string;
       botData: BotsData;
       modelName: string;
+      tools: string[];
     };
   };
 }

@@ -31,12 +31,7 @@
               :color="preferBotID === bot.id ? undefined : 'primary'"
               class="font-weight-bold"
               :disabled="preferBotID === bot.id"
-              @click.stop="
-                dBot.updateDefaultBotInfo({
-                  preferBotID: bot.id,
-                  preferModelName: bot.primaryModel ?? undefined,
-                })
-              "
+              @click.stop="updateSetting(bot)"
               >{{
                 preferBotID === bot.id
                   ? $L.setting.defaultModule
@@ -50,7 +45,14 @@
       <SettingBotDetailDialog
         v-model="isBotsInfoDialogOpen"
         :bot-info="botsInfo"
-        @new-bot-info="(n) => updateBot(n)"
+        @new-bot-info="
+          (n) => {
+            updateBot(n);
+            if (n.id === undefined || !n.primaryModel) return;
+            if (n.id !== preferBotID) return;
+            updateSetting(n as BotsData);
+          }
+        "
         @delete="deleteBot"
       />
       <template v-slot:actions>
@@ -89,5 +91,14 @@ const formatTitle = (bot: BotCreationData) => {
 
   if (bot.secretKey !== undefined) title += hidePartialStr(bot.secretKey);
   return title;
+};
+const updateSetting = (
+  bot: Pick<BotsData, "id" | "primaryModel" | "tools">,
+) => {
+  dBot.updateDefaultBotInfo({
+    preferBotID: bot.id,
+    preferModelName: bot.primaryModel ?? undefined,
+    tools: bot.tools,
+  });
 };
 </script>

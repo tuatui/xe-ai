@@ -3,6 +3,7 @@ import { chatTreeStore, LeafType, type ChatTreeOrdinary } from "./chatTree";
 export interface DefaultBotSetting {
   preferBotID: number;
   preferModelName: string;
+  tools?: string[];
   doNotMemoVtOnUnload: boolean;
   useCustomVT: number;
   vt: ChatTreeOrdinary;
@@ -33,6 +34,7 @@ export const defaultBotStore = defineStore("default-bot", () => {
     const db = await iDB.onDBReady();
     try {
       const clonedData = { ...toRaw(defaultBotInfo.value), ...toRaw(info) };
+      clonedData.tools = toRaw(clonedData.tools);
       const res = await db.put(
         IDB_VAR.DEFAULT_BOT_SETTING,
         clonedData,

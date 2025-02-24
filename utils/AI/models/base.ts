@@ -1,4 +1,4 @@
-import type { VNode } from "vue";
+import type { DefineComponent, VNode } from "vue";
 import type { UnknownRecord } from "type-fest";
 
 export enum Provider {
@@ -38,11 +38,14 @@ export interface ToolCallErrReturn {
 export type ToolCallReturn = ToolCallSuccessReturn | ToolCallErrReturn;
 
 export type ChatDeltaData = Omit<ChatData, "id" | "topicId">;
+export interface ToolCallCompProps {
+  toolCall: ChatToolCall;
+}
 export interface ChatTool {
   name: string;
-  icon: VNode;
-  defaultEnable?: boolean;
+  icon: () => JSX.Element;
   tool: unknown;
+  component: DefineComponent<ToolCallCompProps, {}, {}, {}, {}>;
   i18nKey: string;
   exec: (data: ChatToolCall) => Promise<ToolCallReturn>;
 }
@@ -70,7 +73,11 @@ export interface ChatStream extends AsyncIterable<ChatChunk> {
   stop: () => void;
 }
 export interface ChatSession {
-  createChat: (chatData: ChatData[], model: string) => ChatStream;
+  createChat: (
+    chatData: ChatData[],
+    model: string,
+    opt?: { toolNames?: string[] },
+  ) => ChatStream;
   formatMessage?: (chats: ChatData[]) => unknown;
   getModelList?: () => Promise<ModelList[]>;
 }

@@ -4,6 +4,7 @@ export interface BotsData {
   nickName: string;
   provider: Provider;
   availableModel: ModelList[];
+  tools?: string[];
   primaryModel: string | undefined | null;
   memoCount: number | undefined;
   prompt: string;

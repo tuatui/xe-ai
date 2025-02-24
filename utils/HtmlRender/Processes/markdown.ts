@@ -15,6 +15,8 @@ hljsCore.registerLanguage("plaintext", () => ({
   contains: [],
 }));
 
+export const hljs = hljsCore;
+
 // 😅
 const langPack = ["xml", "javascript", "typescript", "css", "scss"];
 let isLangPackInstalled = false;

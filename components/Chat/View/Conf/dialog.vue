@@ -23,7 +23,7 @@
             @update:model-value="selectedModel = undefined"
             :item-props="(item) => ({ title: item.nickName })"
             return-object
-            :label="$L.common.notSelected"
+            :label="$L.setting.botGroup"
           >
             <template v-slot:item="{ props, item }">
               <VListItem
@@ -72,6 +72,11 @@ const { isShow, selectedBot, selectedModel, confirmSetting, cancelSetting } =
   storeToRefs(topicConf());
 
 const modelList = computed(() => selectedBot.value?.availableModel ?? []);
+watch(selectedModel, (newVal) => {
+  if (newVal) return;
+  const defaultModel = selectedBot.value?.primaryModel;
+  if (defaultModel) selectedModel.value = defaultModel;
+});
 const { Services } = chatServices();
 const { bots } = storeToRefs(botsStore());
 </script>

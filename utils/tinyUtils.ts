@@ -96,3 +96,21 @@ export const toModelListSelectItemProps = (item: ModelList) => ({
   subtitle: ` ${item.provider ?? ""} ${item.owner}`,
   value: item.name,
 });
+export class CyclicTasks {
+  private isPadding: boolean = false;
+  private redo: boolean = false;
+
+  constructor(private task: () => Promise<unknown>) {}
+  public exec = async () => {
+    if (this.isPadding) {
+      this.redo = true;
+      return;
+    }
+    do {
+      this.redo = false;
+      this.isPadding = true;
+      await this.task();
+      this.isPadding = false;
+    } while (this.redo);
+  };
+}

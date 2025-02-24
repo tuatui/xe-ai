@@ -177,6 +177,7 @@ const handleSubmit = async () => {
       botData: selectedBots.value,
       modelName: selectedModel.value,
       userInput: useInput.value,
+      tools: selectedBots.value.tools?.slice(0) ?? [],
     },
   };
 };
