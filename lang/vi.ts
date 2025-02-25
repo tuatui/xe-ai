@@ -39,6 +39,8 @@ export default {
     lineBreak: "Ngắt dòng",
     about: "Về chúng tôi",
     input: "Nhập",
+    enable: "Bật",
+    disable: "Tắt",
   },
   action: {
     deleteSome: (item) => `Đã xóa "${item}"`,
@@ -92,7 +94,10 @@ export default {
       title: "Cài đặt chủ đề",
       tip: "Thay đổi ở đây chỉ ảnh hưởng đến chủ đề hiện tại",
     },
+    exSessionConf: "Cấu hình bổ sung (JSON)",
+    exSessionConfDocs: "Xem tài liệu",
     user: "Người dùng",
+    botGroup: "Nhóm mô hình",
     layouts: {
       name: "Chọn bố cục",
       all: "Tất cả bố cục",

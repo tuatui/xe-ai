@@ -40,6 +40,8 @@ const lang = {
     lineBreak: "换行",
     about: "关于",
     input: "输入",
+    enable: "启用",
+    disable: "禁用",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,

@@ -40,6 +40,8 @@ export default {
     lineBreak: "انتقال إلى السطر",
     about: "حول",
     input: "إدخال",
+    enable: "تمكين",
+    disable: "تعطيل",
   },
   action: {
     deleteSome: (item) => `تم حذف "${item}"`,
@@ -89,10 +91,13 @@ export default {
       fetch: "جلب النموذج",
       preferredModel: "النموذج المفضل",
     },
+    exSessionConf: "تكوين الدردشة الإضافي (JSON)",
+    exSessionConfDocs: "عرض وثائق التكوين",
     topic: {
       title: "إعدادات الموضوع",
       tip: "التغييرات هنا تؤثر فقط على الموضوع الحالي",
     },
+    botGroup: "مجموعة النماذج",
     user: "المستخدم",
     layouts: {
       name: "اختيار التخطيط",

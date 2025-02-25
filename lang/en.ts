@@ -39,6 +39,8 @@ export default {
     lineBreak: "Line break",
     about: "About",
     input: "Input",
+    enable: "Enable",
+    disable: "Disable",
   },
   action: {
     deleteSome: (item) => `Deleted "${item}"`,
@@ -87,10 +89,13 @@ export default {
       fetch: "Fetch Model",
       preferredModel: "Preferred Model",
     },
+    exSessionConf: "Additional chat config (JSON)",
+    exSessionConfDocs: "View config docs",
     topic: {
       title: "Topic Settings",
       tip: "Changes here only affect the current topic",
     },
+    botGroup: "Model Group",
     round: "Round",
     user: "User",
     layouts: {

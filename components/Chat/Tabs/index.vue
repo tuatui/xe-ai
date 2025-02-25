@@ -63,12 +63,13 @@
               />
             </template>
             <template v-else>
-              <VMenu open-on-hover open-on-click location="bottom end">
+              <VMenu location="bottom end" open-on-focus open-on-click>
                 <template v-slot:activator="{ props }">
                   <VBtn
                     icon="i-mdi-dots-vertical"
                     variant="text"
                     v-bind="props"
+                    :title="$L.common.moreOptions"
                     :aria-label="$L.common.moreOptions"
                   />
                 </template>

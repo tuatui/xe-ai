@@ -39,6 +39,8 @@ export default {
     lineBreak: "Salto de línea",
     about: "Acerca de",
     input: "Entrada",
+    enable: "Habilitar",
+    disable: "Deshabilitar",
   },
   action: {
     deleteSome: (item) => `Eliminado "${item}"`,
@@ -102,10 +104,13 @@ export default {
       setAsDefault: "Establecer como predeterminado",
       memo: "Recordar el diseño al cerrar",
     },
+    exSessionConf: "Configuración adicional (JSON)",
+    exSessionConfDocs: "Ver documentación",
     shortcut: {
       sendImm: "¿Presionaste Enter para enviar el diálogo inmediatamente?",
       send: "Método de envío",
     },
+    botGroup: "Grupo de Modelos",
     mdInput:
       "Habilitar sintaxis completa de MARKDOWN para el contenido que ingresas",
   },

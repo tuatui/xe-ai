@@ -40,6 +40,8 @@ export default {
     lineBreak: "Saut de ligne",
     about: "À propos",
     input: "Entrée",
+    enable: "Activer",
+    disable: "Désactiver",
   },
   action: {
     deleteSome: (item) => `Supprimé "${item}"`,
@@ -93,6 +95,9 @@ export default {
       fetch: "Récupérer modèle",
       preferredModel: "Modèle préféré",
     },
+    botGroup: "Groupe de Modèles",
+    exSessionConf: "Configuration supplémentaire (JSON)",
+    exSessionConfDocs: "Voir documentation",
     topic: {
       title: "Paramètres du sujet",
       tip: "Les modifications ici affectent uniquement le sujet actuel",

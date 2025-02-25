@@ -39,6 +39,8 @@ export default {
     lineBreak: "Перенос строки",
     about: "О программе",
     input: "Ввод",
+    enable: "Включить",
+    disable: "Отключить",
   },
   action: {
     deleteSome: (item) => `Удалено "${item}"`,
@@ -96,6 +98,8 @@ export default {
       title: "Настройки темы",
       tip: "Изменения здесь влияют только на текущую тему",
     },
+    exSessionConf: "Дополнительная конфигурация (JSON)",
+    exSessionConfDocs: "Просмотр документации",
     user: "Пользователь",
     layouts: {
       name: "Выбор макета",
@@ -106,6 +110,7 @@ export default {
       setAsDefault: "Установить по умолчанию",
       memo: "Запомнить макет при закрытии",
     },
+    botGroup: "Группа моделей",
     shortcut: {
       sendImm: "Вы нажали Enter, чтобы немедленно отправить разговор?",
       send: "Способ отправки",

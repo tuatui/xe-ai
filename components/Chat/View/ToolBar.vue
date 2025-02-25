@@ -7,7 +7,11 @@
           @click="handleUpdate(tool)"
           icon
           :use-icon="tool.icon"
-          :use-tooltip="`${tool.name}: ${tNamesSet.has(tool.name) ? '启用' : '禁用'}`"
+          :use-tooltip="
+            tool.name +
+            ': ' +
+            (tNamesSet.has(tool.name) ? $L.common.enable : $L.common.disable)
+          "
           variant="text"
           rounded
           density="comfortable"
