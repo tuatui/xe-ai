@@ -504,7 +504,10 @@ const updateHandle = async () => {
     const chatSteam = chatSession.createChat(
       sessionChatsData,
       selectedModel.value,
-      { toolNames: selectedTools.value },
+      {
+        toolNames: selectedTools.value,
+        exConf: selectedBots.value.exSessionConf,
+      },
     );
 
     data.value.stopChatting = chatSteam.stop;

@@ -27,6 +27,8 @@ export const GPTChatService: ChatService = {
     key: Provider.OpenAI,
     icon,
     defaultBaseUrl: "https://api.openai.com/v1/",
+    sessionParamsDocLink:
+      "https://platform.openai.com/docs/api-reference/chat/create",
   },
   tools,
   createChatSession: async (conf) => {
@@ -50,7 +52,7 @@ export const GPTChatService: ChatService = {
       createChat(
         chats: ChatData[],
         model: GPTModel,
-        opt?: { toolNames?: string[] },
+        opt?: { toolNames?: string[]; exConf?: string },
       ) {
         const messages = toOpenAiMessages(chats);
         const chatTools = opt?.toolNames
@@ -62,12 +64,14 @@ export const GPTChatService: ChatService = {
               })
               .filter((each) => each !== undefined)
           : undefined;
+        const exConfParam = opt?.exConf ? JSON.parse(opt.exConf) : {};
         return new OpenAIStream(
           {
             model,
             stream: true,
             messages,
             tools: chatTools?.length ? chatTools : undefined,
+            ...exConfParam,
           },
           openAI,
         );

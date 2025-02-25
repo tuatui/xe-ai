@@ -80,6 +80,8 @@ const lang = {
       sendImm: "是否按下回车立刻发送对话",
       send: "发送方式",
     },
+    exSessionConf: "附加对话配置（JSON）",
+    exSessionConfDocs: "查看对话配置文档",
     useDefault: "使用默认提示词",
     noPrompt: "无提示词",
     custom: "自定义",

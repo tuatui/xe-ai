@@ -169,6 +169,24 @@
             hide-details
             v-model="botsInfoClone.addPromptEveryTime"
           ></VCheckbox>
+          <VTextarea
+            :rules="[handleCheckExConf]"
+            :label="$L.setting.exSessionConf"
+            clearable
+            v-model="botsInfoClone.exSessionConf"
+            :placeholder
+            validate-on="blur"
+          />
+          <VBtn
+            v-if="Services[botsInfoClone.provider].info.sessionParamsDocLink"
+            :href="Services[botsInfoClone.provider].info.sessionParamsDocLink"
+            :text="$L.setting.exSessionConfDocs"
+            target="_blank"
+            size="text"
+            variant="text"
+            append-icon="i-mdi-open-in-new"
+            :ripple="false"
+          />
         </VCardText>
         <VDivider />
         <VCardActions>
@@ -210,7 +228,7 @@ const createBotsInfo = (): BotCreationData => ({
   createTime: new Date(),
   name: "",
   availableModel: [],
-  tools: Services[Provider.OpenAI].tools.map((each) => each.name),
+  tools: [],
   memoCount: undefined,
   primaryModel: undefined,
   prompt: chatMetaExamplePrompt,
@@ -298,4 +316,17 @@ watch(
     };
   },
 );
+const placeholder = `{
+  "temperature":0.7,
+  "presence_penalty": 0.5
+}`;
+const handleCheckExConf = (conf?: string) => {
+  if (!conf) return true;
+  try {
+    JSON.parse(conf);
+    return true;
+  } catch (error) {
+    return (error as Error).message;
+  }
+};
 </script>

@@ -14,6 +14,7 @@ export interface BotsData {
   name: string;
   apiUrl: string;
   createTime: Date;
+  exSessionConf?: string;
 }
 export enum BotPrompt2Use {
   default = 0,

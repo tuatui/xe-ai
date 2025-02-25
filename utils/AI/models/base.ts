@@ -60,6 +60,7 @@ export interface ChatService {
     key: Provider;
     icon: VNode;
     defaultBaseUrl: string;
+    sessionParamsDocLink?: string;
   };
   readonly tools: ChatTool[];
   createChatSession: (conf: Partial<ChatSessionConf>) => Promise<ChatSession>;
@@ -76,7 +77,7 @@ export interface ChatSession {
   createChat: (
     chatData: ChatData[],
     model: string,
-    opt?: { toolNames?: string[] },
+    opt?: { toolNames?: string[]; exConf?: string },
   ) => ChatStream;
   formatMessage?: (chats: ChatData[]) => unknown;
   getModelList?: () => Promise<ModelList[]>;
