@@ -9,6 +9,11 @@ export interface DefaultSetting {
   useFullMDinput: boolean;
   themeMod: ThemeMod;
   enterToSend: boolean;
+  /**
+   * 风险功能，JS工具将可以访问到数据库数据
+   * @description 这个功能只能通过控制台手动开启
+   */
+  allowUnsafeJsExecution: boolean;
 }
 
 export const defaultSettingSync = defineStore("chat-setting-sync", () => {

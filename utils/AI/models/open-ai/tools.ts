@@ -35,7 +35,7 @@ AI助手无法获得console.log warn和 error的输出，而用户只有打开�
     },
   },
 };
-const permissionAllow = `accelerometer;attribution-reporting;autoplay;bluetooth;browsing-topics;compute-pressure;display-capture;encrypted-media;gamepad;geolocation;gyroscope;hid;identity-credentials-get;idle-detection;magnetometer;microphone ${location.origin};camera ${location.origin};midi;otp-credentials;screen-wake-lock;serial;usb;web-share;window-management;xr-spatial-tracking`;
+const permissionAllow = `accelerometer;attribution-reporting;autoplay;bluetooth;browsing-topics;compute-pressure;display-capture;encrypted-media;gamepad;geolocation;gyroscope;hid;identity-credentials-get;idle-detection;magnetometer;midi;otp-credentials;screen-wake-lock;serial;usb;web-share;window-management;xr-spatial-tracking`;
 const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
   new Promise<ToolCallReturn>((resolve) => {
     const id = randomDataId();
@@ -72,11 +72,13 @@ const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
     // make vue-tsc happy
     // iframe.sandbox = "allow-scripts";
     // error TS2540: Cannot assign to 'sandbox' because it is a read-only property.
-    iframe.setAttribute(
-      "sandbox",
-      "allow-scripts allow-downloads allow-modals",
-    );
-    iframe.setAttribute("allow", permissionAllow);
+    if (!defaultSettingSync().setting.allowUnsafeJsExecution) {
+      iframe.setAttribute(
+        "sandbox",
+        "allow-scripts allow-downloads allow-modals",
+      );
+      iframe.setAttribute("allow", permissionAllow);
+    }
 
     let isDone = false;
     const callback = (ev: MessageEvent) => {
