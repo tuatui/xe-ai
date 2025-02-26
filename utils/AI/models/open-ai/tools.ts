@@ -66,11 +66,9 @@ const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
     }
     </script></body></html>`;
 
-    const htmlFile = new Blob([template], { type: "text/html" });
-    const src = URL.createObjectURL(htmlFile);
     const iframe = document.createElement("iframe");
     iframe.hidden = true;
-    iframe.src = src;
+    iframe.srcdoc = template;
     // make vue-tsc happy
     // iframe.sandbox = "allow-scripts";
     // error TS2540: Cannot assign to 'sandbox' because it is a read-only property.
