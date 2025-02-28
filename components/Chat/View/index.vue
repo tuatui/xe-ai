@@ -262,11 +262,16 @@ if (chatSetting) {
       };
       if (conf.preferBotID === undefined) return;
       await until(() => botsStore().bots.length).toBeTruthy();
+      const bot = botsStore().bots.find((bot) => bot.id === conf.preferBotID);
 
       data.value.tempStore.chatSetting = {
-        useBotData: botsStore().bots.find((bot) => bot.id === conf.preferBotID),
-        useModelName: conf.preferModelName,
-        useTools: conf.tools,
+        useBotData: bot,
+        useModelName: bot?.availableModel.find(
+          ({ name }) => name === conf.preferModelName,
+        )
+          ? conf.preferModelName
+          : undefined,
+        useTools: [...new Set(conf.tools).intersection(new Set(bot?.tools))],
       };
     },
     { immediate: true },
@@ -282,29 +287,11 @@ watch(
     selectedBots.value = newSetting.useBotData;
     selectedModel.value = newSetting.useModelName;
     if (newSetting.useTools) selectedTools.value = newSetting.useTools;
-    else selectedTools.value = selectedBots.value?.tools?.slice(0);
   },
   { immediate: true, deep: true },
 );
 
-watch(
-  selectedBots,
-  () => {
-    // 如果模型组被删了，这里仍然有状态残留
-    chatSession = null;
-    selectedTools.value = selectedBots.value?.tools?.slice(0);
-    if (!selectedModel.value) return;
-    if (
-      selectedBots.value?.availableModel.find(
-        ({ name }) => name === selectedModel.value,
-      )
-    )
-      return;
-    if (selectedBots.value?.primaryModel)
-      selectedModel.value = selectedBots.value?.primaryModel;
-  },
-  { deep: true },
-);
+watch(selectedBots, () => (chatSession = null), { deep: true });
 
 watch(
   () => data.value.tempStore.shareEvent,
@@ -330,15 +317,20 @@ const handleConf = async () => {
       selectedBots.value,
       selectedModel.value,
     );
+    const tools = [
+      ...new Set(selectedTools.value).intersection(new Set(res.newBot?.tools)),
+    ];
     data.value.tempStore.chatSetting = {
       useBotData: res.newBot,
       useModelName: res.newModelName,
+      useTools: tools,
     };
     await updateTopic({
       id: props.topics.id,
       preferSetting: {
         preferBotID: res.newBot?.id,
         preferModelName: res.newModelName,
+        tools,
       },
     });
     postWinMessage({
@@ -347,6 +339,7 @@ const handleConf = async () => {
         setting: {
           useBotData: toRaw(res.newBot),
           useModelName: res.newModelName,
+          useTools: tools,
         },
       },
     });
@@ -362,7 +355,7 @@ const handleUpdateTools = async (newTools: string[]) => {
       id: props.topics.id,
       preferSetting: { tools: newTools },
     },
-    false,
+    true,
   );
   postWinMessage({
     updateSetting: {
