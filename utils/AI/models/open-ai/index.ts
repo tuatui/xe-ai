@@ -213,6 +213,7 @@ class OpenAIStream implements ChatStream {
             if (toolReturn.code === ToolCallResStatus.success)
               toolCallChunk.delta.context = JSON.stringify(toolReturn.res);
             else toolCallChunk.delta.context = errorFormatter(toolReturn.err);
+            toolCallChunk.delta.context ??= "";
             this.req.messages.push({
               role: "tool",
               content: toolCallChunk.delta.context,
