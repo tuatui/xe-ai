@@ -67,29 +67,57 @@ export const mergeDeep = deepMerge;
 export const toRawDeep = <T extends object>(source: T): T => {
   return deepMerge({}, source) as T;
 };
+class StringBuff {
+  public stopFlag = false;
+  public out: AsyncGenerator<string, void, undefined>;
+  private originLen: number;
+  constructor(
+    public strBuff: string,
+    public tick: number,
+    public duration: number,
+  ) {
+    this.originLen = strBuff.length;
+    this.out = async function* (this: StringBuff) {
+      while (true) {
+        await new Promise<void>((resolve) => setTimeout(resolve, this.tick));
+        if (!this.strBuff) {
+          if (this.stopFlag) break;
 
-export const bufferedOut = (
-  strBuff = "",
-  tick = 16,
-  duration = 5000,
-  stopFlag = false,
-  len = strBuff.length,
-) => ({
-  out: (async function* () {
-    while (true) {
-      await new Promise<void>((resolve) => setTimeout(resolve, tick));
-      if (stopFlag && !strBuff) return;
-      if (!strBuff) continue;
-      const i = Math.ceil((tick / duration) * len);
-      yield strBuff.slice(0, i);
-      strBuff = strBuff.slice(i);
-    }
-  })(),
-  stop: (time: number = 1000) => ((stopFlag = true), (duration = time)),
-  push: (str: string) => ((strBuff += str), (len = strBuff.length)),
-  clear: () => (strBuff = ""),
-});
-export type BufferedOut = ReturnType<typeof bufferedOut>;
+          const res = await new Promise<void>((resolve, reject) => {
+            this.continueGen = resolve;
+            this.breakGen = reject;
+          }).catch<boolean>(() => true);
+
+          this.continueGen = undefined;
+          this.breakGen = undefined;
+          if (res) break;
+          else continue;
+        }
+        const i = Math.ceil((this.tick / this.duration) * this.originLen);
+        yield this.strBuff.slice(0, i);
+        this.strBuff = this.strBuff.slice(i);
+      }
+    }.call(this);
+  }
+  public stop = (time: number = 1000) => {
+    this.stopFlag = true;
+    this.duration = time;
+    if (this.breakGen) this.breakGen();
+  };
+  public push = (str: string) => {
+    this.strBuff += str;
+    this.originLen = this.strBuff.length;
+    if (this.continueGen) this.continueGen();
+  };
+  public clear = () => (this.strBuff = "");
+  private continueGen?: () => void;
+  private breakGen?: () => void;
+}
+
+export const bufferedOut = (strBuff = "", tick = 16, duration = 5000) =>
+  new StringBuff(strBuff, tick, duration);
+
+export type BufferedOut = StringBuff;
 
 export const toModelListSelectItemProps = (item: ModelList) => ({
   title: item.name,
