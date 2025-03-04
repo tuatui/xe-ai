@@ -78,7 +78,7 @@ const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
       }
     }
     </script></body></html>`;
-    console.log(template);
+
     const iframe = document.createElement("iframe");
     iframe.hidden = true;
     iframe.srcdoc = template;

@@ -215,7 +215,8 @@ const handleDropEnd = (ev: DragEvent) => {
 
   if (
     res.isMove &&
-    (res.isMove.fromTab !== uniqueKey || (splitRes && oType !== "full"))
+    (res.isMove.fromTab !== uniqueKey || (splitRes && oType !== "full")) &&
+    !ev.altKey
   ) {
     globalTabs.get(res.isMove.fromTab)?.value.expose?.remove(res.topic);
   }
