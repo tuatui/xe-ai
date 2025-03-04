@@ -30,7 +30,7 @@ enum state {
 const showType = ref<state>(state.noWrap);
 const ctx = computed(() => {
   try {
-    return JSON.parse(chat.context);
+    return JSON.stringify(JSON.parse(chat.context), null, "\t");
   } catch (error) {
     return chat.context;
   }
