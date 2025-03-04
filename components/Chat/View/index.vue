@@ -530,6 +530,7 @@ const updateHandle = async () => {
               if (!ctx.contextBuff) {
                 ctx.contextBuff = bufferedOut();
                 const out = ctx.contextBuff.out;
+                if (ctx.reasoningBuff) ctx.reasoningBuff.duration = 500;
                 (async () => {
                   for await (const str of out) {
                     postChatMsg(false, -1);
