@@ -16,12 +16,13 @@ const JsTools: OpenAI.Chat.Completions.ChatCompletionTool = {
       properties: {
         code: {
           type: "string",
-          description: `要执行的JavaScript 代码，在最后调用\`sendResult2Chat\`以返回代码结果（类似promise的resolve）,
+          description: `要执行的JavaScript 代码。
+\`sendResult2Chat\`是本工具的全局特殊函数，在最后调用\`sendResult2Chat\`以返回代码结果（类似promise的resolve）,
 或者调用\`sendError2Chat\`返回Error，同时代码会立刻退出。
 \`sendResult2Chat\`的参数可以为是任何类型，但是必须可以被\`structuredClone\`函数拷贝。
 例如如果包含回调函数则会报错。如果传入被Proxy代理的对象也会报错，此时建议调用前使用\`JSON.parse(JSON.stringify())\`先处理一遍。
 \`sendError2Chat\`的参数只能是一个Error的实例。
-注意：必须在代码结束时调用sendResult2Chat或sendError2Chat（即使参数为空），否则代码不会结束并且会导致超时错误，任何JS调用都必须遵守这一规则。
+注意：必须在代码结束时调用sendResult2Chat或sendError2Chat（即使参数为空），否则代码不会结束并且会导致超时错误，如果还是没有，则js代码会以表达式的形式执行。
 AI助手无法获得console.log warn和 error的输出，而用户只有打开控制台才能看到。
 代码运行在用户浏览器而并非node.js。`,
         },
@@ -39,6 +40,18 @@ const permissionAllow = `accelerometer;attribution-reporting;autoplay;bluetooth;
 const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
   new Promise<ToolCallReturn>((resolve) => {
     const id = randomDataId();
+
+    // 有些小模型确实会忘记使用`sendResult2Chat`，尽力执行代码。
+    if (!code.includes("sendResult2Chat"))
+      code = `
+    (async () => {
+    try {
+      const res = await ${code};
+      sendResult2Chat(res);
+    } catch (error) {
+      sendError2Chat(error)
+    }
+    })();`;
 
     const template = `
     <html><head><meta charset="UTF-8"></head><body>
@@ -65,13 +78,11 @@ const jsRun = ({ code, timeout }: { code: string; timeout?: number }) =>
       }
     }
     </script></body></html>`;
-
+    console.log(template);
     const iframe = document.createElement("iframe");
     iframe.hidden = true;
     iframe.srcdoc = template;
-    // make vue-tsc happy
-    // iframe.sandbox = "allow-scripts";
-    // error TS2540: Cannot assign to 'sandbox' because it is a read-only property.
+
     if (!defaultSettingSync().setting.allowUnsafeJsExecution) {
       iframe.setAttribute(
         "sandbox",
