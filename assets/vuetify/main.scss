@@ -9,3 +9,10 @@ $font-family: "Roboto", "Noto Sans", "Microsoft Yahei", sans-serif;
 );
 // css重置
 @use "ress";
+
+// 对于用户希望取消动画的情况，强制禁用所有css动画
+@media (prefers-reduced-motion) {
+  *[class] {
+    transition: none !important;
+  }
+}
