@@ -38,16 +38,25 @@ const haveContext = ref(false);
 const { render } = chatRender();
 const codeCopyBtnDB = useDebounceFn(createCodeCopyBtn, 60);
 const tasks = new CyclicTasks(async () => {
-  const res = props.chat.context
-    ? await render(props.chat.id, props.chat.context)
-    : "";
+  const res = props.chat.noMarkdownRender
+    ? props.chat.context
+    : await render(props.chat.id, props.chat.context);
 
   if (!haveContext.value) {
     haveContext.value = true;
     await nextTick();
   }
   if (mdBodyEl.value) {
-    mdBodyEl.value.innerHTML = res;
+    if (props.chat.noMarkdownRender) {
+      const p = document.createElement("p");
+      p.innerText = res;
+      p.style.whiteSpace = "pre-wrap";
+      mdBodyEl.value.innerHTML = "";
+      mdBodyEl.value.appendChild(p);
+    } else {
+      mdBodyEl.value.innerHTML = res;
+    }
+
     codeCopyBtnDB(mdBodyEl.value);
   }
 });
@@ -58,7 +67,10 @@ const updateDetailOpenStatus = () =>
     ? ChatDetailStatus.hideDraft
     : ChatDetailStatus.viewDraft);
 
-watch(() => props.chat.context, tasks.exec);
+watch(
+  [() => props.chat.context, () => props.chat.noMarkdownRender],
+  tasks.exec,
+);
 watch(
   () => props.chat.reasoningContent,
   () => (

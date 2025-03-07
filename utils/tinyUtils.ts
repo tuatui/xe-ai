@@ -58,15 +58,6 @@ export const deleteUndefined = <
   return obj;
 };
 
-import { deepMerge } from "@antfu/utils";
-export const mergeDeep = deepMerge;
-/**
- * 用于将对象从代理中提取出来，不同于深拷贝，不会创建新对象。
- * @deprecated 不再使用，使用toRaw手动解除代理
- */
-export const toRawDeep = <T extends object>(source: T): T => {
-  return deepMerge({}, source) as T;
-};
 class StringBuff {
   public stopFlag = false;
   public out: AsyncGenerator<string, void, undefined>;
@@ -142,3 +133,18 @@ export class CyclicTasks {
     } while (this.redo);
   };
 }
+
+export const copy2Clipboard = navigator.clipboard
+  ? (str: string) => navigator.clipboard.writeText(str)
+  : (str: string) => {
+      const i = document.createElement("textarea");
+      document.body.appendChild(i);
+      i.value = str;
+      i.select();
+      document.execCommand("copy");
+      document.body.removeChild(i);
+    };
+
+export { deepMerge as mergeDeep } from "@antfu/utils";
+// TODO: 如果能解决d.ts导入的问题，使用nuxt.config的自动导入。
+export { cloneDeep } from "lodash-es";

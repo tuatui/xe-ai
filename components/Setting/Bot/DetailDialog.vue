@@ -261,7 +261,7 @@ const isUpdate = computed(() => botsInfoClone.value.id !== undefined);
 watch([() => props.botInfo, model], ([newVal, isOpen]) => {
   if (!isOpen) return;
   if (!newVal) botsInfoClone.value = createBotsInfo();
-  else botsInfoClone.value = structuredClone(toRaw(newVal));
+  else botsInfoClone.value = cloneDeep(newVal);
 });
 
 watch(

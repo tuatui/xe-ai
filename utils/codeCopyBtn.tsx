@@ -1,16 +1,5 @@
 import { render } from "vue";
 
-const copy = navigator.clipboard
-  ? (str: string) => navigator.clipboard.writeText(str)
-  : (str: string) => {
-      const i = document.createElement("textarea");
-      document.body.appendChild(i);
-      i.value = str;
-      i.select();
-      document.execCommand("copy");
-      document.body.removeChild(i);
-    };
-
 const handleCopy = async (el: MouseEvent, copyEl: HTMLElement) => {
   const target = el.target as HTMLDivElement;
   const timeout = 3000;
@@ -24,7 +13,7 @@ const handleCopy = async (el: MouseEvent, copyEl: HTMLElement) => {
     content: useNuxtApp().$L.tips.copySuccess,
     timeout: timeout,
   });
-  copy(copyEl.outerText);
+  copy2Clipboard(copyEl.outerText);
   await new Promise<void>((resolve) => setTimeout(resolve, timeout));
 
   first?.classList.toggle("hidden");

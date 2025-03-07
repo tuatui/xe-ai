@@ -20,13 +20,10 @@ export class ChatLocal implements ChatInterface {
 
     let id: IDBValidKey | undefined = data.id;
     try {
-      if (data.id === undefined)
-        id = await db.add(IDB_VAR.CHATS, toRawDeep(data));
+      if (data.id === undefined) id = await db.add(IDB_VAR.CHATS, data);
       else {
         const oldVal = (await db.get(IDB_VAR.CHATS, data.id)) as ChatData;
         const mergedVal = mergeDeep(oldVal, data) as ChatData;
-        if (mergedVal.toolCalls)
-          mergedVal.toolCalls = mergedVal.toolCalls.map((each) => toRaw(each));
         await db.put(IDB_VAR.CHATS, mergedVal);
       }
     } catch (error) {

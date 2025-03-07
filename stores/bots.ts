@@ -64,22 +64,18 @@ export const botsStore = defineStore("bots-store", () => {
   const updateBotNotSync = async (data: Partial<BotsData>) => {
     try {
       const db = await iDB.onDBReady();
-      const rawData = toRaw(data);
-      if (rawData.availableModel)
-        rawData.availableModel = rawData.availableModel.map((each) =>
-          toRaw(each),
-        );
-      else rawData.availableModel = [];
+      const cloneData = cloneDeep(data);
+      cloneData.availableModel ??= [];
       let res: IDBValidKey;
       if (data.id === undefined) {
-        rawData.createTime ??= new Date();
-        res = await db.add(IDB_VAR.BOTS, rawData);
-        rawData.id = res as number;
-        bots.value.push(rawData as BotsData);
+        cloneData.createTime ??= new Date();
+        res = await db.add(IDB_VAR.BOTS, cloneData);
+        cloneData.id = res as number;
+        bots.value.push(cloneData as BotsData);
       } else {
-        res = await db.put(IDB_VAR.BOTS, rawData);
+        res = await db.put(IDB_VAR.BOTS, cloneData);
         const bot = bots.value.find((i) => i.id === res);
-        if (bot) Object.assign(bot, rawData);
+        if (bot) Object.assign(bot, cloneData);
       }
       return res;
     } catch (error) {

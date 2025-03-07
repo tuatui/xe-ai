@@ -20,15 +20,10 @@
               {{ $L.tips.notMemo }}
             </div>
           </div>
-          <ChatContentItem
-            v-if="
-              selectedBots?.showPrompt ||
-              (i.from !== ChatRole.system && i.from !== ChatRole.tool)
-            "
+          <ChatContent
+            v-if="selectedBots?.showPrompt || i.from !== ChatRole.system"
             :chat="i"
-            class="max-w-full text-wrap break-words mt16 pb1"
           />
-          <ChatTool v-else-if="i.from === ChatRole.tool" :chat="i" />
         </template>
         <ChatViewErrorTag ref="errTag" />
       </article>
@@ -404,14 +399,13 @@ watch(
   },
   { once: true },
 );
-const postChatMsg = (isCreate?: boolean, lastCount: number = -2) =>
+
+const syncStatus = () =>
   postWinMessage({
-    updateChat: {
-      chats: data.value.chats.slice(lastCount).map((each) => toRaw(each)),
+    syncChatStatus: {
       isProducing: data.value.isProducing,
       topicId: props.topics.id,
       isChatting: data.value.isChatting,
-      isCreate,
     },
   });
 const postChatStopMsg = () =>
@@ -436,7 +430,6 @@ const updateHandle = async () => {
         from: ChatRole.system,
         provider: selectedBots.value.provider,
       });
-      postChatMsg(true, -1);
     }
   }
 
@@ -446,20 +439,12 @@ const updateHandle = async () => {
       : calcChatRound(data.value.chats, selectedBots.value.memoCount);
 
   if (userInput.value) {
-    let context: string;
-    if (ds.setting.useFullMDinput) context = userInput.value;
-    else {
-      const temp = document.createElement("div");
-      temp.innerText = userInput.value;
-      context = `<p>${temp.innerHTML}</p>`;
-    }
-
     await data.value.updateChat({
-      context,
+      context: userInput.value,
       from: ChatRole.user,
       provider: selectedBots.value.provider,
+      noMarkdownRender: !ds.setting.useFullMDinput,
     });
-    postChatMsg(true, -1);
     userInput.value = "";
   }
 
@@ -470,8 +455,7 @@ const updateHandle = async () => {
 
   try {
     data.value.isChatting = true;
-    postChatMsg(false, -1);
-
+    syncStatus();
     if (!chatSession) {
       chatSession = await Services[
         selectedBots.value.provider
@@ -505,7 +489,7 @@ const updateHandle = async () => {
 
     data.value.stopChatting = chatSteam.stop;
     data.value.isProducing = true;
-
+    syncStatus();
     const sessionCtx: {
       chatData: ChatData;
       update: (delta: ChatChunk["delta"]) => void;
@@ -518,9 +502,8 @@ const updateHandle = async () => {
       else {
         const nid = await data.value.updateChat({
           provider: currChatSessionProvider,
-          ...structuredClone(delta),
+          ...cloneDeep(delta),
         });
-        postChatMsg(false, -1);
         const cIndex = index;
         sessionCtx[index] = {
           chatData: data.value.chats.findLast(({ id }) => id === nid)!,
@@ -532,13 +515,12 @@ const updateHandle = async () => {
                 const out = ctx.contextBuff.out;
                 if (ctx.reasoningBuff) ctx.reasoningBuff.duration = 500;
                 (async () => {
-                  for await (const str of out) {
-                    postChatMsg(false, -1);
-                    ctx.chatData.context += str;
-                  }
+                  for await (const str of out) ctx.chatData.context += str;
                   updateDebounced(data, ctx.chatData, currChatSessionProvider);
+
                   const meta = findChatMeta(ctx.chatData.context);
                   if (!meta) return;
+
                   await updateTopic(
                     {
                       id: ctx.chatData.topicId,
@@ -546,7 +528,6 @@ const updateHandle = async () => {
                     },
                     false,
                   );
-                  postChatMsg(false, -1);
                   data.value.tempStore.shareEvent = { title: meta.title };
                 })();
               }
@@ -560,9 +541,12 @@ const updateHandle = async () => {
                   for await (const str of rOut) {
                     ctx.chatData.reasoningContent ??= "";
                     ctx.chatData.reasoningContent += str;
-                    postChatMsg(false, -1);
+                    updateDebounced(
+                      data,
+                      ctx.chatData,
+                      currChatSessionProvider,
+                    );
                   }
-                  updateDebounced(data, ctx.chatData, currChatSessionProvider);
                 })();
               }
               ctx.reasoningBuff.push(delta.reasoningContent);
@@ -575,7 +559,7 @@ const updateHandle = async () => {
                   ctx.chatData.toolCalls[index] = { ...toolCall };
                 else ctx.chatData.toolCalls[index].arg += toolCall.arg;
               }
-              postChatMsg(false, -1);
+
               updateDebounced(data, ctx.chatData, currChatSessionProvider);
             }
           },
@@ -598,7 +582,7 @@ const updateHandle = async () => {
   } finally {
     data.value.isProducing = false;
     data.value.isChatting = false;
-    postChatMsg(false, -1);
+    syncStatus();
   }
 };
 const updateDebounced = useDebounceFn(

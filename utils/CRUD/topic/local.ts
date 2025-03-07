@@ -82,7 +82,8 @@ export class Topic implements TopicInterface {
   };
   public update = async (topicData: TopicCreationData) => {
     let res: number = -1;
-    const clonedData = toRawDeep(topicData);
+
+    const clonedData = cloneDeep(topicData);
     try {
       const db = await this.iDB.onDBReady();
       if (topicData?.id === undefined) {
@@ -90,7 +91,6 @@ export class Topic implements TopicInterface {
       } else {
         const oldData: TopicData = await db.get(IDB_VAR.TOPICS, topicData.id);
         const mergedData = mergeDeep(oldData, clonedData);
-        mergedData.updateTime = new Date();
         res = (await db.put(IDB_VAR.TOPICS, mergedData)) as number;
       }
     } catch (error) {

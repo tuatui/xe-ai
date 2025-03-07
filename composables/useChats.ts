@@ -1,4 +1,4 @@
-import type { ChatToolCall } from "~/utils";
+import type { ChatData } from "~/utils";
 
 export interface UseChatTempStore {
   scrollTop?: number;
@@ -18,28 +18,24 @@ export interface UseChatTempStore {
     };
   };
 }
-
-export type useChatReturn = Ref<{
+interface ChatReturn {
   chats: ChatData[];
   tempStore: UseChatTempStore;
   isPending: boolean;
   isChatting: boolean;
   isProducing: boolean;
   updateChat: (
-    data: {
+    data: Partial<Omit<ChatData, "context" | "from">> & {
       context: string;
       from: number;
-      id?: number;
-      reasoningContent?: string;
-      toolCalls?: ChatToolCall[];
-      toolCallId?: string;
-      provider: Provider;
     },
     autoUpdateCache?: boolean,
   ) => Promise<number>;
   chatRefCount: number;
   stopChatting: () => void;
-}>;
+}
+
+export type useChatReturn = Ref<ChatReturn>;
 
 export const useChats = (topicId: number): useChatReturn => {
   const chatLocal = new ChatLocal();
@@ -68,28 +64,25 @@ export const useChats = (topicId: number): useChatReturn => {
 
   getChatsData().then((val) => (chats.value = val));
 
-  const updateChat = async (
-    data: {
-      context: string;
-      from: number;
-      id?: number;
-      reasoningContent?: string;
-      provider: Provider;
-      toolCalls?: ChatToolCall[];
-      toolCallId?: string;
-    },
+  const updateChat: ChatReturn["updateChat"] = async (
+    data,
     autoUpdateCache = true,
   ) => {
     taskCount.value++;
+    const req = cloneDeep({
+      ...data,
+      topicId,
+    });
     const res = ts.isLogin
-      ? await chatServer.update({
-          ...data,
-          topicId,
-        })
-      : await chatLocal.update({
-          ...data,
-          topicId,
-        });
+      ? await chatServer.update(req)
+      : await chatLocal.update(req);
+    if (res >= 0) {
+      req.id ??= res;
+      chatsStore().postWinMessage({
+        updateChatData: req as ChatData,
+      });
+    }
+
     if (autoUpdateCache) {
       if (data.id === undefined) {
         chats.value.push({

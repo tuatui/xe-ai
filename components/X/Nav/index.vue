@@ -53,6 +53,7 @@
     </div>
     <BottomSnackBar />
     <ChatViewConfDialog />
+    <ChatContentEditDialog />
     <Teleport to="body" v-if="!mobile.isMobileScreen">
       <XNavResizer v-model="width" v-show="!isRail" />
     </Teleport>

@@ -9,6 +9,7 @@ export type ChatData = {
   id: number;
   topicId: number;
   context: string;
+  noMarkdownRender?: boolean;
   reasoningContent?: string;
   toolCalls?: ChatToolCall[];
   toolCallId?: string;

@@ -1,11 +1,10 @@
 export interface ChatCannelData {
-  updateChat?: {
-    isCreate?: boolean;
+  syncChatStatus?: {
     topicId: number;
-    chats: ChatData[];
     isProducing: boolean;
     isChatting: boolean;
   };
+  updateChatData?: ChatData;
   updateSetting?: {
     setting: UseChatTempStore["chatSetting"];
     topicId: number;
@@ -21,29 +20,24 @@ export const chatsStore = defineStore("chats-store", () => {
   const chatChannel = new BroadcastChannel("XeAIChatChannel");
   chatChannel.onmessage = (ev: MessageEvent<ChatCannelData>) => {
     const {
-      data: { stopChat, updateChat, updateSetting },
+      data: { stopChat, syncChatStatus, updateSetting, updateChatData },
     } = ev;
-
-    if (updateChat) {
-      const currChatStore = globalSharedChats.get(updateChat.topicId);
+    // chat session
+    if (syncChatStatus) {
+      const currChatStore = globalSharedChats.get(syncChatStatus.topicId);
       if (currChatStore) {
-        currChatStore.value.isProducing = updateChat.isProducing;
-        currChatStore.value.isChatting = updateChat.isChatting;
-
-        if (updateChat.isCreate)
-          currChatStore.value.chats.push(...updateChat.chats);
-        else {
-          updateChat.chats.forEach((eachUpdateChat) => {
-            const index = currChatStore.value.chats.findLastIndex(
-              (currChat) => currChat.id === eachUpdateChat.id,
-            );
-            if (index < 0) return;
-            currChatStore.value.chats[index] = eachUpdateChat;
-          });
-        }
+        currChatStore.value.isProducing = syncChatStatus.isProducing;
+        currChatStore.value.isChatting = syncChatStatus.isChatting;
       }
     }
-
+    if (updateChatData) {
+      const topic = globalSharedChats.get(updateChatData.topicId);
+      const res = topic?.value.chats.findLast(
+        ({ id }) => updateChatData.id === id,
+      );
+      if (res) Object.assign(res, updateChatData);
+      else topic?.value.chats.push(updateChatData);
+    }
     if (stopChat) {
       const currChatStore = globalSharedChats.get(stopChat.topicId);
       if (currChatStore) {
