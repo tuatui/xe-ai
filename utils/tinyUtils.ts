@@ -93,12 +93,12 @@ class StringBuff {
   public stop = (time: number = 1000) => {
     this.stopFlag = true;
     this.duration = time;
-    if (this.breakGen) this.breakGen();
+    this.breakGen?.();
   };
   public push = (str: string) => {
     this.strBuff += str;
     this.originLen = this.strBuff.length;
-    if (this.continueGen) this.continueGen();
+    this.continueGen?.();
   };
   public clear = () => (this.strBuff = "");
   private continueGen?: () => void;

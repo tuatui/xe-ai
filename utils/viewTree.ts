@@ -9,7 +9,7 @@ export class ViewTree {
     public children: ViewTree[] = [],
     public space: number = 1,
   ) {
-    if (createVNode) this.view = createVNode(this.uniqueKey);
+    this.view = createVNode?.(this.uniqueKey);
   }
 
   public parse = <T>(leafParse: (vt: ViewTree) => T): ViewTreeWithMeta<T> => ({

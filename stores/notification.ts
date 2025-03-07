@@ -24,12 +24,12 @@ class NotificationElement {
       this.cancelJob = reject;
     })
       .then(() => {
-        if (notification.onFinish) notification.onFinish();
+        notification.onFinish?.();
         notification.onCancel = undefined;
         notification.onFinish = undefined;
       })
       .catch(() => {
-        if (notification.onCancel) notification.onCancel();
+        notification.onCancel?.();
         notification.onCancel = undefined;
         notification.onFinish = undefined;
       })
