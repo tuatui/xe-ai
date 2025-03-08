@@ -3,7 +3,7 @@
     <h6>
       JavaScript
       <div class="float-right" v-if="timeout !== undefined">
-        代码执行时间限制: {{ timeout }} 秒
+        {{ $L.tools.js.runTimeLimit(timeout) }}
       </div>
     </h6>
     <div ref="code"></div>

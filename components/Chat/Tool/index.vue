@@ -7,15 +7,15 @@
       <button class="p2 opacity-60" @click="showType = (showType + 1) % 3">
         <div
           class="i-mdi-wrap-disabled w5 h5"
-          title="不换行"
+          :title="$L.chat.noWrap"
           v-if="showType === state.noWrap"
         ></div>
         <div
           class="i-mdi-wrap w5 h5"
-          title="换行显示"
+          :title="$L.chat.wrap"
           v-else-if="showType === state.wrap"
         ></div>
-        <div class="i-mdi-raw w5 h5" title="原始内容" v-else></div>
+        <div class="i-mdi-raw w5 h5" :title="$L.chat.raw" v-else></div>
       </button>
     </div>
   </div>

@@ -67,6 +67,19 @@ export default {
     noVerLimit: "Sin límite en el ancho del contenido",
     verLimit: "Límite en el ancho del contenido",
     reasoningDetail: ["Razonando...", "Ver borrador", "Ocultar borrador"],
+    role: "Rol",
+    reasoningContent: "Contenido de razonamiento",
+    content: "Contenido",
+    noMarkdownRender: "Desactivar sintaxis Markdown",
+    toolCallWith: (name) => `Llamada a herramienta: ${name}`,
+    noWrap: "Sin ajuste",
+    wrap: "Ajustar",
+    raw: "Contenido crudo",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s) => `Límite de tiempo de ejecución: ${s} segundos`,
+    },
   },
   setting: {
     apiUrl: "URL del proveedor",

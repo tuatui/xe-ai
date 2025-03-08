@@ -11,7 +11,7 @@
         density="compact"
         size="small"
         @click="copy"
-        title="编辑"
+        :title="$L.common.copy"
         icon
       >
         <VIcon class="i-mdi-content-copy opacity-60" />
@@ -23,7 +23,7 @@
         density="compact"
         size="small"
         @click="edit(chat)"
-        title="编辑"
+        :title="$L.common.edit"
         icon
       >
         <VIcon class="i-mdi-text-box-edit-outline opacity-60" />

@@ -67,6 +67,19 @@ export default {
     noVerLimit: "No limit on content width",
     verLimit: "Limit on content width",
     reasoningDetail: ["Reasoning...", "View Draft", "Hide Draft"],
+    role: "Role",
+    reasoningContent: "Reasoning Content",
+    content: "Content",
+    noMarkdownRender: "Disable Markdown Syntax",
+    toolCallWith: (name) => `Tool Call: ${name}`,
+    noWrap: "No Wrap",
+    wrap: "Wrap",
+    raw: "Raw Content",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s) => `Code execution time limit: ${s} seconds`,
+    },
   },
   setting: {
     apiUrl: "Provider URL",

@@ -67,6 +67,19 @@ export default {
     noVerLimit: "Không giới hạn độ rộng nội dung",
     verLimit: "Giới hạn độ rộng nội dung",
     reasoningDetail: ["Đang suy luận...", "Xem bản nháp", "Ẩn bản nháp"],
+    role: "Vai trò",
+    reasoningContent: "Nội dung lập luận",
+    content: "Nội dung",
+    noMarkdownRender: "Tắt cú pháp Markdown",
+    toolCallWith: (name) => `Gọi công cụ: ${name}`,
+    noWrap: "Không ngắt dòng",
+    wrap: "Ngắt dòng",
+    raw: "Nội dung thô",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s) => `Giới hạn thời gian thực thi: ${s} giây`,
+    },
   },
   setting: {
     apiUrl: "URL của nhà cung cấp",

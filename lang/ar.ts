@@ -68,6 +68,19 @@ export default {
     noVerLimit: "لا حدود لعقود المحتوى",
     verLimit: "حدود لعقود المحتوى",
     reasoningDetail: ["جارٍ التفكير...", "عرض المسودة", "إخفاء المسودة"],
+    role: "دور",
+    reasoningContent: "المحتوى الاستدلالي",
+    content: "محتوى",
+    noMarkdownRender: "تعطيل تركيب ماركداون",
+    toolCallWith: (name) => `استدعاء أداة: ${name}`,
+    noWrap: "بدون تفاف",
+    wrap: "تفاف",
+    raw: "محتوى خام",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s) => `حد وقت تنفيذ الكود: ${s} ثانية`,
+    },
   },
   setting: {
     apiUrl: "عنوان مزود الخدمة",

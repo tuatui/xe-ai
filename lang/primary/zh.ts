@@ -68,6 +68,19 @@ const lang = {
     noVerLimit: "不限制内容宽度",
     verLimit: "限制内容宽度",
     reasoningDetail: ["推理中...", "查看草稿", "隐藏草稿"],
+    role: "角色",
+    reasoningContent: "推理内容",
+    content: "内容",
+    noMarkdownRender: "停用Markdown语法",
+    toolCallWith: (name: string) => `工具调用：${name}`,
+    noWrap: "不换行",
+    wrap: "换行",
+    raw: "原始内容",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s: number) => `代码执行时间限制: ${s} 秒`,
+    },
   },
   setting: {
     apiUrl: "服务提供商地址",

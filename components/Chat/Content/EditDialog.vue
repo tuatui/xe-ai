@@ -15,30 +15,30 @@
         <VCardText>
           <VSelect
             v-model="form.from"
-            :label="'角色'"
+            :label="$L.chat.role"
             :items="roles"
             :item-props="(i) => ({ title: ChatRole[i] })"
           />
           <VTextarea
             v-if="form.reasoningContent !== undefined"
             v-model="form.reasoningContent"
-            :label="'推理内容'"
+            :label="$L.chat.reasoningContent"
             variant="outlined"
           />
           <VTextarea
             v-model="form.context"
-            :label="'内容'"
+            :label="$L.chat.content"
             variant="outlined"
             rows="12"
           />
           <VCheckbox
-            :label="'停用Markdown语法'"
+            :label="$L.chat.noMarkdownRender"
             v-model="form.noMarkdownRender"
           />
           <VTextarea
             v-for="i in form.toolCalls"
             v-model="i.arg"
-            :label="`工具调用: ${i.name}`"
+            :label="$L.chat.toolCallWith(i.name)"
             variant="outlined"
           />
         </VCardText>

@@ -71,6 +71,19 @@ export default {
       "Просмотреть черновик",
       "Скрыть черновик",
     ],
+    role: "Роль",
+    reasoningContent: "Содержание рассуждений",
+    content: "Содержание",
+    noMarkdownRender: "Отключить синтаксис Markdown",
+    toolCallWith: (name) => `Вызов инструмента: ${name}`,
+    noWrap: "Без переноса",
+    wrap: "Перенос",
+    raw: "Исходное содержимое",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s) => `Ограничение времени выполнения: ${s} секунд`,
+    },
   },
   setting: {
     apiUrl: "URL поставщика",

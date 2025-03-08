@@ -72,6 +72,19 @@ export default {
       "Voir le brouillon",
       "Masquer le brouillon",
     ],
+    role: "Rôle",
+    reasoningContent: "Contenu de raisonnement",
+    content: "Contenu",
+    noMarkdownRender: "Désactiver la syntaxe Markdown",
+    toolCallWith: (name) => `Appel d'outil : ${name}`,
+    noWrap: "Pas de retour",
+    wrap: "Envelopper",
+    raw: "Contenu brut",
+  },
+  tools: {
+    js: {
+      runTimeLimit: (s) => `Limite de temps d'exécution : ${s} secondes`,
+    },
   },
   setting: {
     apiUrl: "Adresse du fournisseur",
