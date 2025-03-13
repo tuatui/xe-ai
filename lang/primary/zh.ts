@@ -42,6 +42,7 @@ const lang = {
     input: "输入",
     enable: "启用",
     disable: "禁用",
+    retry: "重试",
   },
   action: {
     deleteSome: (item: string) => `已删除“${item}”`,
@@ -163,6 +164,7 @@ const lang = {
     notMemo: "下次回答时上面的对话将被遗忘",
     markdownCode:
       "启用后需要使用代码块或行内代码块包裹xml代码，例如`<script>a = 1</script>`",
+    noChatCtx: "请先开始对话",
   },
   theme: {
     switchTo: (mod: ThemeMod) => `切换到${["自动", "浅色", "黑色"][mod]}模式`,

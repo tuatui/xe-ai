@@ -1,3 +1,4 @@
+isDisabled: true
 <template>
   <div class="flex flex-col overflow-hidden">
     <div
@@ -96,7 +97,7 @@
             prepend-icon="i-mdi-send"
             color="primary"
             variant="elevated"
-            @click="updateHandle"
+            @click="updateHandle()"
             :disabled="!isBotReady || data.isProducing"
             :loading="data.isProducing || data.isChatting"
             >{{ $L.chat.send }}</VBtn
@@ -160,6 +161,16 @@
             :use-tooltip="
               articleVerLimit ? $L.chat.noVerLimit : $L.chat.verLimit
             "
+            tooltip-location="top"
+          />
+          <XCommonBtn
+            icon
+            density="comfortable"
+            rounded
+            variant="text"
+            @click="retry"
+            use-icon="i-mdi-cached"
+            :use-tooltip="$L.common.retry"
             tooltip-location="top"
           />
           <VSpacer />
@@ -411,7 +422,7 @@ const syncStatus = () =>
 const postChatStopMsg = () =>
   postWinMessage({ stopChat: { topicId: props.topics.id } });
 
-const updateHandle = async () => {
+const updateHandle = async (ignoreUserInput?: boolean) => {
   errTag.value?.clear();
   if (!selectedBots.value || selectedModel.value === undefined) return;
   if (data.value.isProducing || data.value.isChatting) return;
@@ -438,7 +449,7 @@ const updateHandle = async () => {
       ? 0
       : calcChatRound(data.value.chats, selectedBots.value.memoCount);
 
-  if (userInput.value) {
+  if (!ignoreUserInput && userInput.value) {
     await data.value.updateChat({
       context: userInput.value,
       from: ChatRole.user,
@@ -470,7 +481,10 @@ const updateHandle = async () => {
       }
     }
 
-    const sessionChatsData = data.value.chats.slice(chatTruncateIdx);
+    const sessionChatsData = data.value.chats
+      .slice(chatTruncateIdx)
+      .filter(({ isDisabled }) => !isDisabled);
+
     const currChatSessionProvider = selectedBots.value.provider;
     if (
       selectedBots.value.addPromptEveryTime &&
@@ -694,6 +708,35 @@ watch(
     memoIdx.value = idx === 0 ? undefined : idx;
   },
 );
+
+// TODO: 我草怎么拉这么多了😅，得拆组件了
+const retry = async () => {
+  const assistChatIdx = data.value.chats.findLastIndex(
+    ({ from, isDisabled }) => from === ChatRole.assistant && !isDisabled,
+  );
+  if (assistChatIdx < 0) {
+    notificationStore().pushNotification({
+      content: $L.tips.noChatCtx,
+      timeout: 3000,
+      allowClose: true,
+    });
+    return;
+  }
+
+  const assistChat = data.value.chats[assistChatIdx];
+  await data.value.updateChat({ ...assistChat, isDisabled: true });
+  if (assistChat.toolCalls) {
+    const toolCallIdSet = new Set(assistChat.toolCalls.map(({ id }) => id));
+    await Promise.all(
+      data.value.chats
+        .slice(assistChatIdx)
+        .filter(({ toolCallId }) => toolCallId && toolCallIdSet.has(toolCallId))
+        .map((chat) => data.value.updateChat({ ...chat, isDisabled: true })),
+    );
+  }
+
+  updateHandle(true);
+};
 </script>
 <style lang="scss" scoped>
 @use "/assets/tab.scss" as *

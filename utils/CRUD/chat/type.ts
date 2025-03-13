@@ -10,6 +10,7 @@ export type ChatData = {
   topicId: number;
   context: string;
   noMarkdownRender?: boolean;
+  isDisabled?: boolean;
   reasoningContent?: string;
   toolCalls?: ChatToolCall[];
   toolCallId?: string;

@@ -4,7 +4,10 @@
     <pre class="ws-pre-wrap" v-else-if="showType === state.wrap">{{ ctx }}</pre>
     <div class="py7 px4" v-else>{{ chat.context }}</div>
     <div class="absolute right-0 top-0">
-      <button class="p2 opacity-60" @click="showType = (showType + 1) % 3">
+      <button
+        class="p2 text-medium-emphasis"
+        @click="showType = (showType + 1) % 3"
+      >
         <div
           class="i-mdi-wrap-disabled w5 h5"
           :title="$L.chat.noWrap"

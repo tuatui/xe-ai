@@ -35,7 +35,7 @@ export const createCodeCopyBtn = (el: HTMLElement) => {
     render(
       <div class="text-right h0">
         <button
-          class="pa2 opacity-60"
+          class="pa2 text-medium-emphasis"
           onClick={(e) => handleCopy(e, element)}
           title={title}
         >

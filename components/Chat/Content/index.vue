@@ -1,5 +1,9 @@
 <template>
-  <div class="chat-content" ref="contentEle">
+  <div
+    class="chat-content"
+    ref="contentEle"
+    :class="{ 'text-medium-emphasis': chat.isDisabled }"
+  >
     <ChatTool v-if="chat.from === ChatRole.tool" :chat />
     <ChatContentItem v-else :chat class="max-w-full text-wrap! break-words!" />
 
@@ -14,7 +18,7 @@
         :title="$L.common.copy"
         icon
       >
-        <VIcon class="i-mdi-content-copy opacity-60" />
+        <VIcon class="i-mdi-content-copy text-medium-emphasis" />
       </VBtn>
       <VBtn
         variant="text"
@@ -26,7 +30,7 @@
         :title="$L.common.edit"
         icon
       >
-        <VIcon class="i-mdi-text-box-edit-outline opacity-60" />
+        <VIcon class="i-mdi-text-box-edit-outline text-medium-emphasis" />
       </VBtn>
     </div>
   </div>

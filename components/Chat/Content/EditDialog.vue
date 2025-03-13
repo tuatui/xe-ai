@@ -31,20 +31,23 @@
             variant="outlined"
             rows="12"
           />
-          <VCheckbox
-            :label="$L.chat.noMarkdownRender"
-            v-model="form.noMarkdownRender"
-          />
           <VTextarea
             v-for="i in form.toolCalls"
             v-model="i.arg"
             :label="$L.chat.toolCallWith(i.name)"
             variant="outlined"
           />
+          <VDivider />
+          <VCheckbox
+            :label="$L.chat.noMarkdownRender"
+            v-model="form.noMarkdownRender"
+            hide-details
+          />
+          <VCheckbox :label="$L.common.disable" v-model="form.isDisabled" />
         </VCardText>
         <VDivider />
         <VCardActions>
-          <VSpacer></VSpacer>
+          <VSpacer />
           <VBtn
             size="large"
             variant="elevated"
