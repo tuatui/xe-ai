@@ -696,6 +696,7 @@ const calcChatRound = (chats: ChatData[], count: number): number => {
   }
   return 0;
 };
+
 const memoIdx = ref<number>();
 watch(
   [() => selectedBots.value?.memoCount, () => data.value.chats.length],
