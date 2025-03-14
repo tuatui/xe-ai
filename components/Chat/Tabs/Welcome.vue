@@ -16,7 +16,6 @@
           autofocus
           v-model="useInput"
           :placeholder
-          class="![&_input]:placeholder:opacity-100"
           variant="solo-filled"
           :rules="[
             () => (selectedModel === undefined ? $L.tips.needToAddModel : true),

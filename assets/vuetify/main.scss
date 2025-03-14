@@ -16,3 +16,11 @@ $font-family: "Roboto", "Noto Sans", "Microsoft Yahei", sans-serif;
     transition: none !important;
   }
 }
+input::placeholder,
+textarea::placeholder {
+  color: rgba(
+    var(--v-theme-on-background),
+    var(--v-medium-emphasis-opacity)
+  ) !important;
+  opacity: 1 !important;
+}

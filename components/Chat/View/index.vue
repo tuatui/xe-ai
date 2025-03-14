@@ -69,7 +69,7 @@ isDisabled: true
           row-height="0"
           class="custom-flex-v-textarea"
           rounded="0"
-          :label="$L.chat.inputTips"
+          :placeholder="$L.chat.inputTips"
           v-model="userInput"
           hide-details
           no-resize
