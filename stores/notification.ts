@@ -33,7 +33,7 @@ class NotificationElement {
         notification.onCancel = undefined;
         notification.onFinish = undefined;
       })
-      .finally(() => onFinish && onFinish());
+      .finally(() => onFinish?.());
   }
 }
 export const notificationStore = defineStore("global-notification", () => {
