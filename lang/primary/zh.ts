@@ -127,7 +127,7 @@ const lang = {
       memo: "记住上次关闭时的布局",
     },
     user: "用户",
-    mdInput: "为你输入的内容启用完整MARKDOWN语法",
+    mdInput: "为你输入的内容启用 MARKDOWN 语法",
   },
   model: {
     config: "配置模型",
