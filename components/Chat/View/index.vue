@@ -686,7 +686,6 @@ const takeSnapshot = async () => {
 };
 
 const articleVerLimit = ref(true);
-
 const calcChatRound = (chats: ChatData[], count: number): number => {
   if (count === 0) return chats.length;
   for (let index = chats.length - 1; index >= 0; index--) {
