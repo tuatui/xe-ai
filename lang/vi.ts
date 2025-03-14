@@ -41,6 +41,7 @@ export default {
     input: "Nhập",
     enable: "Bật",
     disable: "Tắt",
+    retry: "Thử lại",
   },
   action: {
     deleteSome: (item) => `Đã xóa "${item}"`,
@@ -163,6 +164,7 @@ export default {
     notMemo: "Quên cuộc trò chuyện trên lần sau",
     markdownCode:
       "Khi bật, mã XML nên được bao bọc trong khối mã hoặc mã nội tuyến, ví dụ: `<script>a = 1</script>`",
+    noChatCtx: "Vui lòng bắt đầu cuộc trò chuyện trước",
   },
   theme: {
     switchTo: (mod) => `Chuyển sang chế độ ${["Tự động", "Sáng", "Tối"][mod]}`,

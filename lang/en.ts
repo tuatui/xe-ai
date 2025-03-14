@@ -41,6 +41,7 @@ export default {
     input: "Input",
     enable: "Enable",
     disable: "Disable",
+    retry: "Retry",
   },
   action: {
     deleteSome: (item) => `Deleted "${item}"`,
@@ -162,6 +163,7 @@ export default {
     notMemo: "Forget the above conversation next time",
     markdownCode:
       "Once enabled, XML code should be wrapped in code blocks or inline code blocks, e.g., `<script>a = 1</script>`",
+    noChatCtx: "Please start a conversation first",
   },
   theme: {
     switchTo: (mod) => `Switch to ${["Auto", "Light", "Dark"][mod]} mode`,

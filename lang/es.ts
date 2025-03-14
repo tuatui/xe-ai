@@ -41,6 +41,7 @@ export default {
     input: "Entrada",
     enable: "Habilitar",
     disable: "Deshabilitar",
+    retry: "Reintentar",
   },
   action: {
     deleteSome: (item) => `Eliminado "${item}"`,
@@ -164,6 +165,7 @@ export default {
     notMemo: "Olvidar conversación anterior próxima vez",
     markdownCode:
       "Al habilitarlo, el código XML debe estar entre bloques de código o bloques en línea, por ejemplo, `<script>a = 1</script>`",
+    noChatCtx: "Por favor, empieza una conversación primero",
   },
   theme: {
     switchTo: (mod) =>

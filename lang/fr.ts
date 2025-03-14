@@ -42,6 +42,7 @@ export default {
     input: "Entrée",
     enable: "Activer",
     disable: "Désactiver",
+    retry: "Réessayer",
   },
   action: {
     deleteSome: (item) => `Supprimé "${item}"`,
@@ -171,6 +172,7 @@ export default {
     notMemo: "Oublier la conversation ci-dessus prochaine fois",
     markdownCode:
       "Une fois activé, le code XML doit être enveloppé dans des blocs de code ou des blocs de code en ligne, par exemple `<script>a = 1</script>`",
+    noChatCtx: "Veuillez d'abord démarrer une conversation",
   },
   theme: {
     switchTo: (mod) =>

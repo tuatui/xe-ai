@@ -41,6 +41,7 @@ export default {
     input: "Ввод",
     enable: "Включить",
     disable: "Отключить",
+    retry: "Повторить",
   },
   action: {
     deleteSome: (item) => `Удалено "${item}"`,
@@ -167,6 +168,7 @@ export default {
     notMemo: "Забыть приведенный выше диалог следующий раз",
     markdownCode:
       "После включения XML-код должен быть заключен в блоки кода или встроенные блоки кода, например `<script>a = 1</script>`",
+    noChatCtx: "Пожалуйста, начните разговор сначала",
   },
   theme: {
     switchTo: (mod) =>

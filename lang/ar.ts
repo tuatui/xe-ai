@@ -42,6 +42,7 @@ export default {
     input: "إدخال",
     enable: "تمكين",
     disable: "تعطيل",
+    retry: "إعادة المحاولة",
   },
   action: {
     deleteSome: (item) => `تم حذف "${item}"`,
@@ -163,6 +164,7 @@ export default {
     notMemo: "النسيان المحادثة أعلاه في المرة القادمة",
     markdownCode:
       "عند التمكين، يجب إحاطة كود XML بكتل كود أو كتل كود مضمنة، مثلًا `<script>a = 1</script>`",
+    noChatCtx: "يرجى بدء محادثة أولاً",
   },
   theme: {
     switchTo: (mod) => `التبديل إلى الوضع ${["تلقائي", "فاتح", "داكن"][mod]}`,
