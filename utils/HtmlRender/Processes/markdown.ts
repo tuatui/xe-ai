@@ -2,7 +2,7 @@ import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import hljsCore from "highlight.js/lib/core";
 import { hljsDefineVue } from "./hljs-vue";
-
+import type { ProcessCtx } from "~/utils";
 for (const [alias, languageName] of langAliasAddition.entries()) {
   hljsCore.registerAliases([alias], { languageName });
 }
@@ -52,6 +52,22 @@ const marked = new Marked(
   markedHighlight({
     async: true,
     langPrefix: "hljs language-",
+    /**
+     * 现在部分代码高亮是一个同步任务，但是选择保留其异步函数的属性，
+     * 这样在多个分屏中同一个对话可以利用之前的优化逻辑只渲染一次。
+     */
+    async highlight(code, lang) {
+      lang = lang.toLowerCase();
+      analyzeAndImport(lang);
+      const language = hljsCore.getLanguage(lang) ? lang : "plaintext";
+      return hljsCore.highlight(code, { language }).value;
+    },
+  }),
+);
+const markedWithFullCode = new Marked(
+  markedHighlight({
+    async: true,
+    langPrefix: "hljs language-",
     async highlight(code, lang) {
       lang = lang.toLowerCase();
       await analyzeAndImport(lang);
@@ -61,4 +77,11 @@ const marked = new Marked(
   }),
 );
 
-export default (text: string) => marked.parse(text);
+export default async (ctx: ProcessCtx): Promise<ProcessCtx> => {
+  if (ctx.shouldFullRender) ctx.text = await markedWithFullCode.parse(ctx.text);
+  else {
+    ctx.text = await marked.parse(ctx.text);
+    ctx.isMDPartialRender = true;
+  }
+  return ctx;
+};

@@ -40,7 +40,12 @@ const codeCopyBtnDB = useDebounceFn(createCodeCopyBtn, 60);
 const tasks = new CyclicTasks(async () => {
   const res = props.chat.noMarkdownRender
     ? props.chat.context
-    : await render(props.chat.id, props.chat.context);
+    : (
+        await render(props.chat.id, {
+          text: props.chat.context,
+          shouldFullRender: props.chat.status !== ChatStatus.generating,
+        })
+      ).text;
 
   if (!haveContext.value) {
     haveContext.value = true;
@@ -68,7 +73,11 @@ const updateDetailOpenStatus = () =>
     : ChatDetailStatus.viewDraft);
 
 watch(
-  [() => props.chat.context, () => props.chat.noMarkdownRender],
+  [
+    () => props.chat.context,
+    () => props.chat.noMarkdownRender,
+    () => props.chat.status,
+  ],
   tasks.exec,
 );
 watch(

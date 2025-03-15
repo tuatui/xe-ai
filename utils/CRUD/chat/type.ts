@@ -5,6 +5,7 @@ export interface ChatToolCall {
   id: string;
   index: number;
 }
+
 export type ChatData = {
   id: number;
   topicId: number;
@@ -16,6 +17,8 @@ export type ChatData = {
   toolCallId?: string;
   from: ChatRole;
   provider?: Provider;
+  finishReason?: string;
+  status?: ChatStatus;
 };
 export type ChatCreationData = Omit<ChatData, "id"> &
   Pick<Partial<ChatData>, "id">;
@@ -26,6 +29,11 @@ export enum ChatRole {
   assistant,
   function,
   tool,
+}
+export enum ChatStatus {
+  init,
+  generating,
+  finish,
 }
 export interface ChatInterface {
   get: (topicId: number) => Promise<ChatData[]>;

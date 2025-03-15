@@ -1,2 +1,6 @@
 import DOMPurify from "dompurify";
-export default (i: string) => DOMPurify.sanitize(i);
+import type { ProcessCtx } from "~/utils";
+export default (ctx: ProcessCtx) => {
+  ctx.text = DOMPurify.sanitize(ctx.text);
+  return ctx;
+};

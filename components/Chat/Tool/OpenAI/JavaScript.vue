@@ -33,8 +33,11 @@ const tasks = new CyclicTasks(async () => {
       return;
     }
   }
-  const codeHtml = await htmlRender(`\`\`\`javascript\n${codeStr}\n\`\`\``);
-  if (code.value) code.value.innerHTML = codeHtml;
+  const codeHtml = await htmlRender({
+    text: `\`\`\`javascript\n${codeStr}\n\`\`\``,
+    shouldFullRender: true,
+  });
+  if (code.value) code.value.innerHTML = codeHtml.text;
 });
 watch(() => toolCall, tasks.exec, { immediate: true, deep: true });
 </script>

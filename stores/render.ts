@@ -1,6 +1,6 @@
 export const chatRender = defineStore("global-chat-render-task", () => {
-  const map = new Map<number, Promise<string>>();
-  const render = (key: number, md: string): Promise<string> => {
+  const map = new Map<number, Promise<ProcessCtx>>();
+  const render = (key: number, md: ProcessCtx): Promise<ProcessCtx> => {
     const res = map.get(key);
     if (res) return res;
 

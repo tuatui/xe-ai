@@ -464,6 +464,14 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
       scrollToEnd(contentBody.value, { behavior: "instant" });
   });
 
+  const sessionCtx: {
+    chatData: ChatData;
+    update: (delta: ChatChunk["delta"]) => void;
+    remove: () => void;
+    reasoningBuff?: BufferedOut;
+    contextBuff?: BufferedOut;
+  }[] = [];
+
   try {
     data.value.isChatting = true;
     syncStatus();
@@ -504,16 +512,11 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
     data.value.stopChatting = chatSteam.stop;
     data.value.isProducing = true;
     syncStatus();
-    const sessionCtx: {
-      chatData: ChatData;
-      update: (delta: ChatChunk["delta"]) => void;
-      remove: () => void;
-      reasoningBuff?: BufferedOut;
-      contextBuff?: BufferedOut;
-    }[] = [];
+
     for await (const { finish_reason, index, delta } of chatSteam) {
       if (sessionCtx[index]) sessionCtx[index].update(delta);
       else {
+        delta.status = ChatStatus.generating;
         const nid = await data.value.updateChat({
           provider: currChatSessionProvider,
           ...cloneDeep(delta),
@@ -529,9 +532,13 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
                 const out = ctx.contextBuff.out;
                 if (ctx.reasoningBuff) ctx.reasoningBuff.duration = 500;
                 (async () => {
-                  for await (const str of out) ctx.chatData.context += str;
-                  updateDebounced(data, ctx.chatData, currChatSessionProvider);
-
+                  for await (const str of out) {
+                    ctx.chatData.context += str;
+                    updateDebounced(data, ctx.chatData);
+                  }
+                  ctx.chatData.finishReason = delta.finishReason;
+                  ctx.chatData.status = ChatStatus.finish;
+                  updateDebounced(data, ctx.chatData);
                   const meta = findChatMeta(ctx.chatData.context);
                   if (!meta) return;
 
@@ -555,11 +562,7 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
                   for await (const str of rOut) {
                     ctx.chatData.reasoningContent ??= "";
                     ctx.chatData.reasoningContent += str;
-                    updateDebounced(
-                      data,
-                      ctx.chatData,
-                      currChatSessionProvider,
-                    );
+                    updateDebounced(data, ctx.chatData);
                   }
                 })();
               }
@@ -574,7 +577,7 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
                 else ctx.chatData.toolCalls[index].arg += toolCall.arg;
               }
 
-              updateDebounced(data, ctx.chatData, currChatSessionProvider);
+              updateDebounced(data, ctx.chatData);
             }
           },
           remove: () => {
@@ -588,7 +591,6 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
       }
       if (finish_reason) sessionCtx[index].remove();
     }
-    sessionCtx.forEach((each) => each.remove());
   } catch (error: any) {
     let msg = error?.message ?? JSON.stringify(error);
     if (error.stack) msg += `\n${error.stack}`;
@@ -596,23 +598,12 @@ const updateHandle = async (ignoreUserInput?: boolean) => {
   } finally {
     data.value.isProducing = false;
     data.value.isChatting = false;
+    sessionCtx.forEach((each) => each.remove());
     syncStatus();
   }
 };
 const updateDebounced = useDebounceFn(
-  (data: useChatReturn, chat: ChatData, provider: Provider) =>
-    data.value.updateChat(
-      {
-        context: chat.context,
-        from: ChatRole.assistant,
-        id: chat.id,
-        reasoningContent: chat.reasoningContent,
-        provider,
-        toolCalls: chat.toolCalls,
-        toolCallId: chat.toolCallId,
-      },
-      false,
-    ),
+  (data: useChatReturn, chat: ChatData) => data.value.updateChat(chat, false),
   100,
 );
 

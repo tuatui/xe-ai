@@ -1,4 +1,5 @@
 import type { renderToString } from "temml";
+import type { ProcessCtx } from "~/utils";
 const BlockLeft = "\\[";
 const BlockRight = "\\]";
 const InlineLeft = "\\(";
@@ -13,9 +14,11 @@ class FindResult {
     public right: number,
   ) {}
 }
+
 let latex2Mathml: typeof renderToString | undefined = undefined;
 
-export default async (input: string) => {
+export default async (ctx: ProcessCtx): Promise<ProcessCtx> => {
+  const { text: input } = ctx;
   const resInline: FindResult[] = [];
   const resBlock: FindResult[] = [];
 
@@ -75,6 +78,6 @@ export default async (input: string) => {
       }
     }
   }
-
-  return output + input.slice(cursor);
+  ctx.text = output + input.slice(cursor);
+  return ctx;
 };
