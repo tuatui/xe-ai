@@ -53,6 +53,7 @@ const lang = {
     chatHistory: "聊天历史记录",
   },
   chat: {
+    noCollapse: "还原输入框",
     collapse: "折叠输入框",
     setting: "对话设置",
     stop: "停止对话",

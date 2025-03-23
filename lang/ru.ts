@@ -52,6 +52,7 @@ export default {
     chatHistory: "История чатов",
   },
   chat: {
+    noCollapse: "Восстановить поле ввода",
     collapse: "Свернуть поле ввода",
     setting: "Настройки чата",
     stop: "Остановить чат",

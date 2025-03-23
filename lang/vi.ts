@@ -52,6 +52,7 @@ export default {
     chatHistory: "Lịch sử trò chuyện",
   },
   chat: {
+    noCollapse: "Khôi phục hộp nhập",
     collapse: "Thu gọn nhập liệu",
     setting: "Cài đặt trò chuyện",
     stop: "Dừng trò chuyện",

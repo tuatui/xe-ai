@@ -53,6 +53,7 @@ export default {
     chatHistory: "Historique des chats",
   },
   chat: {
+    noCollapse: "Restaurer la zone de saisie",
     collapse: "Réduire l'entrée",
     setting: "Paramètres de chat",
     stop: "Arrêter le chat",

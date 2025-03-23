@@ -53,6 +53,7 @@ export default {
     chatHistory: "سجل المحادثات",
   },
   chat: {
+    noCollapse: "استعادة مربع الإدخال",
     collapse: "إخفاء صندوق الإدخال",
     setting: "إعدادات الدردشة",
     stop: "إيقاف الدردشة",

@@ -8,14 +8,21 @@
       <VAppBarTitle>{{
         data.topics[0]?.title || $L.chat.untitled
       }}</VAppBarTitle>
-      <template v-if="!mobile.isMobileScreen">
-        <VSpacer />
-        <VBtn
-          icon="i-mdi-close"
-          :title="$L.common.back"
-          @click="() => chatTreeStore().init()"
-        />
-      </template>
+      <VSpacer />
+      <XCommonBtn
+        v-if="data.isCollapse"
+        icon
+        variant="text"
+        @click.stop="data.isCollapse = false"
+        use-icon="i-mdi-chevron-up"
+        :use-tooltip="$L.chat.noCollapse"
+      />
+      <VBtn
+        v-if="!mobile.isMobileScreen"
+        icon="i-mdi-close"
+        :title="$L.common.back"
+        @click="() => chatTreeStore().init()"
+      />
     </VAppBar>
     <template v-if="data.topics[0]">
       <ChatView

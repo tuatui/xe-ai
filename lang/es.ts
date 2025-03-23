@@ -52,6 +52,7 @@ export default {
     chatHistory: "Historial de chat",
   },
   chat: {
+    noCollapse: "Restaurar cuadro de entrada",
     collapse: "Colapsar entrada",
     setting: "Configuración del chat",
     stop: "Detener conversación",

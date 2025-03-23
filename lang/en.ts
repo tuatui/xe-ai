@@ -52,6 +52,7 @@ export default {
     chatHistory: "Chat History",
   },
   chat: {
+    noCollapse: "Restore input box",
     collapse: "Collapse Input",
     setting: "Chat Settings",
     stop: "Stop Chat",
