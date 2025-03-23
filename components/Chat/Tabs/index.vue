@@ -54,6 +54,14 @@
         </VTab>
         <template #window>
           <div>
+            <XCommonBtn
+              v-if="data.isCollapse"
+              icon
+              variant="text"
+              @click.stop="data.isCollapse = false"
+              use-icon="i-mdi-chevron-up"
+              :use-tooltip="$L.chat.noCollapse"
+            />
             <template v-if="viewSize.inlineSize > 500">
               <ChatTabsBtnGroup
                 @handle-new-chat="handleNewChat"
@@ -301,15 +309,6 @@ const handleDragOver = (ev: DragEvent) => {
   if (!el) return;
   dragOverlayType.value = calcMousePos(el.getBoundingClientRect(), ev);
 };
-
-watch(
-  () => data.value.isCollapse,
-  async (isCollapse) => {
-    if (!isCollapse || !tabRootEl.value) return;
-    tabRootEl.value.title = $L.tips.doubleToRestore;
-    setTimeout(() => tabRootEl.value && (tabRootEl.value.title = ""), 3000);
-  },
-);
 
 let slideEl: HTMLDivElement | undefined | null = null;
 const mapVerScrollToHor = (e: WheelEvent) => {

@@ -3,7 +3,6 @@ isDisabled: true
   <div class="flex flex-col overflow-hidden">
     <div
       class="markdown-body h0 grow overflow-y-auto py4 contain-strict"
-      @dblclick="isCollapse = false"
       ref="contentBody"
       @scroll.passive="handleScroll"
     >
