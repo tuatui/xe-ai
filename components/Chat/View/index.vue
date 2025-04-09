@@ -799,4 +799,39 @@ const retry = async () => {
   margin: 0 auto;
   padding: 0 0.5rem;
 }
+.hl-code-wrapper {
+  position: relative;
+  & > strong,
+  & > button {
+    color: rgba(var(--v-theme-on-background), var(--v-medium-emphasis-opacity));
+  }
+  & > strong {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+  }
+  & > button {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0.3125rem;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    border-radius: 4px;
+    transition: 300ms;
+
+    & > div {
+      width: 1.125rem;
+      height: 1.125rem;
+      pointer-events: none;
+    }
+    &:active {
+      background-color: rgb(var(--v-theme-surface-light));
+    }
+  }
+}
 </style>

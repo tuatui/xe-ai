@@ -3,6 +3,7 @@
     <ChatViewReasoningDetails
       v-if="chat.reasoningContent"
       v-model="isDetailsOpen"
+      n
     >
       <template #title>{{ $L.chat.reasoningDetail[detailsStatus] }}</template>
       <template #content>{{ chat.reasoningContent }}</template>
@@ -25,6 +26,10 @@
 <script setup lang="ts">
 import { services } from "~/utils/AI/models/all";
 import { createCodeCopyBtn } from "~/utils/codeCopyBtn";
+import { DiffDOM } from "diff-dom";
+
+const dd = new DiffDOM();
+
 const enum ChatDetailStatus {
   reasoning = 0,
   viewDraft,
@@ -36,7 +41,8 @@ const props = defineProps<{ chat: ChatData }>();
 const isDetailsOpen = ref(false);
 const haveContext = ref(false);
 const { render } = chatRender();
-const codeCopyBtnDB = useDebounceFn(createCodeCopyBtn, 60);
+const $L = useNuxtApp().$L;
+
 const tasks = new CyclicTasks(async () => {
   const res = props.chat.noMarkdownRender
     ? props.chat.context
@@ -59,12 +65,19 @@ const tasks = new CyclicTasks(async () => {
       mdBodyEl.value.innerHTML = "";
       mdBodyEl.value.appendChild(p);
     } else {
-      mdBodyEl.value.innerHTML = res;
+      const content = `<div>${res}</div>`;
+      if (mdBodyEl.value.innerHTML) {
+        const diff = dd.diff(mdBodyEl.value, content);
+        dd.apply(mdBodyEl.value, diff);
+      } else {
+        mdBodyEl.value.innerHTML = content;
+      }
     }
 
-    codeCopyBtnDB(mdBodyEl.value);
+    createCodeCopyBtn(mdBodyEl.value, { title: $L.common.copy });
   }
 });
+
 const detailsStatus = ref(ChatDetailStatus.viewDraft);
 
 const updateDetailOpenStatus = () =>

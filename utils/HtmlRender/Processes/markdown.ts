@@ -1,5 +1,5 @@
 import { Marked } from "marked";
-import { markedHighlight } from "marked-highlight";
+import { markedHighlight } from "./highlight";
 import hljsCore from "highlight.js/lib/core";
 import { hljsDefineVue } from "./hljs-vue";
 import type { ProcessCtx } from "~/utils";
@@ -50,12 +50,6 @@ const analyzeAndImport = async (lang: string) => {
 };
 const marked = new Marked(
   markedHighlight({
-    async: true,
-    langPrefix: "hljs language-",
-    /**
-     * 现在部分代码高亮是一个同步任务，但是选择保留其异步函数的属性，
-     * 这样在多个分屏中同一个对话可以利用之前的优化逻辑只渲染一次。
-     */
     async highlight(code, lang) {
       lang = lang.toLowerCase();
       analyzeAndImport(lang);
@@ -64,10 +58,9 @@ const marked = new Marked(
     },
   }),
 );
+
 const markedWithFullCode = new Marked(
   markedHighlight({
-    async: true,
-    langPrefix: "hljs language-",
     async highlight(code, lang) {
       lang = lang.toLowerCase();
       await analyzeAndImport(lang);
